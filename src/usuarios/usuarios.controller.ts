@@ -1,19 +1,33 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { CreateDetallesTecnicosDto } from './dto/create-detallesTecnicos.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolEnum } from 'src/auth/enums/rol.enum';
 
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
+
+  @Post(':id_tecnico/datos-tecnicos')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
+  agregarDatosTecnicos(
+    @Param('id_tecnico') idTecnico: string,
+    @Body() createDetallesTecnicosDto: CreateDetallesTecnicosDto,
+  ) {
+    return this.usuariosService.agregarDatosTecnicos(
+      createDetallesTecnicosDto,
+      idTecnico,
+    );
+  }
 
   // @Post()
   // create(@Body() createUsuarioDto: CreateUsuarioDto) {

@@ -5,6 +5,8 @@ export const ERROR_MESSAGES = {
     correoDuplicado: 'El correo ya está registrado',
     telefonoDuplicado: 'El teléfono ya está registrado',
     credencialesInvalidas: 'Credenciales inválidas',
+    rolInvalido: (id: string, rol: string) =>
+      `El usuario '${id}' no tiene el rol '${rol}' requerido`,
   },
   direccion: {
     noEncontrada: (id: string) => `Dirección '${id}' no encontrada`,

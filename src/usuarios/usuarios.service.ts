@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PrismaService } from 'src/prisma.service';
 import { RolEnum } from 'src/auth/enums/rol.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { CreateDetallesTecnicosDto } from './dto/create-detallesTecnicos.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -29,6 +34,32 @@ export class UsuariosService {
     `;
 
     return { id_usuario, ...createUsuarioDto };
+  }
+
+  async agregarDatosTecnicos(
+    agregarDetallesTecnicosDto: CreateDetallesTecnicosDto,
+    id_tecnico: string,
+  ) {
+    const tecnico = await this.findOne(id_tecnico);
+    if (tecnico.rol !== RolEnum.TECNICO || tecnico.id_usuario !== RolEnum.ADMIN) {
+      throw new BadRequestException(
+        ERROR_MESSAGES.usuario.rolInvalido(id_tecnico, RolEnum.TECNICO),
+      );
+    }
+
+    const { especialidad, licencia_profesional } = agregarDetallesTecnicosDto;
+
+    await this.prisma.$executeRaw`
+        INSERT INTO detalles_tecnicos (id_tecnico, especialidad, licencia_profesional)
+        VALUES (${id_tecnico}, ${especialidad}, ${licencia_profesional})
+      `;
+
+    return {
+      message: `Datos tecnicos agregados para el tecnico ${id_tecnico}`,
+      id_tecnico,
+      especialidad,
+      licencia_profesional,
+    };
   }
 
   async findOne(id: string) {
