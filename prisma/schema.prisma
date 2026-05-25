@@ -82,6 +82,8 @@ model solicitud_servicios {
   id_servicio                                       String           @db.VarChar(50)
   id_direccion                                      String           @db.VarChar(50)
   estado                                            String           @default("pendiente") @db.VarChar(20)
+  confirmacion_cliente                              Boolean          @default(false)
+  confirmacion_tecnico                              Boolean          @default(false)
   fecha                                             DateTime         @default(now()) @db.Timestamp(6)
   calificaciones                                    calificaciones[]
   comentarios                                       comentarios[]

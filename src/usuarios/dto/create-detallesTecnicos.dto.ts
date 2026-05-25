@@ -39,7 +39,7 @@ export class CreateDetallesTecnicosDto {
 
   @IsOptional()
   @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsNumber()
   @Min(0)
   @Max(5)
   calificacion_promedio?: number;

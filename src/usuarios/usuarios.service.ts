@@ -41,7 +41,8 @@ export class UsuariosService {
     id_tecnico: string,
   ) {
     const tecnico = await this.findOne(id_tecnico);
-    if (tecnico.rol !== RolEnum.TECNICO || tecnico.id_usuario !== RolEnum.ADMIN) {
+
+    if (tecnico.rol !== RolEnum.TECNICO && tecnico.rol !== RolEnum.ADMIN) {
       throw new BadRequestException(
         ERROR_MESSAGES.usuario.rolInvalido(id_tecnico, RolEnum.TECNICO),
       );
@@ -50,7 +51,7 @@ export class UsuariosService {
     const { especialidad, licencia_profesional } = agregarDetallesTecnicosDto;
 
     await this.prisma.$executeRaw`
-        INSERT INTO detalles_tecnicos (id_tecnico, especialidad, licencia_profesional)
+        INSERT INTO detalles_tecnicos (id_usuario, especialidad, licencia_profesional)
         VALUES (${id_tecnico}, ${especialidad}, ${licencia_profesional})
       `;
 
