@@ -13,20 +13,19 @@ export function HeroSection() {
       <div className="lg:w-1/2 flex flex-col gap-lg z-10">
         <div className="space-y-sm">
           <span className="inline-block px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[12px] leading-[16px] tracking-[0.05em] font-semibold uppercase border border-outline-variant/30">
-            Precision Engineering
+            Soluciones de Precisión
           </span>
           <h1 className="text-[36px] leading-[44px] md:text-[48px] md:leading-[56px] tracking-[-0.02em] font-bold text-primary">
-            Absolute Reliability in Service Delivery.
+            Fiabilidad absoluta en la prestación de servicios.
           </h1>
           <p className="text-[18px] leading-[28px] text-on-surface-variant max-w-2xl">
-            Connect with rigorously vetted technical experts for your high-end
-            property needs. Quality and efficiency, guaranteed by our
-            proprietary matching algorithm.
+            Conéctate con expertos técnicos rigurosamente verificados para satisfacer tus necesidades 
+            de propiedad de alto nivel. Calidad y eficiencia, garantizadas por nuestro algoritmo de emparejamiento propio.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-md">
           <button className="bg-primary text-on-primary text-[14px] leading-[20px] tracking-[0.01em] font-medium px-8 py-4 rounded-lg hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center gap-2">
-            Explore Marketplace
+            Conoce Nuestros Servicios
             <span
               className="material-symbols-outlined text-[20px]"
               style={{ fontVariationSettings: "'FILL' 0" }}
@@ -41,7 +40,7 @@ export function HeroSection() {
             >
               play_circle
             </span>
-            See How It Works
+            Observa Cómo Funciona
           </button>
         </div>
         <div className="flex items-center gap-sm pt-sm border-t border-outline-variant/20">
@@ -69,7 +68,7 @@ export function HeroSection() {
             />
           </div>
           <div className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant flex flex-col justify-center">
-            <span className="text-primary font-bold">500+ Vetted Experts</span>
+            <span className="text-primary font-bold">500+ Técnicos Verificados</span>
             <span className="flex items-center text-[#fbbf24]">
               <span
                 className="material-symbols-outlined text-[16px]"
@@ -77,7 +76,7 @@ export function HeroSection() {
               >
                 star
               </span>{" "}
-              4.9/5 Average Rating
+              4.7/5 Calificación Promedio
             </span>
           </div>
         </div>
@@ -104,15 +103,15 @@ export function HeroSection() {
               </div>
               <div>
                 <h3 className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-primary font-bold">
-                  Verified Professional
+                  Técnico Verificado
                 </h3>
                 <p className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant">
-                  Diagnostics &amp; Repair
+                  Diagnóstico &amp; Reparación
                 </p>
               </div>
             </div>
             <span className="bg-[#10b981]/10 text-[#10b981] text-[12px] leading-[16px] tracking-[0.05em] font-semibold px-3 py-1 rounded-full border border-[#10b981]/20">
-              Available Now
+              Disponible Ahora
             </span>
           </div>
         </div>
