@@ -29,19 +29,19 @@ export function TopNavBar() {
             href="#"
             className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-lg px-3 py-2"
           >
-            Services
+            Servicios
           </Link>
           <Link
             href="#"
             className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-lg px-3 py-2"
           >
-            Pricing
+            Precios
           </Link>
           <Link
             href="#"
             className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-lg px-3 py-2"
           >
-            Enterprise
+            Sobre Nosotros
           </Link>
         </nav>
         <div className="flex items-center gap-sm">
@@ -49,13 +49,13 @@ export function TopNavBar() {
             href="/login"
             className="hidden lg:block text-[14px] leading-[20px] tracking-[0.01em] font-medium text-primary bg-transparent border border-outline px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors"
           >
-            Sign In
+            Iniciar Sesión
           </Link>
           <Link
             href="/login"
             className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-primary bg-primary px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Get Started
+            Regístrate
           </Link>
           <button className="md:hidden text-on-surface-variant">
             <span

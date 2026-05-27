@@ -4,15 +4,15 @@ export function HowItWorksSection() {
       <div className="max-w-[1280px] mx-auto px-gutter">
         <div className="text-center mb-lg max-w-2xl mx-auto">
           <h2 className="text-[30px] leading-[38px] tracking-[-0.01em] font-semibold text-primary mb-sm">
-            Streamlined Process
+            Proceso optimizado
           </h2>
           <p className="text-[16px] leading-[24px] text-on-surface-variant">
-            {"We've engineered a frictionless experience from request to completion."}
+            {"Hemos diseñado un proceso fluido, desde la solicitud hasta la finalización."}
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-md relative">
           {/* Connecting line for desktop */}
-          <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-outline-variant/30 z-0"></div>
+          <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-outline-variant/60 z-0"></div>
           {/* Step 1 */}
           <div className="flex flex-col items-center text-center relative z-10">
             <div className="w-24 h-24 rounded-full bg-surface border border-outline-variant/30 flex items-center justify-center mb-md shadow-sm">
@@ -24,11 +24,10 @@ export function HowItWorksSection() {
               </span>
             </div>
             <h3 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-primary mb-xs">
-              Select Service
+              Selecciona tu Servicio
             </h3>
             <p className="text-[16px] leading-[24px] text-on-surface-variant">
-              Choose from our curated list of technical categories and specify
-              your requirements.
+              Elige entre nuestra selección de categorías técnicas y especifica tus requisitos.
             </p>
           </div>
           {/* Step 2 */}
@@ -42,11 +41,10 @@ export function HowItWorksSection() {
               </span>
             </div>
             <h3 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-primary mb-xs">
-              Expert Match
+              Emparejamiento Inteligente
             </h3>
             <p className="text-[16px] leading-[24px] text-on-surface-variant">
-              Our algorithm pairs you with an expert holding the precise
-              certifications needed.
+              Nuestro algoritmo te empareja con un experto que posee las certificaciones precisas necesarias.
             </p>
           </div>
           {/* Step 3 */}
@@ -60,11 +58,10 @@ export function HowItWorksSection() {
               </span>
             </div>
             <h3 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-primary mb-xs">
-              Execution
+              Ejecución
             </h3>
             <p className="text-[16px] leading-[24px] text-on-surface-variant">
-              Precision delivery with real-time tracking and comprehensive
-              digital invoicing.
+              Entrega precisa con seguimiento en tiempo real y facturación digital integral.
             </p>
           </div>
         </div>

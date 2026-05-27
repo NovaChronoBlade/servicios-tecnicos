@@ -8,9 +8,9 @@ export function Footer() {
           <span className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-on-primary-container">
             TechServe Pro
           </span>
-          <p className="text-[16px] leading-[24px] text-on-primary-container/80 max-w-sm">
-            Elevating property maintenance through rigorous engineering
-            standards and meticulously vetted technical experts.
+          <p className="text-[16px] leading-[24px] text-on-primary-container/80 w-full break-words">
+            Elevando el mantenimiento de propiedades a través de estándares 
+            de ingeniería rigurosos y expertos técnicos meticulosamente verificados.
           </p>
           <div className="flex gap-4 mt-auto">
             <Link
@@ -39,25 +39,25 @@ export function Footer() {
         </div>
         <div className="flex flex-col gap-sm">
           <h4 className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-primary-container font-bold mb-2">
-            Legal &amp; Trust
+            Legal y  de Confianza
           </h4>
           <Link
             href="#"
             className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/80 hover:text-on-primary-container transition-colors py-1"
           >
-            Privacy Policy
+            Política de Privacidad
           </Link>
           <Link
             href="#"
             className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/80 hover:text-on-primary-container transition-colors py-1"
           >
-            Terms of Service
+            Términos de Servicio
           </Link>
           <Link
             href="#"
             className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/80 hover:text-on-primary-container transition-colors py-1"
           >
-            Compliance
+            Cumplimiento
           </Link>
           <Link
             href="#"
@@ -68,31 +68,30 @@ export function Footer() {
         </div>
         <div className="flex flex-col gap-sm">
           <h4 className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-primary-container font-bold mb-2">
-            Support
+            Soporte
           </h4>
           <Link
             href="#"
             className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/80 hover:text-on-primary-container transition-colors py-1"
           >
-            Contact
+            Contacto
           </Link>
           <Link
             href="#"
             className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/80 hover:text-on-primary-container transition-colors py-1"
           >
-            Help Center
+            Centro de Ayuda
           </Link>
           <Link
             href="#"
             className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/80 hover:text-on-primary-container transition-colors py-1"
           >
-            Provider Portal
+            Portal de Proveedores
           </Link>
         </div>
         <div className="col-span-1 md:col-span-4 mt-lg pt-md border-t border-outline-variant/10 text-center md:text-left">
           <p className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-primary-container/60">
-            &copy; 2024 TechServe Pro. Precision Engineering in Service
-            Delivery.
+            &copy; 2024 TechServe Pro. Ingeniería de Precisión en Entrega de Servicios.
           </p>
         </div>
       </div>
