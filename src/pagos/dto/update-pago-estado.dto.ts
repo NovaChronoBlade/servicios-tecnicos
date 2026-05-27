@@ -1,6 +1,6 @@
 import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 
-export const PAGOS_ESTADOS = ['pendiente', 'pagado', 'fallido', 'cancelado'] as const;
+export const PAGOS_ESTADOS = ['pendiente', 'pagado', 'reembolsado'] as const;
 
 export class UpdatePagoEstadoDto {
   @IsString()

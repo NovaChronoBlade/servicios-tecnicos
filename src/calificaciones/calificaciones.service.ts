@@ -11,19 +11,17 @@ import { CreateCalificacionDto } from './dto/create-calificacion.dto';
 export class CalificacionesService {
   constructor(private prisma: PrismaService) {}
 
-  // ----------------------------------------------------------------
-  // Crear una calificación para una solicitud completada
-  // ----------------------------------------------------------------
-  async create(createCalificacionDto: CreateCalificacionDto) {
+  async create(
+    createCalificacionDto: CreateCalificacionDto,
+    actor?: { userId?: string; rol?: string },
+  ) {
     const { id_tecnico, id_cliente, id_ss, puntuacion, comentario } =
       createCalificacionDto;
 
-    // Validar rango de puntuación (refuerzo de la regla de negocio)
     if (puntuacion < 1 || puntuacion > 5) {
-      throw new BadRequestException('La puntuación debe estar entre 1 y 5');
+      throw new BadRequestException('La puntuacion debe estar entre 1 y 5');
     }
 
-    // Verificar que la solicitud existe y está completada
     const solicitudes = await this.prisma.$queryRaw`
       SELECT id_ss, estado, id_cliente, id_tecnico
       FROM solicitud_servicios
@@ -42,7 +40,21 @@ export class CalificacionesService {
       );
     }
 
-    // Verificar que no exista ya una calificación para esta solicitud
+    if (
+      solicitud.id_cliente !== id_cliente ||
+      solicitud.id_tecnico !== id_tecnico
+    ) {
+      throw new BadRequestException(
+        'La calificacion debe coincidir con el cliente y tecnico de la solicitud',
+      );
+    }
+
+    if (actor?.rol !== 'admin' && actor?.userId !== solicitud.id_cliente) {
+      throw new BadRequestException(
+        'El cliente solo puede calificar solicitudes propias',
+      );
+    }
+
     const calExistente = await this.prisma.$queryRaw`
       SELECT id_calificacion FROM calificaciones
       WHERE id_ss = ${id_ss}
@@ -50,7 +62,7 @@ export class CalificacionesService {
     `;
     if (Array.isArray(calExistente) && calExistente.length > 0) {
       throw new BadRequestException(
-        `La solicitud '${id_ss}' ya tiene una calificación registrada`,
+        `La solicitud '${id_ss}' ya tiene una calificacion registrada`,
       );
     }
 
@@ -63,7 +75,6 @@ export class CalificacionesService {
         (${id_calificacion}, ${id_tecnico}, ${id_cliente}, ${id_ss}, ${puntuacion}, ${comentario ?? null})
     `;
 
-    // Actualizar el promedio de calificación del técnico
     await this.actualizarPromedioTecnico(id_tecnico);
 
     return {
@@ -76,9 +87,6 @@ export class CalificacionesService {
     };
   }
 
-  // ----------------------------------------------------------------
-  // Obtener una calificación por ID
-  // ----------------------------------------------------------------
   async findOne(id: string) {
     const calificaciones = await this.prisma.$queryRaw`
       SELECT
@@ -99,16 +107,15 @@ export class CalificacionesService {
     const calificacion = Array.isArray(calificaciones)
       ? calificaciones[0]
       : null;
-    if (!calificacion)
-      throw new NotFoundException(`Calificación '${id}' no encontrada`);
+    if (!calificacion) {
+      throw new NotFoundException(`Calificacion '${id}' no encontrada`);
+    }
 
     return calificacion;
   }
 
-  // ----------------------------------------------------------------
-  // Obtener todas las calificaciones de un técnico
-  // ----------------------------------------------------------------
-  async findByTecnico(id_tecnico: string) {
+  async findByTecnico(id_tecnico: string, page?: string, limit?: string) {
+    const { take, skip, currentPage } = this.getPagination(page, limit);
     const calificaciones = await this.prisma.$queryRaw`
       SELECT
         c.id_calificacion,
@@ -121,14 +128,22 @@ export class CalificacionesService {
       JOIN usuarios u_cli ON u_cli.id_usuario = c.id_cliente
       WHERE c.id_tecnico = ${id_tecnico}
       ORDER BY c.fecha_calificacion DESC
+      LIMIT ${take} OFFSET ${skip}
     `;
 
-    return calificaciones;
+    const totalResult = await this.prisma.$queryRaw`
+      SELECT COUNT(*)::int AS total
+      FROM calificaciones
+      WHERE id_tecnico = ${id_tecnico}
+    `;
+    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+
+    return {
+      data: calificaciones,
+      pagination: { page: currentPage, limit: take, total },
+    };
   }
 
-  // ----------------------------------------------------------------
-  // Obtener el promedio de calificaciones de un técnico
-  // ----------------------------------------------------------------
   async getPromedioPorTecnico(id_tecnico: string) {
     const resultado = await this.prisma.$queryRaw`
       SELECT
@@ -145,16 +160,15 @@ export class CalificacionesService {
     `;
 
     const promedio = Array.isArray(resultado) ? resultado[0] : null;
-    if (!promedio)
-      throw new NotFoundException(`Técnico '${id_tecnico}' no encontrado`);
+    if (!promedio) {
+      throw new NotFoundException(`Tecnico '${id_tecnico}' no encontrado`);
+    }
 
     return promedio;
   }
 
-  // ----------------------------------------------------------------
-  // Obtener todas las calificaciones hechas por un cliente
-  // ----------------------------------------------------------------
-  async findByCliente(id_cliente: string) {
+  async findByCliente(id_cliente: string, page?: string, limit?: string) {
+    const { take, skip, currentPage } = this.getPagination(page, limit);
     const calificaciones = await this.prisma.$queryRaw`
       SELECT
         c.id_calificacion,
@@ -167,14 +181,43 @@ export class CalificacionesService {
       JOIN usuarios u_tec ON u_tec.id_usuario = c.id_tecnico
       WHERE c.id_cliente = ${id_cliente}
       ORDER BY c.fecha_calificacion DESC
+      LIMIT ${take} OFFSET ${skip}
     `;
 
-    return calificaciones;
+    const totalResult = await this.prisma.$queryRaw`
+      SELECT COUNT(*)::int AS total
+      FROM calificaciones
+      WHERE id_cliente = ${id_cliente}
+    `;
+    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+
+    return {
+      data: calificaciones,
+      pagination: { page: currentPage, limit: take, total },
+    };
   }
 
-  // ----------------------------------------------------------------
-  // Helper privado: recalcular y actualizar promedio del técnico
-  // ----------------------------------------------------------------
+  async getTopTecnicos(limit?: string) {
+    const take = Math.min(Math.max(Number(limit) || 10, 1), 100);
+
+    return this.prisma.$queryRaw`
+      SELECT
+        u.id_usuario AS id_tecnico,
+        u.nombre AS nombre_tecnico,
+        dt.especialidad,
+        dt.disponible,
+        COUNT(c.id_calificacion)::int AS total_calificaciones,
+        COALESCE(ROUND(AVG(c.puntuacion), 2), 0) AS promedio
+      FROM usuarios u
+      JOIN detalles_tecnicos dt ON dt.id_usuario = u.id_usuario
+      LEFT JOIN calificaciones c ON c.id_tecnico = u.id_usuario
+      WHERE u.rol = 'tecnico'
+      GROUP BY u.id_usuario, u.nombre, dt.especialidad, dt.disponible
+      ORDER BY promedio DESC, total_calificaciones DESC, u.nombre ASC
+      LIMIT ${take}
+    `;
+  }
+
   private async actualizarPromedioTecnico(id_tecnico: string): Promise<void> {
     await this.prisma.$executeRaw`
       UPDATE detalles_tecnicos
@@ -187,11 +230,16 @@ export class CalificacionesService {
     `;
   }
 
-  // ----------------------------------------------------------------
-  // Helper: generar ID único para calificación
-  // ----------------------------------------------------------------
   private generarIdCalificacion(): string {
     const shortId = uuidv4().split('-')[0].toUpperCase();
     return `CAL-${shortId}`;
+  }
+
+  private getPagination(page?: string, limit?: string) {
+    const currentPage = Math.max(Number(page) || 1, 1);
+    const take = Math.min(Math.max(Number(limit) || 10, 1), 100);
+    const skip = (currentPage - 1) * take;
+
+    return { currentPage, take, skip };
   }
 }

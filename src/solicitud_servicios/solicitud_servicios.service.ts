@@ -20,6 +20,14 @@ const ESTADOS_VALIDOS = [
 
 type EstadoSolicitud = (typeof ESTADOS_VALIDOS)[number];
 
+type SolicitudesFilters = {
+  page?: string;
+  limit?: string;
+  estado?: string;
+  id_tecnico?: string;
+  desde?: string;
+};
+
 // Transiciones permitidas desde cada estado
 const TRANSICIONES: Record<EstadoSolicitud, EstadoSolicitud[]> = {
   pendiente: ['aceptado', 'cancelado'],
@@ -37,16 +45,21 @@ export class SolicitudServiciosService {
   // Crear una nueva solicitud de servicio
   // ----------------------------------------------------------------
   async create(createSolicitudDto: CreateSolicitudServicioDto) {
-    const { id_cliente, id_tecnico, id_servicio, id_direccion } =
-      createSolicitudDto;
+    const {
+      id_cliente,
+      id_tecnico,
+      id_servicio,
+      id_direccion,
+      fecha_programada,
+    } = createSolicitudDto;
 
     const id_ss = this.generarIdSolicitud();
 
     await this.prisma.$executeRaw`
       INSERT INTO solicitud_servicios
-        (id_ss, id_cliente, id_tecnico, id_servicio, id_direccion, estado)
+        (id_ss, id_cliente, id_tecnico, id_servicio, id_direccion, estado, fecha_programada)
       VALUES
-        (${id_ss}, ${id_cliente}, ${id_tecnico ?? null}, ${id_servicio}, ${id_direccion}, 'pendiente')
+        (${id_ss}, ${id_cliente}, ${id_tecnico ?? null}, ${id_servicio}, ${id_direccion}, 'pendiente', ${fecha_programada ? new Date(fecha_programada) : null})
     `;
 
     return { id_ss, ...createSolicitudDto, estado: 'pendiente' };
@@ -55,14 +68,22 @@ export class SolicitudServiciosService {
   // ----------------------------------------------------------------
   // Obtener todas las solicitudes
   // ----------------------------------------------------------------
-  async findAll() {
-    const solicitudes = await this.prisma.$queryRaw`
+  async findAll(filters: SolicitudesFilters = {}) {
+    const { take, skip, currentPage } = this.getPagination(
+      filters.page,
+      filters.limit,
+    );
+    const { whereSql, params } = this.buildFilters(filters);
+    const solicitudes = await this.prisma.$queryRawUnsafe(
+      `
       SELECT
         ss.id_ss,
         ss.estado,
         ss.confirmacion_cliente,
         ss.confirmacion_tecnico,
+        ss.motivo_cancelacion,
         ss.fecha,
+        ss.fecha_programada,
         ss.id_cliente,
         ss.id_tecnico,
         ss.id_servicio,
@@ -75,10 +96,29 @@ export class SolicitudServiciosService {
       JOIN usuarios u_cli     ON u_cli.id_usuario  = ss.id_cliente
       LEFT JOIN usuarios u_tec ON u_tec.id_usuario  = ss.id_tecnico
       JOIN servicios s         ON s.id_servicio     = ss.id_servicio
+      ${whereSql}
       ORDER BY ss.fecha DESC
-    `;
+      LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+    `,
+      ...params,
+      take,
+      skip,
+    );
 
-    return solicitudes;
+    const totalResult = await this.prisma.$queryRawUnsafe(
+      `
+      SELECT COUNT(*)::int AS total
+      FROM solicitud_servicios ss
+      ${whereSql}
+    `,
+      ...params,
+    );
+    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+
+    return {
+      data: solicitudes,
+      pagination: { page: currentPage, limit: take, total },
+    };
   }
 
   // ----------------------------------------------------------------
@@ -91,7 +131,9 @@ export class SolicitudServiciosService {
         ss.estado,
         ss.confirmacion_cliente,
         ss.confirmacion_tecnico,
+        ss.motivo_cancelacion,
         ss.fecha,
+        ss.fecha_programada,
         ss.id_cliente,
         ss.id_tecnico,
         ss.id_servicio,
@@ -157,6 +199,7 @@ export class SolicitudServiciosService {
         ss.id_ss,
         ss.estado,
         ss.fecha,
+        ss.fecha_programada,
         ss.id_tecnico,
         s.nombre  AS nombre_servicio,
         s.precio  AS precio_servicio
@@ -178,6 +221,7 @@ export class SolicitudServiciosService {
         ss.id_ss,
         ss.estado,
         ss.fecha,
+        ss.fecha_programada,
         ss.id_cliente,
         u_cli.nombre  AS nombre_cliente,
         s.nombre      AS nombre_servicio,
@@ -205,6 +249,7 @@ export class SolicitudServiciosService {
         ss.id_ss,
         ss.estado,
         ss.fecha,
+        ss.fecha_programada,
         ss.id_cliente,
         u_cli.nombre  AS nombre_cliente,
         s.nombre      AS nombre_servicio,
@@ -236,6 +281,7 @@ export class SolicitudServiciosService {
         ss.id_ss,
         ss.estado,
         ss.fecha,
+        ss.fecha_programada,
         ss.id_cliente,
         ss.id_tecnico,
         s.nombre AS nombre_servicio
@@ -278,6 +324,81 @@ export class SolicitudServiciosService {
       UPDATE detalles_tecnicos
       SET disponible = false
       WHERE id_usuario = ${id_tecnico}
+    `;
+
+    return this.findOne(id_ss);
+  }
+
+  async cancelar(
+    id_ss: string,
+    motivo_cancelacion: string,
+    actor?: { userId?: string; rol?: string },
+  ) {
+    const solicitud = await this.findOne(id_ss);
+
+    if (solicitud.estado === 'completado' || solicitud.estado === 'cancelado') {
+      throw new BadRequestException(
+        `No se puede cancelar una solicitud en estado '${solicitud.estado}'`,
+      );
+    }
+
+    const actorRol = actor?.rol;
+    const actorId = actor?.userId;
+    const esPropietario =
+      actorId === solicitud.id_cliente || actorId === solicitud.id_tecnico;
+
+    if (actorRol !== 'admin' && !esPropietario) {
+      throw new UnauthorizedException('No tiene permisos para cancelar esta solicitud');
+    }
+
+    await this.prisma.$executeRaw`
+      UPDATE solicitud_servicios
+      SET estado = 'cancelado', motivo_cancelacion = ${motivo_cancelacion}
+      WHERE id_ss = ${id_ss}
+    `;
+
+    if (solicitud.id_tecnico) {
+      await this.prisma.$executeRaw`
+        UPDATE detalles_tecnicos
+        SET disponible = true
+        WHERE id_usuario = ${solicitud.id_tecnico}
+      `;
+    }
+
+    return this.findOne(id_ss);
+  }
+
+  async reasignarTecnico(id_ss: string, nuevo_id_tecnico: string) {
+    const solicitud = await this.findOne(id_ss);
+
+    if (solicitud.estado !== 'aceptado') {
+      throw new BadRequestException(
+        `Solo se puede reasignar una solicitud en estado 'aceptado'. Estado actual: '${solicitud.estado}'`,
+      );
+    }
+
+    if (solicitud.id_tecnico === nuevo_id_tecnico) {
+      throw new BadRequestException('La solicitud ya esta asignada a ese tecnico');
+    }
+
+    await this.prisma.$executeRaw`
+      UPDATE solicitud_servicios
+      SET id_tecnico = ${nuevo_id_tecnico}
+      WHERE id_ss = ${id_ss}
+    `;
+
+    if (solicitud.id_tecnico) {
+      await this.prisma.$executeRaw`
+        UPDATE detalles_tecnicos
+        SET disponible = true
+        WHERE id_usuario = ${solicitud.id_tecnico}
+      `;
+    }
+
+    await this.prisma.$executeRaw`
+      UPDATE detalles_tecnicos
+      SET disponible = false
+      WHERE id_usuario = ${nuevo_id_tecnico}
     `;
 
     return this.findOne(id_ss);
@@ -358,5 +479,47 @@ export class SolicitudServiciosService {
   private generarIdSolicitud(): string {
     const shortId = uuidv4().split('-')[0].toUpperCase();
     return `SS-${shortId}`;
+  }
+
+  private getPagination(page?: string, limit?: string) {
+    const currentPage = Math.max(Number(page) || 1, 1);
+    const take = Math.min(Math.max(Number(limit) || 10, 1), 100);
+    const skip = (currentPage - 1) * take;
+
+    return { currentPage, take, skip };
+  }
+
+  private buildFilters(filters: SolicitudesFilters) {
+    const clauses: string[] = [];
+    const params: unknown[] = [];
+
+    if (filters.estado) {
+      if (!ESTADOS_VALIDOS.includes(filters.estado as EstadoSolicitud)) {
+        throw new BadRequestException(
+          `Estado invalido. Los estados permitidos son: ${ESTADOS_VALIDOS.join(', ')}`,
+        );
+      }
+      params.push(filters.estado);
+      clauses.push(`ss.estado = $${params.length}`);
+    }
+
+    if (filters.id_tecnico) {
+      params.push(filters.id_tecnico);
+      clauses.push(`ss.id_tecnico = $${params.length}`);
+    }
+
+    if (filters.desde) {
+      const desde = new Date(filters.desde);
+      if (Number.isNaN(desde.getTime())) {
+        throw new BadRequestException('La fecha desde no es valida');
+      }
+      params.push(desde);
+      clauses.push(`ss.fecha >= $${params.length}`);
+    }
+
+    return {
+      whereSql: clauses.length ? `WHERE ${clauses.join(' AND ')}` : '',
+      params,
+    };
   }
 }

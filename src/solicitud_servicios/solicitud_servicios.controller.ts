@@ -18,6 +18,8 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolEnum } from 'src/auth/enums/rol.enum';
 import { SolicitudServiciosService } from './solicitud_servicios.service';
+import { CancelarSolicitudDto } from './dto/cancelar-solicitud.dto';
+import { ReasignarTecnicoDto } from './dto/reasignar-tecnico.dto';
 
 @Controller('solicitudes-servicio')
 export class SolicitudServiciosController {
@@ -44,8 +46,20 @@ export class SolicitudServiciosController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.ADMIN)
-  findAll() {
-    return this.solicitudServiciosService.findAll();
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('estado') estado?: string,
+    @Query('id_tecnico') id_tecnico?: string,
+    @Query('desde') desde?: string,
+  ) {
+    return this.solicitudServiciosService.findAll({
+      page,
+      limit,
+      estado,
+      id_tecnico,
+      desde,
+    });
   }
 
   // ------------------------------------------------------------
@@ -105,6 +119,40 @@ export class SolicitudServiciosController {
   @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
   updateEstado(@Param('id') id: string, @Body('estado') estado: string) {
     return this.solicitudServiciosService.updateEstado(id, estado);
+  }
+
+  // ------------------------------------------------------------
+  // Cancelar solicitud con motivo
+  // ------------------------------------------------------------
+  @Patch(':id/cancelar')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.CLIENTE, RolEnum.TECNICO, RolEnum.ADMIN)
+  cancelar(
+    @Param('id') id: string,
+    @Body() cancelarDto: CancelarSolicitudDto,
+    @Request() req,
+  ) {
+    return this.solicitudServiciosService.cancelar(
+      id,
+      cancelarDto.motivo_cancelacion,
+      req.user,
+    );
+  }
+
+  // ------------------------------------------------------------
+  // Reasignar tecnico de una solicitud aceptada
+  // ------------------------------------------------------------
+  @Patch(':id/reasignar-tecnico')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.ADMIN)
+  reasignarTecnico(
+    @Param('id') id: string,
+    @Body() reasignarDto: ReasignarTecnicoDto,
+  ) {
+    return this.solicitudServiciosService.reasignarTecnico(
+      id,
+      reasignarDto.id_tecnico,
+    );
   }
 
   // ------------------------------------------------------------

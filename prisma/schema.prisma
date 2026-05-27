@@ -61,8 +61,17 @@ model pagos {
   monto               Decimal             @db.Decimal(10, 2)
   metodo_pago         String              @db.VarChar(50)
   estado              String              @db.VarChar(20)
+  numero_referencia   String?             @unique @db.VarChar(50)
   fecha_pago          DateTime            @default(now()) @db.Timestamp(6)
   solicitud_servicios solicitud_servicios @relation(fields: [id_ss], references: [id_ss], map: "fk_pagos_ss")
+}
+
+model categorias_servicios {
+  id_categoria String      @id @db.VarChar(50)
+  nombre       String      @unique @db.VarChar(100)
+  descripcion  String?     @db.VarChar(500)
+  activo       Boolean     @default(true)
+  servicios    servicios[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -71,6 +80,9 @@ model servicios {
   nombre              String                @db.VarChar(100)
   descripcion         String                @db.VarChar(500)
   precio              Decimal               @db.Decimal(10, 2)
+  activo              Boolean               @default(true)
+  id_categoria        String?               @db.VarChar(50)
+  categorias_servicios categorias_servicios? @relation(fields: [id_categoria], references: [id_categoria], map: "fk_servicios_categoria")
   solicitud_servicios solicitud_servicios[]
 }
 
@@ -84,7 +96,9 @@ model solicitud_servicios {
   estado                                            String           @default("pendiente") @db.VarChar(20)
   confirmacion_cliente                              Boolean          @default(false)
   confirmacion_tecnico                              Boolean          @default(false)
+  motivo_cancelacion                                String?          @db.VarChar(500)
   fecha                                             DateTime         @default(now()) @db.Timestamp(6)
+  fecha_programada                                  DateTime?        @db.Timestamp(6)
   calificaciones                                    calificaciones[]
   comentarios                                       comentarios[]
   pagos                                             pagos?
