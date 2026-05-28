@@ -5,49 +5,49 @@ const serviceRequests = [
   {
     id: "REQ-8091",
     client: "Acme Corp HQ",
-    serviceType: "HVAC Diagnostic",
-    status: "In Progress",
+    serviceType: "Diagnóstico de HVAC",
+    status: "En Progreso",
     statusColor: "bg-emerald-100 text-emerald-800",
   },
   {
     id: "REQ-8092",
     client: "Stark Industries",
-    serviceType: "Server Rack Install",
-    status: "Pending",
+    serviceType: "Instalación de Rack de Servidores",
+    status: "Pendiente",
     statusColor: "bg-amber-100 text-amber-800",
   },
   {
     id: "REQ-8093",
     client: "Wayne Enterprises",
-    serviceType: "Security System Audit",
-    status: "In Progress",
+    serviceType: "Auditoría de Sistema de Seguridad",
+    status: "En Progreso",
     statusColor: "bg-emerald-100 text-emerald-800",
   },
   {
     id: "REQ-8094",
     client: "Daily Planet",
-    serviceType: "Network Troubleshooting",
-    status: "Completed",
+    serviceType: "Resolución de Problemas de Red",
+    status: "Completado",
     statusColor: "bg-slate-100 text-slate-800",
   },
 ];
 
 const technicians = [
-  { initials: "JD", name: "John Doe", status: "En route to REQ-8091", eta: "2 min" },
-  { initials: "AS", name: "Alice Smith", status: "On-site at REQ-8093", eta: "Engaged" },
+  { initials: "JD", name: "John Doe", status: "En ruta hacia REQ-8091", eta: "2 min" },
+  { initials: "AS", name: "Alice Smith", status: "En el sitio de REQ-8093", eta: "Comprometido" },
 ];
 
 export default function AdminDashboardPage() {
   return (
     <div className="bg-surface text-on-surface flex min-h-screen">
       {/* SideNavBar */}
-      <nav className="hidden md:flex flex-col h-screen w-72 fixed left-0 top-0 border-r border-outline-variant/30 bg-surface py-md z-40">
+      <nav className="hidden md:flex flex-col h-[calc(100vh-2rem)] w-72 fixed left-0 top-4 border-r border-outline-variant/30 bg-surface py-md z-40 rounded-r-2xl">
         <div className="px-4 mb-8">
           <h1 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold font-black text-primary">
-            Admin Console
+            Consola de Administrador
           </h1>
-          <p className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant mt-1">
-            Technical Operations
+          <p className="text-sm text-on-surface-variant">
+            Operaciones Técnicas
           </p>
         </div>
         <div className="px-4 mb-6">
@@ -55,7 +55,7 @@ export default function AdminDashboardPage() {
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
               add
             </span>
-            New Service
+            Nuevo Servicio
           </button>
         </div>
         <ul className="flex-1 flex flex-col gap-1 px-2">
@@ -66,7 +66,7 @@ export default function AdminDashboardPage() {
             >
               <span className="material-symbols-outlined">dashboard</span>
               <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                Overview
+                Descripción General
               </span>
             </Link>
           </li>
@@ -77,7 +77,7 @@ export default function AdminDashboardPage() {
             >
               <span className="material-symbols-outlined">build</span>
               <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                Service Requests
+                Solicitudes de Servicio
               </span>
             </Link>
           </li>
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
             >
               <span className="material-symbols-outlined">engineering</span>
               <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                Technicians
+                Técnicos
               </span>
             </Link>
           </li>
@@ -105,7 +105,7 @@ export default function AdminDashboardPage() {
                 monitoring
               </span>
               <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium font-semibold">
-                Analytics
+                Analítica
               </span>
             </Link>
           </li>
@@ -116,7 +116,7 @@ export default function AdminDashboardPage() {
             >
               <span className="material-symbols-outlined">inventory_2</span>
               <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                Inventory
+                Inventario
               </span>
             </Link>
           </li>
@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
             >
               <span className="material-symbols-outlined">settings</span>
               <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                Settings
+                Configuración
               </span>
             </Link>
           </li>
@@ -141,7 +141,7 @@ export default function AdminDashboardPage() {
               >
                 <span className="material-symbols-outlined">help</span>
                 <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                  Support
+                  Soporte
                 </span>
               </Link>
             </li>
@@ -152,7 +152,7 @@ export default function AdminDashboardPage() {
               >
                 <span className="material-symbols-outlined">logout</span>
                 <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-                  Sign Out
+                  Cerrar Sesión
                 </span>
               </Link>
             </li>
@@ -161,25 +161,25 @@ export default function AdminDashboardPage() {
       </nav>
 
       {/* Main Content Canvas */}
-      <main className="flex-1 md:ml-72 p-gutter max-w-[1280px] mx-auto w-full">
+      <main className="flex-1 md:ml-72 px-8 py-10 lg:px-12 max-w-[1400px] mx-auto w-full">
         {/* Header */}
-        <header className="flex justify-between items-center mb-lg">
+        <header className="flex flex-col lg:flex-row justify-between lg:items-center gap-6 mb-10">
           <div>
             <h2 className="text-[30px] leading-[38px] tracking-[-0.01em] font-semibold text-primary">
-              Operations Analytics
+              Analítica de Operaciones
             </h2>
-            <p className="text-[16px] leading-[24px] text-on-surface-variant mt-1">
-              Real-time metrics and service orchestration.
+            <p className="text-sm text-on-surface-variant">
+              Métricas en tiempo real y orquestación de servicios.
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">
                 search
               </span>
               <input
                 className="pl-10 pr-4 py-2 border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] focus:border-secondary focus:ring-2 focus:ring-secondary/20 outline-none w-64 bg-surface-container-lowest widget-shadow"
-                placeholder="Search resources..."
+                placeholder="Buscar recursos..."
                 type="text"
               />
             </div>
@@ -192,38 +192,39 @@ export default function AdminDashboardPage() {
         </header>
 
         {/* Analytics Widgets (Bento Grid) */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-md mb-lg">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {/* Widget 1: Revenue */}
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 widget-shadow hover-lift">
+          <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 widget-shadow hover-lift">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Total Revenue
+                Ingresos Totales
               </h3>
               <span className="material-symbols-outlined text-secondary bg-secondary-container/20 p-2 rounded-lg">
                 payments
               </span>
             </div>
-            <div className="flex items-baseline gap-2">
+            <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-[48px] leading-[56px] tracking-[-0.02em] font-bold text-primary">
                 $124,500
               </span>
-              <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-emerald-600 flex items-center">
+
+              <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-emerald-600 flex items-center whitespace-nowrap">
                 <span className="material-symbols-outlined text-[16px]">
                   arrow_upward
-                </span>{" "}
+                </span>
                 12.5%
               </span>
             </div>
-            <p className="text-[16px] leading-[24px] text-on-surface-variant/70 mt-2">
-              vs. previous 30 days
+            <p className="text-sm text-on-surface-variant">
+              vs. últimos 30 días
             </p>
           </div>
 
           {/* Widget 2: Technicians */}
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 widget-shadow hover-lift">
+          <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 widget-shadow hover-lift">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Active Technicians
+                Técnicos Activos
               </h3>
               <span className="material-symbols-outlined text-secondary bg-secondary-container/20 p-2 rounded-lg">
                 engineering
@@ -234,7 +235,7 @@ export default function AdminDashboardPage() {
                 48
               </span>
               <span className="text-[16px] leading-[24px] text-on-surface-variant">
-                / 52 available
+                / 52 disponibles
               </span>
             </div>
             <div className="w-full bg-surface-container-high rounded-full h-2 mt-4">
@@ -246,10 +247,10 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Widget 3: Pending Requests */}
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 widget-shadow hover-lift">
+          <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 widget-shadow hover-lift">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Pending Requests
+                Solicitudes Pendientes
               </h3>
               <span className="material-symbols-outlined text-error bg-error-container/50 p-2 rounded-lg">
                 pending_actions
@@ -263,25 +264,25 @@ export default function AdminDashboardPage() {
                 <span className="material-symbols-outlined text-[16px]">
                   arrow_upward
                 </span>{" "}
-                3 urgent
+                3 urgentes
               </span>
             </div>
-            <p className="text-[16px] leading-[24px] text-on-surface-variant/70 mt-2">
-              Requires immediate dispatch
+            <p className="text-sm text-on-surface-variant">
+              Requiere envío inmediato
             </p>
           </div>
         </section>
 
         {/* Complex Layout Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-md mb-xl">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
           {/* Service Management Table (Spans 2 columns) */}
           <div className="lg:col-span-2 bg-surface-container-lowest rounded-xl border border-outline-variant/30 widget-shadow overflow-hidden flex flex-col">
             <div className="p-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/50">
               <h3 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-primary">
-                Service Management
+                Gestión de Servicios
               </h3>
               <button className="text-secondary text-[14px] leading-[20px] tracking-[0.01em] font-medium flex items-center gap-1 hover:underline">
-                View All{" "}
+                Ver Todo{" "}
                 <span className="material-symbols-outlined text-[16px]">
                   arrow_forward
                 </span>
@@ -295,16 +296,16 @@ export default function AdminDashboardPage() {
                       ID
                     </th>
                     <th className="p-4 text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase">
-                      Client
+                      Cliente
                     </th>
                     <th className="p-4 text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase">
-                      Service Type
+                      Tipo de Servicio
                     </th>
                     <th className="p-4 text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase">
-                      Status
+                      Estado
                     </th>
                     <th className="p-4 text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase text-right">
-                      Actions
+                      Acciones
                     </th>
                   </tr>
                 </thead>
@@ -314,23 +315,23 @@ export default function AdminDashboardPage() {
                       key={request.id}
                       className="hover:bg-surface-container-low/30 transition-colors"
                     >
-                      <td className="p-4 text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-surface-variant">
+                      <td className="px-6 py-5 text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-surface-variant">
                         {request.id}
                       </td>
-                      <td className="p-4 text-[16px] leading-[24px] text-primary font-medium">
+                      <td className="px-6 py-5 text-[16px] leading-[24px] text-primary font-medium">
                         {request.client}
                       </td>
-                      <td className="p-4 text-[16px] leading-[24px] text-on-surface-variant">
+                      <td className="px-6 py-5 text-[16px] leading-[24px] text-on-surface-variant">
                         {request.serviceType}
                       </td>
-                      <td className="p-4">
+                      <td className="px-6 py-5">
                         <span
                           className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${request.statusColor}`}
                         >
                           {request.status}
                         </span>
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="px-6 py-5 text-right">
                         <button className="text-on-surface-variant hover:text-secondary">
                           <span className="material-symbols-outlined">
                             more_vert
@@ -348,7 +349,7 @@ export default function AdminDashboardPage() {
           <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/30 widget-shadow overflow-hidden flex flex-col">
             <div className="p-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/50">
               <h3 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold text-primary">
-                Live Dispatch
+                Despacho en Vivo
               </h3>
               <button className="text-on-surface-variant hover:text-secondary">
                 <span className="material-symbols-outlined">filter_list</span>
@@ -357,7 +358,7 @@ export default function AdminDashboardPage() {
             <div className="relative h-64 bg-surface-container-low w-full overflow-hidden">
               {/* Map Placeholder Image */}
               <Image
-                alt="Map View"
+                alt="Mapa"
                 className="w-full h-full object-cover opacity-70 grayscale"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAeWzIckYyXzzmn1ekHRsNCcnFZyUxt6EH7yyHEXws1-28qj2bE3repWGI6VovAUsx7N0eSK87tne6a_LAc_T-BcFXEku44Ls7uEdLNhvA7A7ylFKnYigyy-4BpMz8ipznNxET96KFbThi-bGxqc5osyoQrTQ-S5xWFpcwscPe48j8KrnZN-GvKeVxSZY8iRuyAHmjAVz6PjKP3BpA1SMyX3tVGuzwi3epd7IXdvVutvwXODEAAWsexB09qAwASKq19dxzuPlVd-FY"
                 fill
@@ -377,10 +378,10 @@ export default function AdminDashboardPage() {
                     {tech.initials}
                   </div>
                   <div className="flex-1">
-                    <p className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-primary">
+                    <p className="text-sm text-on-surface-variant">
                       {tech.name}
                     </p>
-                    <p className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant">
+                    <p className="text-sm text-on-surface-variant">
                       {tech.status}
                     </p>
                   </div>
