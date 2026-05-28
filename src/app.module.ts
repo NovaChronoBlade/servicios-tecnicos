@@ -9,9 +9,20 @@ import { ServiciosModule } from './servicios/servicios.module';
 import { SolicitudServiciosModule } from './solicitud_servicios/solicitud_servicios.module';
 import { PagosModule } from './pagos/pagos.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
+import { ComentariosModule } from './comentarios/comentarios.module';
 
 @Module({
-  imports: [PrismaModule, UsuariosModule, AuthModule, CalificacionesModule, ServiciosModule, SolicitudServiciosModule, PagosModule, DireccionesModule],
+  imports: [
+    PrismaModule,
+    UsuariosModule,
+    AuthModule,
+    CalificacionesModule,
+    ServiciosModule,
+    SolicitudServiciosModule,
+    PagosModule,
+    DireccionesModule,
+    ComentariosModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

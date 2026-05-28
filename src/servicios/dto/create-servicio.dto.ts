@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -12,6 +13,8 @@ export const CREATE_SERVICIO_REQUEST_EXAMPLE = {
   nombre: 'Instalacion electrica',
   descripcion: 'Revision e instalacion de puntos electricos residenciales.',
   precio: 120000,
+  activo: true,
+  id_categoria: 'cat-electricidad',
 };
 
 export const SERVICIO_RESPONSE_EXAMPLE = {
@@ -37,6 +40,15 @@ export class CreateServicioDto {
 
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
+  @Min(0.01)
   precio!: number;
+
+  @IsOptional()
+  @IsBoolean()
+  activo?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  id_categoria?: string;
 }
