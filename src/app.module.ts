@@ -13,6 +13,7 @@ import { SolicitudServiciosModule } from './solicitud_servicios/solicitud_servic
 import { PagosModule } from './pagos/pagos.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { envValidationSchema } from './config/env.validation';
+import { ComentariosModule } from './comentarios/comentarios.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { envValidationSchema } from './config/env.validation';
     SolicitudServiciosModule,
     PagosModule,
     DireccionesModule,
+    ComentariosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

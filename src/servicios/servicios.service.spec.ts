@@ -40,7 +40,10 @@ describe('ServiciosService', () => {
     const all = await service.findAll();
 
     expect(created.id_servicio).toMatch(/^SRV-/);
-    expect(all).toEqual([{ id_servicio: 'SRV-1' }]);
+    expect(all).toEqual({
+      data: [{ id_servicio: 'SRV-1' }],
+      pagination: { page: 1, limit: 10, total: 0 },
+    });
   });
 
   it('findOne returns a service or throws NotFoundException', async () => {
@@ -97,7 +100,7 @@ describe('ServiciosService', () => {
     prismaMock.$executeRaw.mockResolvedValue(1);
 
     await expect(service.remove('SRV-1')).resolves.toEqual({
-      message: "Servicio 'SRV-1' eliminado exitosamente",
+      message: "Servicio 'SRV-1' desactivado exitosamente",
     });
   });
 

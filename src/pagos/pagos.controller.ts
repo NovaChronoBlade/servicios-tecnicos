@@ -5,8 +5,8 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -42,6 +42,19 @@ export class PagosController {
     return this.pagosService.createPago(createPagoDto, req.user.userId);
   }
 
+  @Get('solicitud/:id_ss')
+  @UseGuards(JwtAuthGuard)
+  findBySolicitud(@Param('id_ss') id_ss: string) {
+    return this.pagosService.findBySolicitud(id_ss);
+  }
+
+  @Get('cliente/:id_cliente')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
+  findByCliente(@Param('id_cliente') id_cliente: string) {
+    return this.pagosService.findByCliente(id_cliente);
+  }
+
   /**
    * Obtiene un pago por id.
    * Parametros: id del pago.
@@ -71,5 +84,12 @@ export class PagosController {
     @Body() updateDto: UpdatePagoEstadoDto,
   ) {
     return this.pagosService.updateEstadoPago(id, updateDto.estado);
+  }
+
+  @Patch(':id/reembolsar')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.ADMIN)
+  reembolsar(@Param('id') id: string) {
+    return this.pagosService.reembolsar(id);
   }
 }

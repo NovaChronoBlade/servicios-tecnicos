@@ -67,7 +67,14 @@ describe('CalificacionesService', () => {
 
   it('creates a rating and refreshes technician average', async () => {
     prismaMock.$queryRaw
-      .mockResolvedValueOnce([{ id_ss: 'SS-1', estado: 'completado' }])
+      .mockResolvedValueOnce([
+        {
+          id_ss: 'SS-1',
+          estado: 'completado',
+          id_cliente: 'USR-CLI-1',
+          id_tecnico: 'USR-TEC-1',
+        },
+      ])
       .mockResolvedValueOnce([]);
     prismaMock.$executeRaw.mockResolvedValue(1);
 
@@ -78,7 +85,7 @@ describe('CalificacionesService', () => {
         id_ss: 'SS-1',
         puntuacion: 5,
         comentario: 'Excelente',
-      }),
+      }, { userId: 'USR-CLI-1', rol: 'cliente' }),
     ).resolves.toMatchObject({
       id_tecnico: 'USR-TEC-1',
       id_cliente: 'USR-CLI-1',
@@ -105,14 +112,18 @@ describe('CalificacionesService', () => {
   it('lists ratings by technician and client', async () => {
     prismaMock.$queryRaw
       .mockResolvedValueOnce([{ id_calificacion: 'CAL-TEC' }])
-      .mockResolvedValueOnce([{ id_calificacion: 'CAL-CLI' }]);
+      .mockResolvedValueOnce([{ total: 1 }])
+      .mockResolvedValueOnce([{ id_calificacion: 'CAL-CLI' }])
+      .mockResolvedValueOnce([{ total: 1 }]);
 
-    await expect(service.findByTecnico('USR-TEC-1')).resolves.toEqual([
-      { id_calificacion: 'CAL-TEC' },
-    ]);
-    await expect(service.findByCliente('USR-CLI-1')).resolves.toEqual([
-      { id_calificacion: 'CAL-CLI' },
-    ]);
+    await expect(service.findByTecnico('USR-TEC-1')).resolves.toEqual({
+      data: [{ id_calificacion: 'CAL-TEC' }],
+      pagination: { page: 1, limit: 10, total: 1 },
+    });
+    await expect(service.findByCliente('USR-CLI-1')).resolves.toEqual({
+      data: [{ id_calificacion: 'CAL-CLI' }],
+      pagination: { page: 1, limit: 10, total: 1 },
+    });
   });
 
   it('gets technician average or throws when technician is missing', async () => {

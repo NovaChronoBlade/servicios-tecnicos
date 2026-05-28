@@ -22,6 +22,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolEnum } from 'src/auth/enums/rol.enum';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { CreateServicioDto } from './dto/create-servicio.dto';
+import { CreateCategoriaServicioDto } from './dto/create-categoria-servicio.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Servicios')
@@ -52,8 +53,29 @@ export class ServiciosController {
   @Get()
   @ApiOperation({ summary: 'Listar servicios' })
   @ApiResponse({ status: 200, description: 'Servicios encontrados' })
-  findAll() {
-    return this.serviciosService.findAll();
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.serviciosService.findAll(page, limit);
+  }
+
+  @Post('categorias')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.ADMIN)
+  createCategoria(@Body() createCategoriaDto: CreateCategoriaServicioDto) {
+    return this.serviciosService.createCategoria(createCategoriaDto);
+  }
+
+  @Get('categorias')
+  findCategorias() {
+    return this.serviciosService.findCategorias();
+  }
+
+  @Get('buscar')
+  buscarPorNombre(
+    @Query('nombre') nombre: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.serviciosService.buscarPorNombre(nombre, page, limit);
   }
 
   /**
@@ -110,5 +132,12 @@ export class ServiciosController {
   @Roles(RolEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.serviciosService.remove(id);
+  }
+
+  @Patch(':id/activar')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.ADMIN)
+  activar(@Param('id') id: string) {
+    return this.serviciosService.cambiarActivo(id, true);
   }
 }

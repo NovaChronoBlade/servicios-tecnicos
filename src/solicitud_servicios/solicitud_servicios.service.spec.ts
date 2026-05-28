@@ -77,11 +77,16 @@ describe('SolicitudServiciosService', () => {
   });
 
   it('findAll and findOne return request data', async () => {
-    prismaMock.$queryRaw
+    prismaMock.$queryRawUnsafe
       .mockResolvedValueOnce([{ id_ss: 'SS-1' }])
+      .mockResolvedValueOnce([{ total: 1 }]);
+    prismaMock.$queryRaw
       .mockResolvedValueOnce([{ id_ss: 'SS-1', estado: 'pendiente' }]);
 
-    await expect(service.findAll()).resolves.toEqual([{ id_ss: 'SS-1' }]);
+    await expect(service.findAll()).resolves.toEqual({
+      data: [{ id_ss: 'SS-1' }],
+      pagination: { page: 1, limit: 10, total: 1 },
+    });
     await expect(service.findOne('SS-1')).resolves.toEqual({
       id_ss: 'SS-1',
       estado: 'pendiente',

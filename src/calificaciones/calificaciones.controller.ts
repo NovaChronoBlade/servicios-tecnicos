@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -19,37 +28,31 @@ import { CreateCalificacionDto } from './dto/create-calificacion.dto';
 export class CalificacionesController {
   constructor(private readonly calificacionesService: CalificacionesService) {}
 
-  /**
-   * Crea una calificacion para una solicitud completada.
-   * Body: id_tecnico, id_cliente, id_ss, puntuacion y comentario opcional.
-   * Respuesta: calificacion creada.
-   */
   @Post()
   @ApiOperation({ summary: 'Crear calificacion' })
   @ApiResponse({ status: 201, description: 'Calificacion creada' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
-  create(@Body() createCalificacionDto: CreateCalificacionDto) {
-    return this.calificacionesService.create(createCalificacionDto);
+  create(@Body() createCalificacionDto: CreateCalificacionDto, @Request() req) {
+    return this.calificacionesService.create(createCalificacionDto, req.user);
   }
 
-  /**
-   * Lista las calificaciones recibidas por un tecnico.
-   * Parametros: id_tecnico.
-   * Respuesta: calificaciones del tecnico.
-   */
+  @Get('top-tecnicos')
+  getTopTecnicos(@Query('limit') limit?: string) {
+    return this.calificacionesService.getTopTecnicos(limit);
+  }
+
   @Get('tecnico/:id_tecnico')
   @ApiOperation({ summary: 'Listar calificaciones por tecnico' })
   @ApiResponse({ status: 200, description: 'Calificaciones encontradas' })
-  findByTecnico(@Param('id_tecnico') id_tecnico: string) {
-    return this.calificacionesService.findByTecnico(id_tecnico);
+  findByTecnico(
+    @Param('id_tecnico') id_tecnico: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.calificacionesService.findByTecnico(id_tecnico, page, limit);
   }
 
-  /**
-   * Obtiene el promedio de calificacion de un tecnico.
-   * Parametros: id_tecnico.
-   * Respuesta: promedio y datos agregados.
-   */
   @Get('tecnico/:id_tecnico/promedio')
   @ApiOperation({ summary: 'Obtener promedio por tecnico' })
   @ApiResponse({ status: 200, description: 'Promedio encontrado' })
@@ -57,23 +60,17 @@ export class CalificacionesController {
     return this.calificacionesService.getPromedioPorTecnico(id_tecnico);
   }
 
-  /**
-   * Lista las calificaciones realizadas por un cliente.
-   * Parametros: id_cliente.
-   * Respuesta: calificaciones del cliente.
-   */
   @Get('cliente/:id_cliente')
   @ApiOperation({ summary: 'Listar calificaciones por cliente' })
   @ApiResponse({ status: 200, description: 'Calificaciones encontradas' })
-  findByCliente(@Param('id_cliente') id_cliente: string) {
-    return this.calificacionesService.findByCliente(id_cliente);
+  findByCliente(
+    @Param('id_cliente') id_cliente: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.calificacionesService.findByCliente(id_cliente, page, limit);
   }
 
-  /**
-   * Obtiene una calificacion por id.
-   * Parametros: id de calificacion.
-   * Respuesta: calificacion encontrada.
-   */
   @Get(':id')
   @ApiOperation({ summary: 'Obtener calificacion por id' })
   @ApiResponse({ status: 200, description: 'Calificacion encontrada' })

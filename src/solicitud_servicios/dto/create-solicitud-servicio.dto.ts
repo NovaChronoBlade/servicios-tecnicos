@@ -11,6 +11,7 @@ export const CREATE_SOLICITUD_SERVICIO_REQUEST_EXAMPLE = {
   id_cliente: 'cli-001',
   id_servicio: 'srv-001',
   id_direccion: 'dir-001',
+  fecha_programada: '2026-05-30T14:00:00.000Z',
   estado: 'pendiente',
 };
 
@@ -57,4 +58,8 @@ export class CreateSolicitudServicioDto {
   @IsOptional()
   @IsDateString()
   fecha?: string;
+
+  @IsOptional()
+  @IsDateString()
+  fecha_programada?: string;
 }
