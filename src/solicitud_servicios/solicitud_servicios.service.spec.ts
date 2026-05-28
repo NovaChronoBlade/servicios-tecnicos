@@ -10,7 +10,10 @@ describe('SolicitudServiciosService', () => {
     prismaMock = { $queryRaw: jest.fn(), $executeRaw: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SolicitudServiciosService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        SolicitudServiciosService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
     service = module.get<SolicitudServiciosService>(SolicitudServiciosService);

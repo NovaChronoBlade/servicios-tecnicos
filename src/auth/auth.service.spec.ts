@@ -13,7 +13,12 @@ describe('AuthService', () => {
   beforeEach(async () => {
     prismaMock = { $queryRaw: jest.fn(), $executeRaw: jest.fn() } as any;
     jwtMock = { sign: jest.fn() } as any;
-    usuariosMock = { findByCorreo: jest.fn(), findByDocumento: jest.fn(), findByTelefono: jest.fn(), create: jest.fn() } as any;
+    usuariosMock = {
+      findByCorreo: jest.fn(),
+      findByDocumento: jest.fn(),
+      findByTelefono: jest.fn(),
+      create: jest.fn(),
+    } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [

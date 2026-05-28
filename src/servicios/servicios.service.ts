@@ -18,8 +18,13 @@ export class ServiciosService {
   // Crear un nuevo servicio
   // ----------------------------------------------------------------
   async create(createServicioDto: CreateServicioDto) {
-    const { nombre, descripcion, precio, activo = true, id_categoria } =
-      createServicioDto;
+    const {
+      nombre,
+      descripcion,
+      precio,
+      activo = true,
+      id_categoria,
+    } = createServicioDto;
 
     if (precio < 0.01) {
       throw new BadRequestException('El precio minimo debe ser 0.01');
@@ -59,7 +64,7 @@ export class ServiciosService {
     const totalResult = await this.prisma.$queryRaw`
       SELECT COUNT(*)::int AS total FROM servicios
     `;
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: servicios,
@@ -215,7 +220,7 @@ export class ServiciosService {
       FROM servicios
       WHERE nombre ILIKE ${patron}
     `;
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: servicios,

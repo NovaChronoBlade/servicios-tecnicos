@@ -136,7 +136,7 @@ export class CalificacionesService {
       FROM calificaciones
       WHERE id_tecnico = ${id_tecnico}
     `;
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: calificaciones,
@@ -189,7 +189,7 @@ export class CalificacionesService {
       FROM calificaciones
       WHERE id_cliente = ${id_cliente}
     `;
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: calificaciones,

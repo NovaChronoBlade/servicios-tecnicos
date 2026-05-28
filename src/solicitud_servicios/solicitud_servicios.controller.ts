@@ -166,7 +166,11 @@ export class SolicitudServiciosController {
     @Param('id_tecnico') id_tecnico: string,
     @Request() req,
   ) {
-    return this.solicitudServiciosService.asignarTecnico(id, id_tecnico, req.user);
+    return this.solicitudServiciosService.asignarTecnico(
+      id,
+      id_tecnico,
+      req.user,
+    );
   }
 
   // ------------------------------------------------------------
@@ -176,7 +180,10 @@ export class SolicitudServiciosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.CLIENTE)
   confirmarCliente(@Param('id') id: string, @Request() req) {
-    return this.solicitudServiciosService.confirmarPorCliente(id, req.user.userId);
+    return this.solicitudServiciosService.confirmarPorCliente(
+      id,
+      req.user.userId,
+    );
   }
 
   // ------------------------------------------------------------
@@ -186,6 +193,9 @@ export class SolicitudServiciosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.TECNICO)
   confirmarTecnico(@Param('id') id: string, @Request() req) {
-    return this.solicitudServiciosService.confirmarPorTecnico(id, req.user.userId);
+    return this.solicitudServiciosService.confirmarPorTecnico(
+      id,
+      req.user.userId,
+    );
   }
 }

@@ -12,10 +12,15 @@ describe('SolicitudServiciosController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SolicitudServiciosController],
-      providers: [SolicitudServiciosService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        SolicitudServiciosService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
-    controller = module.get<SolicitudServiciosController>(SolicitudServiciosController);
+    controller = module.get<SolicitudServiciosController>(
+      SolicitudServiciosController,
+    );
   });
 
   it('should be defined', () => {

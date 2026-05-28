@@ -140,7 +140,9 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
 
     // 7) Tecnico se asigna la solicitud (pendiente -> aceptado)
     const asignarRes = await request(app.getHttpServer())
-      .patch(`/solicitudes-servicio/${idSolicitud}/asignar-tecnico/${idTecnico}`)
+      .patch(
+        `/solicitudes-servicio/${idSolicitud}/asignar-tecnico/${idTecnico}`,
+      )
       .set('Authorization', `Bearer ${tokenTecnico}`)
       .expect(200);
 
@@ -164,12 +166,14 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
         id_ss: idSolicitud,
         monto: 89000,
         metodo_pago: 'tarjeta',
+        token_pago: `tok-e2e-${unique}`,
       })
       .expect(201);
 
     idPago = createPagoRes.body?.id_pago;
     expect(idPago).toBeTruthy();
-    expect(createPagoRes.body?.estado).toBe('pendiente');
+    expect(createPagoRes.body?.estado).toBe('pagado');
+    expect(createPagoRes.body?.numero_referencia).toBeTruthy();
 
     // 10) Confirmacion tecnico
     const confirmarTecnicoRes = await request(app.getHttpServer())

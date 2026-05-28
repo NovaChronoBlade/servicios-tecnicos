@@ -108,13 +108,18 @@ export class ComentariosService {
 
     const comentario = Array.isArray(comentarios) ? comentarios[0] : null;
     if (!comentario) {
-      throw new NotFoundException(`Comentario '${id_comentario}' no encontrado`);
+      throw new NotFoundException(
+        `Comentario '${id_comentario}' no encontrado`,
+      );
     }
 
     return comentario;
   }
 
-  async update(id_comentario: string, updateComentarioDto: UpdateComentarioDto) {
+  async update(
+    id_comentario: string,
+    updateComentarioDto: UpdateComentarioDto,
+  ) {
     await this.findOne(id_comentario);
 
     if (!updateComentarioDto.contenido) {

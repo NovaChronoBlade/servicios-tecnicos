@@ -19,10 +19,19 @@ describe('CalificacionesController - Guards', () => {
   it('GET /calificaciones/:id devuelve 401 si no está autenticado', async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [CalificacionesController],
-      providers: [{ provide: CalificacionesService, useValue: { findOne: () => mockCalificacion } }],
+      providers: [
+        {
+          provide: CalificacionesService,
+          useValue: { findOne: () => mockCalificacion },
+        },
+      ],
     })
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: () => { throw new UnauthorizedException(); } })
+      .useValue({
+        canActivate: () => {
+          throw new UnauthorizedException();
+        },
+      })
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -34,16 +43,29 @@ describe('CalificacionesController - Guards', () => {
   it('GET /calificaciones/:id devuelve 200 si está autenticado', async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [CalificacionesController],
-      providers: [{ provide: CalificacionesService, useValue: { findOne: () => mockCalificacion } }],
+      providers: [
+        {
+          provide: CalificacionesService,
+          useValue: { findOne: () => mockCalificacion },
+        },
+      ],
     })
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: (ctx) => { const req = ctx.switchToHttp().getRequest(); req.user = { userId: 'u1' }; return true; } })
+      .useValue({
+        canActivate: (ctx) => {
+          const req = ctx.switchToHttp().getRequest();
+          req.user = { userId: 'u1' };
+          return true;
+        },
+      })
       .compile();
 
     app = moduleRef.createNestApplication();
     await app.init();
 
-    const res = await request(app.getHttpServer()).get('/calificaciones/1').expect(200);
+    const res = await request(app.getHttpServer())
+      .get('/calificaciones/1')
+      .expect(200);
     expect(res.body).toEqual(mockCalificacion);
   });
 
@@ -51,7 +73,12 @@ describe('CalificacionesController - Guards', () => {
     // RolesGuard denies
     const moduleRefDenied: TestingModule = await Test.createTestingModule({
       controllers: [CalificacionesController],
-      providers: [{ provide: CalificacionesService, useValue: { create: () => mockCalificacion } }],
+      providers: [
+        {
+          provide: CalificacionesService,
+          useValue: { create: () => mockCalificacion },
+        },
+      ],
     })
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: () => true })
@@ -62,16 +89,30 @@ describe('CalificacionesController - Guards', () => {
     app = moduleRefDenied.createNestApplication();
     await app.init();
 
-    await request(app.getHttpServer()).post('/calificaciones').send({}).expect(403);
+    await request(app.getHttpServer())
+      .post('/calificaciones')
+      .send({})
+      .expect(403);
     await app.close();
 
     // RolesGuard allows
     const moduleRefAllowed: TestingModule = await Test.createTestingModule({
       controllers: [CalificacionesController],
-      providers: [{ provide: CalificacionesService, useValue: { create: () => mockCalificacion } }],
+      providers: [
+        {
+          provide: CalificacionesService,
+          useValue: { create: () => mockCalificacion },
+        },
+      ],
     })
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: (ctx) => { const req = ctx.switchToHttp().getRequest(); req.user = { userId: 'u1', rol: 'CLIENTE' }; return true; } })
+      .useValue({
+        canActivate: (ctx) => {
+          const req = ctx.switchToHttp().getRequest();
+          req.user = { userId: 'u1', rol: 'CLIENTE' };
+          return true;
+        },
+      })
       .overrideGuard(RolesGuard)
       .useValue({ canActivate: () => true })
       .compile();
@@ -79,7 +120,10 @@ describe('CalificacionesController - Guards', () => {
     app = moduleRefAllowed.createNestApplication();
     await app.init();
 
-    const res = await request(app.getHttpServer()).post('/calificaciones').send({ puntaje: 5, comentario: 'Muy bien' }).expect(201);
+    const res = await request(app.getHttpServer())
+      .post('/calificaciones')
+      .send({ puntaje: 5, comentario: 'Muy bien' })
+      .expect(201);
     expect(res.body).toEqual(mockCalificacion);
   });
 });
@@ -97,7 +141,10 @@ describe('CalificacionesController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CalificacionesController],
-      providers: [CalificacionesService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        CalificacionesService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
     controller = module.get<CalificacionesController>(CalificacionesController);

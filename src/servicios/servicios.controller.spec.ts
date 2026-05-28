@@ -7,7 +7,14 @@ import { ServiciosService } from './servicios.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 describe('ServiciosController - Guards', () => {
-  const mockServicios = [{ id: '1', nombre: 'Limpieza', descripcion: 'Limpieza general', precio: 100 }];
+  const mockServicios = [
+    {
+      id: '1',
+      nombre: 'Limpieza',
+      descripcion: 'Limpieza general',
+      precio: 100,
+    },
+  ];
 
   let app: INestApplication;
 
@@ -18,10 +25,19 @@ describe('ServiciosController - Guards', () => {
   it('GET /servicios devuelve 401 si no está autenticado', async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [ServiciosController],
-      providers: [{ provide: ServiciosService, useValue: { findAll: () => mockServicios } }],
+      providers: [
+        {
+          provide: ServiciosService,
+          useValue: { findAll: () => mockServicios },
+        },
+      ],
     })
       .overrideGuard(JwtAuthGuard)
-        .useValue({ canActivate: () => { throw new UnauthorizedException(); } })
+      .useValue({
+        canActivate: () => {
+          throw new UnauthorizedException();
+        },
+      })
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -33,16 +49,29 @@ describe('ServiciosController - Guards', () => {
   it('GET /servicios devuelve 200 si está autenticado', async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [ServiciosController],
-      providers: [{ provide: ServiciosService, useValue: { findAll: () => mockServicios } }],
+      providers: [
+        {
+          provide: ServiciosService,
+          useValue: { findAll: () => mockServicios },
+        },
+      ],
     })
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: (ctx) => { const req = ctx.switchToHttp().getRequest(); req.user = { userId: 'u1' }; return true; } })
+      .useValue({
+        canActivate: (ctx) => {
+          const req = ctx.switchToHttp().getRequest();
+          req.user = { userId: 'u1' };
+          return true;
+        },
+      })
       .compile();
 
     app = moduleRef.createNestApplication();
     await app.init();
 
-    const res = await request(app.getHttpServer()).get('/servicios').expect(200);
+    const res = await request(app.getHttpServer())
+      .get('/servicios')
+      .expect(200);
     expect(res.body).toEqual(mockServicios);
   });
 });
@@ -60,7 +89,10 @@ describe('ServiciosController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ServiciosController],
-      providers: [ServiciosService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        ServiciosService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
     controller = module.get<ServiciosController>(ServiciosController);
