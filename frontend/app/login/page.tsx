@@ -146,7 +146,7 @@ export default function LoginPage() {
                 {/* Submit */}
                 <div className="pt-4">
                   <Link
-                    href="/client"
+                    href="/admin"
                     className="w-full rounded-lg bg-primary text-on-primary py-3 text-[14px] leading-[20px] tracking-[0.01em] font-bold shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-on-surface transition-all active:scale-[0.98] flex items-center justify-center"
                   >
                     Iniciar Sesión
