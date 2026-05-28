@@ -27,6 +27,19 @@ import { ComentariosModule } from './comentarios/comentarios.module';
         pinoHttp: {
           level: configService.get<string>('LOG_LEVEL', 'info'),
           redact: ['req.headers.authorization', 'req.headers.cookie'],
+          transport:
+            configService.get<string>('NODE_ENV') === 'production'
+              ? undefined
+              : {
+                  target: 'pino-pretty',
+                  options: {
+                    colorize: true,
+                    singleLine: true,
+                    translateTime: 'SYS:standard',
+                    ignore: 'pid,hostname',
+                    messageFormat: '{msg}',
+                  },
+                },
         },
       }),
     }),

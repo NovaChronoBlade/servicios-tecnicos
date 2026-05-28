@@ -97,7 +97,7 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
     const loginClienteRes = await request(app.getHttpServer())
       .post('/auth/login')
       .send({ email: clienteCorreo, password })
-      .expect(201);
+      .expect(200);
 
     tokenCliente = loginClienteRes.body?.token;
     refreshCliente = loginClienteRes.body?.refresh_token;
@@ -107,7 +107,7 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
     const loginTecnicoRes = await request(app.getHttpServer())
       .post('/auth/login')
       .send({ email: tecnicoCorreo, password })
-      .expect(201);
+      .expect(200);
 
     tokenTecnico = loginTecnicoRes.body?.token;
     expect(tokenTecnico).toBeTruthy();

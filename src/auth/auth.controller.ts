@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -40,10 +47,11 @@ export class AuthController {
    * Respuesta: usuario publico, access_token, refresh_token y alias token.
    */
   @Post('login')
+  @HttpCode(200)
   @UseGuards(ThrottlerGuard)
   @Throttle({ login: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Iniciar sesion' })
-  @ApiResponse({ status: 201, description: 'Credenciales validas' })
+  @ApiResponse({ status: 200, description: 'Credenciales validas' })
   @ApiResponse({
     status: 401,
     description: 'Credenciales invalidas o usuario inactivo',
