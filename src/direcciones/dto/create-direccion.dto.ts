@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateDireccionDto {
   @IsOptional()
@@ -25,4 +31,8 @@ export class CreateDireccionDto {
   @IsString()
   @MaxLength(200)
   nota?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  es_default?: boolean;
 }

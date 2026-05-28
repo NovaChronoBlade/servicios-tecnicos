@@ -11,7 +11,10 @@ describe('UsuariosService', () => {
     prismaMock = { $queryRaw: jest.fn(), $executeRaw: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsuariosService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        UsuariosService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
     service = module.get<UsuariosService>(UsuariosService);
@@ -22,18 +25,21 @@ describe('UsuariosService', () => {
   });
 
   it('agregarDatosTecnicos permite un usuario con rol tecnico', async () => {
-    prismaMock.$queryRaw = jest.fn().mockResolvedValue([
-      {
-        id_usuario: 'USR-TEC-e08baae4',
-        rol: RolEnum.TECNICO,
-      },
-    ]);
+    prismaMock.$queryRaw = jest
+      .fn()
+      .mockResolvedValueOnce([
+        {
+          id_usuario: 'USR-TEC-e08baae4',
+          rol: RolEnum.TECNICO,
+        },
+      ])
+      .mockResolvedValueOnce([]);
     prismaMock.$executeRaw = jest.fn().mockResolvedValue(1);
 
     await expect(
       service.agregarDatosTecnicos(
         {
-          especialidad: 'Electrónica',
+          especialidad: 'Electronica',
           licencia_profesional: 'LP-123',
         } as any,
         'USR-TEC-e08baae4',
@@ -41,8 +47,10 @@ describe('UsuariosService', () => {
     ).resolves.toEqual({
       message: 'Datos tecnicos agregados para el tecnico USR-TEC-e08baae4',
       id_tecnico: 'USR-TEC-e08baae4',
-      especialidad: 'Electrónica',
+      especialidad: 'Electronica',
       licencia_profesional: 'LP-123',
+      disponible: true,
+      calificacion_promedio: 0,
     });
 
     expect(prismaMock.$executeRaw).toHaveBeenCalled();

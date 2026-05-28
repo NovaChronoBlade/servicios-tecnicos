@@ -34,8 +34,9 @@ export class SolicitudServiciosController {
   create(
     @Body()
     createSolicitudDto: CreateSolicitudServicioDto,
+    @Request() req,
   ) {
-    return this.solicitudServiciosService.create(createSolicitudDto);
+    return this.solicitudServiciosService.create(createSolicitudDto, req.user);
   }
 
   // ------------------------------------------------------------

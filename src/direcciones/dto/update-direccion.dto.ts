@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdateDireccionDto {
   @IsOptional()
@@ -20,4 +20,8 @@ export class UpdateDireccionDto {
   @IsString()
   @MaxLength(200)
   nota?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  es_default?: boolean;
 }

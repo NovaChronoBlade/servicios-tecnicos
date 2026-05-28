@@ -50,6 +50,7 @@ model direcciones {
   tipo_edificio       String                @db.VarChar(50)
   informacion         String?               @db.VarChar(200)
   nota                String?               @db.VarChar(200)
+  es_default          Boolean               @default(false)
   usuarios            usuarios              @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade, map: "fk_direcciones_usuario")
   solicitud_servicios solicitud_servicios[]
 }

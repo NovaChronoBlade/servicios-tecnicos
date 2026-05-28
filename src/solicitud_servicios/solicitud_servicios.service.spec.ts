@@ -1,16 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SolicitudServiciosService } from './solicitud_servicios.service';
 import { PrismaService } from 'src/prisma.service';
+import { DireccionesService } from 'src/direcciones/direcciones.service';
 
 describe('SolicitudServiciosService', () => {
   let service: SolicitudServiciosService;
   let prismaMock: Partial<PrismaService>;
+  let direccionesMock: Partial<DireccionesService>;
 
   beforeEach(async () => {
     prismaMock = { $queryRaw: jest.fn(), $executeRaw: jest.fn() } as any;
+    direccionesMock = { belongsToUser: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SolicitudServiciosService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        SolicitudServiciosService,
+        { provide: PrismaService, useValue: prismaMock },
+        { provide: DireccionesService, useValue: direccionesMock },
+      ],
     }).compile();
 
     service = module.get<SolicitudServiciosService>(SolicitudServiciosService);

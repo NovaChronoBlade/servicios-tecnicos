@@ -7,5 +7,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 @Module({
   controllers: [DireccionesController],
   providers: [DireccionesService, RolesGuard, JwtAuthGuard],
+  exports: [DireccionesService],
 })
 export class DireccionesModule {}
