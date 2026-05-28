@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "constructor.lacuarta.com",
       },
+
+      {
+        protocol: "https",
+        hostname: "twyzle-s3-1.s3.amazonaws.com",
+      },
     ],
   },
 };

@@ -49,87 +49,15 @@
   --color-background: #fcf8fa;
   --color-error: #ba1a1a;
 
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-gutter: 24px;
-  --spacing-md: 24px;
-  --spacing-sm: 12px;
-  --spacing-base: 8px;
-  --spacing-xl: 80px;
-  --spacing-lg: 48px;
-  --spacing-container-max: 1280px;
-
-  /* Font family */
-  --font-inter: "Inter", system-ui, sans-serif;
-  --font-sans: var(--font-inter);
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
-/* Custom component styles */
-.service-card-hover:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border-color: #57dffe;
-  transition: all 0.3s ease;
+html, body {
+  width: 100%;
+  overflow-x: hidden;
 }
 
-.service-card-hover:hover .service-icon {
-  color: #57dffe;
-  transform: scale(1.1);
-  transition: all 0.3s ease;
-}
-
-.bento-card {
-  background: linear-gradient(145deg, #ffffff, #fcf8fa);
-}
-
-.input-ring-transition {
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.service-card {
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-}
-
-.service-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border-color: #57dffe;
-}
-
-.ambient-shadow {
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.05),
-    0 4px 6px -2px rgba(0, 0, 0, 0.025);
-}
-
-.widget-shadow {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-}
-
-.hover-lift {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* Hide scrollbar for clean aesthetic */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #e4e2e4;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #c6c6cd;
+body {
+  margin: 0;
+  padding: 0;
 }
