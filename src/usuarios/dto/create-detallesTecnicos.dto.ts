@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -23,20 +24,24 @@ export const DETALLES_TECNICOS_RESPONSE_EXAMPLE = {
 };
 
 export class CreateDetallesTecnicosDto {
+  @ApiProperty({ example: 'Electricidad residencial', maxLength: 100 })
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   especialidad!: string;
 
+  @ApiProperty({ example: 'LIC-12345', maxLength: 50 })
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
   licencia_profesional!: string;
 
+  @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()
   @IsBoolean()
   disponible?: boolean;
 
+  @ApiPropertyOptional({ example: 0, minimum: 0, maximum: 5 })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

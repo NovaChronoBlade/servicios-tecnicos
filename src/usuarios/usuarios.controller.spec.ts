@@ -12,7 +12,10 @@ describe('UsuariosController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsuariosController],
-      providers: [UsuariosService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        UsuariosService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
     controller = module.get<UsuariosController>(UsuariosController);

@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/swagger';
 import {
   CREATE_SERVICIO_REQUEST_EXAMPLE,
   SERVICIO_RESPONSE_EXAMPLE,

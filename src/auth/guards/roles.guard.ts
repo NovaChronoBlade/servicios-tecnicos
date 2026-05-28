@@ -32,7 +32,9 @@ export class RolesGuard implements CanActivate {
     const rolUsuario = request.user?.rol;
 
     if (!rolUsuario) {
-      throw new UnauthorizedException('No se pudo identificar el rol del usuario');
+      throw new UnauthorizedException(
+        'No se pudo identificar el rol del usuario',
+      );
     }
 
     return rolesRequeridos.includes(rolUsuario);

@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/swagger';
 import {
   CALIFICACION_RESPONSE_EXAMPLE,
   CREATE_CALIFICACION_REQUEST_EXAMPLE,
