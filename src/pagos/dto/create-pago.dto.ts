@@ -2,10 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
+  Length,
   MaxLength,
-  Min,
 } from 'class-validator';
 
 export class CreatePagoDto {
@@ -24,4 +25,14 @@ export class CreatePagoDto {
   @IsNotEmpty()
   @MaxLength(50)
   metodo_pago!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  token_pago?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(3, 3)
+  moneda?: string;
 }

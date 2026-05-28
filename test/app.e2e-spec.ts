@@ -169,12 +169,14 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
         id_ss: idSolicitud,
         monto: 89000,
         metodo_pago: 'tarjeta',
+        token_pago: `tok-e2e-${unique}`,
       })
       .expect(201);
 
     idPago = createPagoRes.body?.id_pago;
     expect(idPago).toBeTruthy();
-    expect(createPagoRes.body?.estado).toBe('pendiente');
+    expect(createPagoRes.body?.estado).toBe('pagado');
+    expect(createPagoRes.body?.numero_referencia).toBeTruthy();
 
     // 10) Confirmacion tecnico
     const confirmarTecnicoRes = await request(app.getHttpServer())

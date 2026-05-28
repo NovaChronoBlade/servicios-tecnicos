@@ -7,13 +7,23 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { PaymentGatewayService } from './payment-gateway.service';
 
 @Injectable()
 export class PagosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly paymentGateway: PaymentGatewayService,
+  ) {}
 
   async createPago(createPagoDto: CreatePagoDto, id_cliente: string) {
-    const { id_ss, monto, metodo_pago } = createPagoDto;
+    const {
+      id_ss,
+      monto,
+      metodo_pago,
+      token_pago,
+      moneda = 'COP',
+    } = createPagoDto;
 
     const solicitudes = await this.prisma.$queryRaw`
       SELECT id_ss, estado, id_cliente, id_servicio
@@ -33,7 +43,9 @@ export class PagosService {
     }
 
     if (solicitud.estado === 'completado') {
-      throw new BadRequestException('No se puede pagar una solicitud completada');
+      throw new BadRequestException(
+        'No se puede pagar una solicitud completada',
+      );
     }
 
     const pagosExist = await this.prisma.$queryRaw`
@@ -52,7 +64,31 @@ export class PagosService {
       VALUES (${id_pago}, ${id_ss}, ${monto}, ${metodo_pago}, 'pendiente')
     `;
 
-    return { id_pago, id_ss, monto, metodo_pago, estado: 'pendiente' };
+    const gatewayResult = await this.paymentGateway.charge({
+      id_pago,
+      id_ss,
+      id_cliente,
+      monto,
+      moneda,
+      metodo_pago,
+      token_pago,
+    });
+
+    await this.prisma.$executeRaw`
+      UPDATE pagos
+      SET
+        estado = ${gatewayResult.estado},
+        numero_referencia = ${gatewayResult.numero_referencia}
+      WHERE id_pago = ${id_pago}
+    `;
+
+    return {
+      ...(await this.findById(id_pago)),
+      pasarela: {
+        provider: gatewayResult.provider,
+        approved: gatewayResult.approved,
+      },
+    };
   }
 
   async findById(id_pago: string) {

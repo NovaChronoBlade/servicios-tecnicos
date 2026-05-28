@@ -137,7 +137,7 @@ export class SolicitudServiciosService {
     `,
       ...params,
     );
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: solicitudes,
@@ -378,7 +378,9 @@ export class SolicitudServiciosService {
       actorId === solicitud.id_cliente || actorId === solicitud.id_tecnico;
 
     if (actorRol !== 'admin' && !esPropietario) {
-      throw new UnauthorizedException('No tiene permisos para cancelar esta solicitud');
+      throw new UnauthorizedException(
+        'No tiene permisos para cancelar esta solicitud',
+      );
     }
 
     await this.prisma.$executeRaw`
@@ -408,7 +410,9 @@ export class SolicitudServiciosService {
     }
 
     if (solicitud.id_tecnico === nuevo_id_tecnico) {
-      throw new BadRequestException('La solicitud ya esta asignada a ese tecnico');
+      throw new BadRequestException(
+        'La solicitud ya esta asignada a ese tecnico',
+      );
     }
 
     await this.prisma.$executeRaw`
