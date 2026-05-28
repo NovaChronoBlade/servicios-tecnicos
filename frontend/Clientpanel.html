@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Client Dashboard - TechServe Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#0b1c30",
+                      "on-secondary-container": "#006172",
+                      "secondary-container": "#57dffe",
+                      "secondary": "#00687a",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#f6f3f5",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#38485d",
+                      "on-primary-fixed": "#131b2e",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "tertiary": "#000000",
+                      "on-secondary-fixed-variant": "#004e5c",
+                      "secondary-fixed-dim": "#4cd7f6",
+                      "on-error-container": "#93000a",
+                      "primary": "#000000",
+                      "outline": "#76777d",
+                      "on-background": "#1b1b1d",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-highest": "#e4e2e4",
+                      "surface-tint": "#565e74",
+                      "secondary-fixed": "#acedff",
+                      "primary-fixed": "#dae2fd",
+                      "on-primary-container": "#7c839b",
+                      "on-tertiary-container": "#75859d",
+                      "tertiary-fixed": "#d3e4fe",
+                      "on-surface-variant": "#45464d",
+                      "inverse-surface": "#303032",
+                      "inverse-on-surface": "#f3f0f2",
+                      "surface-variant": "#e4e2e4",
+                      "surface": "#fcf8fa",
+                      "surface-container-high": "#eae7e9",
+                      "tertiary-fixed-dim": "#b7c8e1",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "surface-container": "#f0edef",
+                      "on-secondary-fixed": "#001f26",
+                      "surface-bright": "#fcf8fa",
+                      "primary-container": "#131b2e",
+                      "primary-fixed-dim": "#bec6e0",
+                      "outline-variant": "#c6c6cd",
+                      "tertiary-container": "#0b1c30",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface": "#1b1b1d",
+                      "surface-dim": "#dcd9db",
+                      "background": "#fcf8fa",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "gutter": "24px",
+                      "md": "24px",
+                      "sm": "12px",
+                      "base": "8px",
+                      "xl": "80px",
+                      "lg": "48px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .service-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        .service-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #57dffe; /* cyan subtle glow equivalent */
+        }
+      </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden">
+<!-- Mobile Nav Header -->
+<header class="md:hidden flex items-center justify-between px-4 py-4 bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
+<h1 class="font-headline-md text-headline-md font-black text-primary">TechServe Pro</h1>
+<button class="p-2 text-primary" id="mobile-menu-btn">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<div class="flex h-screen bg-surface">
+<!-- SideNavBar Component -->
+<nav class="h-screen w-72 fixed left-0 top-0 bg-surface border-r border-outline-variant/30 flex flex-col py-md z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+<div class="flex items-center justify-between px-4 mb-8">
+<div class="font-headline-md text-headline-md font-black text-primary">TechServe Pro</div>
+<button class="md:hidden p-2 text-primary" id="close-menu-btn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="px-4 mb-6">
+<div class="flex items-center gap-3 p-3 bg-surface-container rounded-lg">
+<img alt="User Profile" class="w-10 h-10 rounded-full border border-outline-variant" data-alt="A professional headshot of a person looking confident in a well-lit, modern office setting. The style is bright and corporate, matching a premium technical service dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUdP1NiGUlK4CwuqJ6PQBhNBTSQD9psJcOzv8vHyDl4DxEEBEPFcQbSpH6mPBfuk8Dw1nFNCAt3AJMiBSjOyBpaOdE-xwdsy3WQTng1w2qHTavYych9wo0Eu8y4qiiN3bZQIA-WQdOUzBt_He7xnHYXy1RK_eRniFhyw5L2Uw2I5Y-FbnXp9D2S27LuESIA6MlsGUbWq1UquckgLDXhVUrtaGbW57Yx-bLe57QSF4anxS761DoVqhuPlM84QQWYqZ1-HcEtKd0wIMs"/>
+<div>
+<p class="font-label-md text-label-md text-primary">Admin Console</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Technical Operations</p>
+</div>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg hover:bg-on-tertiary-fixed transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Service
+                </button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary bg-secondary-container/10 border-r-4 border-secondary rounded-l-lg hover:translate-x-1 duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-md text-label-md">Service Requests</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-md text-label-md">Technicians</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+<div class="px-4 mt-auto pt-4 border-t border-outline-variant/30 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 flex flex-col min-w-0 bg-background overflow-y-auto">
+<!-- Top Bar (Cart Preview) -->
+<div class="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 px-gutter py-4 flex justify-end items-center hidden md:flex">
+<button class="relative flex items-center gap-2 p-2 rounded-lg hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary">shopping_cart</span>
+<span class="font-label-md text-label-md text-primary">Cart</span>
+<span class="absolute top-0 right-0 -mt-1 -mr-1 bg-secondary text-on-secondary text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+</button>
+</div>
+<div class="p-4 md:p-gutter max-w-container-max mx-auto w-full space-y-lg">
+<!-- Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary tracking-tight">Dashboard Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Manage your technical services and active requests.</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Left Column: Available Services (Spans 2 columns on lg) -->
+<div class="lg:col-span-2 space-y-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-headline-md text-primary">Available Services</h3>
+<a class="font-label-sm text-label-sm text-secondary hover:underline" href="#">VIEW ALL</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Service Card 1 -->
+<div class="service-card bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col h-full cursor-pointer">
+<div class="h-32 rounded-lg mb-4 bg-cover bg-center" data-alt="A modern data center interior showing rows of sleek server racks. The lighting is cool, technical, and precise, highlighting the professional engineering aesthetic of the service." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAZeqZhMidZC-YGdmbmhHkyZM6l0-upHFCLk9VxBbUTKdpX3jvMKTXMoKpo-AmEuUiT2mqZdhTdZ35RRwm5Dk4IlmNlndOctDhldLc1u89QBnRZh0X9LpEV0MCwjCCHu_M8DfcZJoV_D4dweEMZj6tFcDVgBsb3R7wOkEMOvW2Nq54GZoizjmKRWXDMsDaBpcbcbGCPRLLfgaMojG0EGFG0dcbSOwgy9lESatuIdhiS2SgQPztYmrnX5hm-kNDZUCv2x4L66j6rXIxO');"></div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-label-md text-label-md text-primary">Server Maintenance</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-1 rounded">IT Ops</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm flex-1 mb-4">Comprehensive diagnostic and repair for enterprise server hardware.</p>
+<div class="flex justify-between items-center mt-auto border-t border-outline-variant/30 pt-3">
+<span class="font-label-md text-label-md text-primary font-semibold">From $150/hr</span>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="service-card bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col h-full cursor-pointer">
+<div class="h-32 rounded-lg mb-4 bg-cover bg-center" data-alt="A high-tech control room with multiple glowing monitors displaying analytics. The environment feels secure, advanced, and minimalist, emphasizing top-tier technical support capabilities." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGoNie7_tFLrpCfMqAIO3suFrc0uJHORFwKnrMXZ18ifJGO_2K7q39vONkgCevYUuZOW8SmWSqxGivF5JrlD72Zuixsf58jI7Pe5TYiO1En7amU1OcDkwVJYdSsHS9W6rwp7dUwM1USnd_ByJrdQn6GtDvJORygJmYl9BUmVsw7z__3M7np99IbFRDzy2IR6umrv3eUOlTLYcEOXJihOR9KWbiAFKprdTRCiidE2kDv6JVR972qJ1AmAfxxQnORyzd2R-KxMkYhclA');"></div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-label-md text-label-md text-primary">Network Setup</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-1 rounded">Infra</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm flex-1 mb-4">Installation and configuration of robust enterprise-grade networks.</p>
+<div class="flex justify-between items-center mt-auto border-t border-outline-variant/30 pt-3">
+<span class="font-label-md text-label-md text-primary font-semibold">From $800/flat</span>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Active Requests Sidebar Widget -->
+<div class="lg:col-span-1 space-y-md">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4">Active Requests</h3>
+<div class="space-y-4">
+<!-- Widget Item 1 -->
+<div class="p-3 border border-outline-variant/50 rounded-lg hover:border-secondary-container transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="font-label-md text-label-md text-primary">REQ-2049</p>
+<p class="font-body-md text-[13px] text-on-surface-variant">HVAC Diagnostics</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm">schedule</span>
+</div>
+<div class="flex items-center gap-2 mt-3">
+<div class="w-6 h-6 bg-surface-container rounded-full flex items-center justify-center text-xs font-bold text-on-surface-variant">JM</div>
+<div class="flex-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tech ETA: 45 mins</p>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-1 overflow-hidden">
+<div class="bg-secondary h-full w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Widget Item 2 -->
+<div class="p-3 border border-outline-variant/50 rounded-lg hover:border-secondary-container transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="font-label-md text-label-md text-primary">REQ-2050</p>
+<p class="font-body-md text-[13px] text-on-surface-variant">Router Replacement</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm">sync</span>
+</div>
+<div class="flex items-center gap-2 mt-3">
+<div class="w-6 h-6 bg-surface-container rounded-full flex items-center justify-center text-xs font-bold text-on-surface-variant">AK</div>
+<div class="flex-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant">In Progress</p>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-outline text-primary font-label-md text-label-md rounded-lg hover:bg-surface-container-low transition-colors">
+                                View Map
+                            </button>
+</div>
+</div>
+</div>
+<!-- Service History Table -->
+<div class="mt-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Service History</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant/30">
+<tr>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">ID</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Service</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Date</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Technician</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr class="hover:bg-surface-container-lowest/50 transition-colors">
+<td class="p-4 font-body-md text-body-md text-primary">#SH-102</td>
+<td class="p-4 font-label-md text-label-md text-primary">System Audit</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant hidden md:table-cell">Oct 12, 2024</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant hidden md:table-cell">Sarah L.</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-secondary-container/20 text-secondary">In Progress</span>
+</td>
+<td class="p-4 font-body-md text-body-md text-primary text-right">$450.00</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest/50 transition-colors">
+<td class="p-4 font-body-md text-body-md text-primary">#SH-101</td>
+<td class="p-4 font-label-md text-label-md text-primary">Emergency Patching</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant hidden md:table-cell">Oct 10, 2024</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant hidden md:table-cell">Mike T.</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-surface-container text-on-surface-variant">Completed</span>
+</td>
+<td class="p-4 font-body-md text-body-md text-primary text-right">$800.00</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest/50 transition-colors">
+<td class="p-4 font-body-md text-body-md text-primary">#SH-100</td>
+<td class="p-4 font-label-md text-label-md text-primary">Site Survey</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant hidden md:table-cell">Oct 08, 2024</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant hidden md:table-cell">Unassigned</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold border border-outline-variant text-on-surface-variant">Pending</span>
+</td>
+<td class="p-4 font-body-md text-body-md text-primary text-right">$150.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-auto w-full py-xl border-t border-outline-variant/20 bg-primary-container">
+<div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-4 gap-lg">
+<div class="col-span-1 md:col-span-4 flex flex-col items-center md:items-start mb-6">
+<span class="font-headline-md text-headline-md text-on-primary-container">TechServe Pro</span>
+</div>
+<div class="col-span-1 md:col-span-4 flex flex-wrap justify-center md:justify-start gap-4">
+<a class="font-label-sm text-label-sm text-on-primary-container/80 hover:text-on-primary-container transition-colors hover:opacity-80" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-primary-container/80 hover:text-on-primary-container transition-colors hover:opacity-80" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-primary-container/80 hover:text-on-primary-container transition-colors hover:opacity-80" href="#">Compliance</a>
+<a class="font-label-sm text-label-sm text-on-primary-container/80 hover:text-on-primary-container transition-colors hover:opacity-80" href="#">SLA</a>
+<a class="font-label-sm text-label-sm text-on-primary-container/80 hover:text-on-primary-container transition-colors hover:opacity-80" href="#">Contact</a>
+</div>
+<div class="col-span-1 md:col-span-4 mt-8 text-center md:text-left font-body-md text-body-md text-on-primary-container/80">
+                        © 2024 TechServe Pro. Precision Engineering in Service Delivery.
+                    </div>
+</div>
+</footer>
+</main>
+</div>
+<script>
+        // Mobile Sidebar Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeMenuBtn.addEventListener('click', toggleSidebar);
+    </script>
+</body></html>
