@@ -9,6 +9,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ServiciosService } from './servicios.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -19,31 +25,38 @@ import { CreateServicioDto } from './dto/create-servicio.dto';
 import { CreateCategoriaServicioDto } from './dto/create-categoria-servicio.dto';
 
 @UseGuards(JwtAuthGuard)
+@ApiTags('Servicios')
+@ApiBearerAuth()
 @Controller('servicios')
 export class ServiciosController {
   constructor(private readonly serviciosService: ServiciosService) {}
 
-  // ------------------------------------------------------------
-  // Crear servicio
-  // ------------------------------------------------------------
+  /**
+   * Crea un servicio ofrecido por la plataforma.
+   * Body: nombre, descripcion y precio.
+   * Respuesta: servicio creado.
+   */
   @Post()
+  @ApiOperation({ summary: 'Crear servicio' })
+  @ApiResponse({ status: 201, description: 'Servicio creado' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
   create(@Body() createServicioDto: CreateServicioDto) {
     return this.serviciosService.create(createServicioDto);
   }
 
-  // ------------------------------------------------------------
-  // Obtener todos los servicios
-  // ------------------------------------------------------------
+  /**
+   * Lista todos los servicios ordenados por nombre.
+   * Parametros: ninguno.
+   * Respuesta: servicios disponibles.
+   */
   @Get()
+  @ApiOperation({ summary: 'Listar servicios' })
+  @ApiResponse({ status: 200, description: 'Servicios encontrados' })
   findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.serviciosService.findAll(page, limit);
   }
 
-  // ------------------------------------------------------------
-  // Crear categoria de servicio
-  // ------------------------------------------------------------
   @Post('categorias')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.ADMIN)
@@ -51,17 +64,11 @@ export class ServiciosController {
     return this.serviciosService.createCategoria(createCategoriaDto);
   }
 
-  // ------------------------------------------------------------
-  // Obtener categorias de servicios
-  // ------------------------------------------------------------
   @Get('categorias')
   findCategorias() {
     return this.serviciosService.findCategorias();
   }
 
-  // ------------------------------------------------------------
-  // Buscar servicios por nombre
-  // ------------------------------------------------------------
   @Get('buscar')
   buscarPorNombre(
     @Query('nombre') nombre: string,
@@ -71,26 +78,39 @@ export class ServiciosController {
     return this.serviciosService.buscarPorNombre(nombre, page, limit);
   }
 
-  // ------------------------------------------------------------
-  // Buscar servicios por rango de precio
-  // ------------------------------------------------------------
+  /**
+   * Busca servicios por rango de precio.
+   * Query params: min y max.
+   * Respuesta: servicios dentro del rango.
+   */
   @Get('rango-precio')
+  @ApiOperation({ summary: 'Buscar servicios por precio' })
+  @ApiResponse({ status: 200, description: 'Servicios encontrados' })
   findByRangoPrecio(@Query('min') min: string, @Query('max') max: string) {
     return this.serviciosService.findByRangoPrecio(Number(min), Number(max));
   }
 
-  // ------------------------------------------------------------
-  // Obtener un servicio por ID
-  // ------------------------------------------------------------
+  /**
+   * Obtiene un servicio por id.
+   * Parametros: id del servicio.
+   * Respuesta: servicio encontrado.
+   */
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener servicio por id' })
+  @ApiResponse({ status: 200, description: 'Servicio encontrado' })
   findOne(@Param('id') id: string) {
     return this.serviciosService.findOne(id);
   }
 
-  // ------------------------------------------------------------
-  // Actualizar servicio
-  // ------------------------------------------------------------
+  /**
+   * Actualiza un servicio.
+   * Parametros: id del servicio.
+   * Body: campos de servicio a modificar.
+   * Respuesta: servicio actualizado.
+   */
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar servicio' })
+  @ApiResponse({ status: 200, description: 'Servicio actualizado' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.ADMIN)
   update(
@@ -100,19 +120,20 @@ export class ServiciosController {
     return this.serviciosService.update(id, updateServicioDto);
   }
 
-  // ------------------------------------------------------------
-  // Eliminar servicio
-  // ------------------------------------------------------------
+  /**
+   * Elimina un servicio por id.
+   * Parametros: id del servicio.
+   * Respuesta: mensaje de confirmacion.
+   */
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar servicio' })
+  @ApiResponse({ status: 200, description: 'Servicio eliminado' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.serviciosService.remove(id);
   }
 
-  // ------------------------------------------------------------
-  // Activar servicio
-  // ------------------------------------------------------------
   @Patch(':id/activar')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.ADMIN)

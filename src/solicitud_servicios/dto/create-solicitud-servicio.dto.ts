@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
   IsNotEmpty,
@@ -22,29 +23,38 @@ export const SOLICITUD_SERVICIO_RESPONSE_EXAMPLE = {
 };
 
 export class CreateSolicitudServicioDto {
+  @ApiProperty({ example: 'USR-CLI-abc123' })
   @IsString()
   @IsNotEmpty()
   id_cliente!: string;
 
+  @ApiPropertyOptional({ example: 'USR-TEC-abc123' })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
   id_tecnico?: string;
 
+  @ApiProperty({ example: 'SRV-abc123' })
   @IsString()
   @IsNotEmpty()
   id_servicio!: string;
 
+  @ApiProperty({ example: 'DIR-abc123' })
   @IsString()
   @IsNotEmpty()
   id_direccion!: string;
 
+  @ApiPropertyOptional({ example: 'pendiente', maxLength: 20 })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
   @MaxLength(20)
   estado?: string;
 
+  @ApiPropertyOptional({
+    example: '2026-05-23T22:37:10.000Z',
+    format: 'date-time',
+  })
   @IsOptional()
   @IsDateString()
   fecha?: string;

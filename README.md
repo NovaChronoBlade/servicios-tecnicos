@@ -1,98 +1,114 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Servicios Tecnicos
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para gestionar un sistema de servicios tecnicos: registro e inicio de sesion de usuarios, tecnicos, servicios, direcciones, solicitudes de servicio, pagos y calificaciones.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Modulos
 
-## Description
+- **Auth**: registro, login, refresh tokens y logout con invalidacion del JWT activo.
+- **Usuarios**: perfiles, tecnicos, desactivacion y datos tecnicos.
+- **Direcciones**: direcciones por cliente, direccion predeterminada con `es_default`.
+- **Servicios**: creacion, consulta, actualizacion y eliminacion de servicios.
+- **Solicitudes de servicio**: creacion, asignacion de tecnico, cambios de estado y confirmaciones.
+- **Pagos**: creacion y actualizacion de estado de pagos.
+- **Calificaciones**: calificaciones por solicitud, tecnico y cliente.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requisitos
 
-## Project setup
+- Node.js 22 o compatible.
+- PostgreSQL accesible desde `DATABASE_URL`.
+- npm.
 
-```bash
-$ npm install
+## Variables de entorno
+
+Crea un archivo `.env` en la raiz del backend:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/servicioTecnico?schema=public"
+JWT_SECRET="cambia-este-secreto"
+JWT_ACCESS_EXPIRES_IN="1h"
+JWT_REFRESH_EXPIRES_IN_DAYS=7
+CORS_ORIGINS="http://localhost:3000,http://localhost:3001,http://localhost:3002"
+PORT=3000
+LOG_LEVEL="info"
+LOGIN_THROTTLE_TTL=60000
+LOGIN_THROTTLE_LIMIT=5
 ```
 
-## Compile and run the project
+## Instalacion
 
-```bash
-# development
-$ npm run start
+En PowerShell usa `npm.cmd` y `npx.cmd` si la politica de ejecucion bloquea los shims `.ps1`.
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```powershell
+cd "D:\THE PC MASTER RACE\Escritorio\ServiciosTecnicosProyecto\servicios-tecnicos"
+npm.cmd install
+npx.cmd prisma migrate deploy
+npx.cmd prisma generate
 ```
 
-## Run tests
+## Correr el proyecto
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```powershell
+npm.cmd run start:dev
 ```
 
-## Deployment
+La API queda disponible en `http://localhost:3000`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+La documentacion OpenAPI/Swagger queda disponible en:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```text
+http://localhost:3000/api/docs
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Scripts utiles
 
-## Resources
+```powershell
+npm.cmd run format
+npm.cmd run build
+npm.cmd test
+npm.cmd run test:e2e
+npm.cmd run test:cov
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Autenticacion
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+El login devuelve:
 
-## Support
+- `access_token`: JWT para usar en `Authorization: Bearer <token>`.
+- `refresh_token`: token renovable mediante `POST /auth/refresh`.
+- `token`: alias de compatibilidad para clientes existentes.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Para cerrar sesion:
 
-## Stay in touch
+```http
+POST /auth/logout
+Authorization: Bearer <access_token>
+Content-Type: application/json
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+{
+  "refresh_token": "opcional"
+}
+```
 
-## License
+## Base de datos
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Prisma administra migraciones en `prisma/migrations`. Las migraciones actuales crean el esquema base, agregan `direcciones.es_default` y las tablas de tokens:
+
+- `refresh_tokens`
+- `revoked_access_tokens`
+
+Para aplicar cambios en otro entorno:
+
+```powershell
+npx.cmd prisma migrate deploy
+```
+
+## Calidad
+
+El proyecto usa:
+
+- Swagger/OpenAPI para documentacion interactiva.
+- `@nestjs/config` con validacion Joi de variables de entorno.
+- `@nestjs/throttler` para limitar intentos de login.
+- `nestjs-pino`/Pino para logs JSON.
+- Filtro global para errores HTTP y errores conocidos de Prisma.
+- Jest con umbral minimo de cobertura.

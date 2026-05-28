@@ -8,6 +8,8 @@ import { PrismaService } from 'src/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { CreateSolicitudServicioDto } from './dto/create-solicitud-servicio.dto';
+import { DireccionesService } from 'src/direcciones/direcciones.service';
+import { RolEnum } from 'src/auth/enums/rol.enum';
 
 // Estados válidos según el CHECK constraint de la BD
 const ESTADOS_VALIDOS = [
@@ -39,12 +41,18 @@ const TRANSICIONES: Record<EstadoSolicitud, EstadoSolicitud[]> = {
 
 @Injectable()
 export class SolicitudServiciosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly direccionesService: DireccionesService,
+  ) {}
 
   // ----------------------------------------------------------------
   // Crear una nueva solicitud de servicio
   // ----------------------------------------------------------------
-  async create(createSolicitudDto: CreateSolicitudServicioDto) {
+  async create(
+    createSolicitudDto: CreateSolicitudServicioDto,
+    actor?: { userId?: string; rol?: string },
+  ) {
     const {
       id_cliente,
       id_tecnico,
@@ -52,6 +60,22 @@ export class SolicitudServiciosService {
       id_direccion,
       fecha_programada,
     } = createSolicitudDto;
+
+    if (actor?.rol !== RolEnum.ADMIN && actor?.userId !== id_cliente) {
+      throw new UnauthorizedException(
+        'Solo el cliente propietario puede crear esta solicitud',
+      );
+    }
+
+    const direccionPertenece = await this.direccionesService.belongsToUser(
+      id_direccion,
+      id_cliente,
+    );
+    if (!direccionPertenece) {
+      throw new BadRequestException(
+        'La direccion seleccionada no pertenece al cliente',
+      );
+    }
 
     const id_ss = this.generarIdSolicitud();
 

@@ -20,6 +20,7 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
 
   let tokenCliente = '';
   let tokenTecnico = '';
+  let refreshCliente = '';
 
   const clienteCorreo = `cliente.e2e.${unique}@test.com`;
   const tecnicoCorreo = `tecnico.e2e.${unique}@test.com`;
@@ -99,7 +100,9 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
       .expect(201);
 
     tokenCliente = loginClienteRes.body?.token;
+    refreshCliente = loginClienteRes.body?.refresh_token;
     expect(tokenCliente).toBeTruthy();
+    expect(refreshCliente).toBeTruthy();
 
     const loginTecnicoRes = await request(app.getHttpServer())
       .post('/auth/login')
@@ -200,6 +203,21 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
 
     expect(getSolicitudRes.body?.estado).toBe('completado');
     expect(getSolicitudRes.body?.id_tecnico).toBe(idTecnico);
+
+    // 13) Refresh token y logout
+    const refreshRes = await request(app.getHttpServer())
+      .post('/auth/refresh')
+      .send({ refresh_token: refreshCliente })
+      .expect(201);
+
+    expect(refreshRes.body?.access_token).toBeTruthy();
+    expect(refreshRes.body?.refresh_token).toBeTruthy();
+
+    await request(app.getHttpServer())
+      .post('/auth/logout')
+      .set('Authorization', `Bearer ${refreshRes.body.access_token}`)
+      .send({ refresh_token: refreshRes.body.refresh_token })
+      .expect(201);
   });
 
   afterAll(async () => {
@@ -220,11 +238,15 @@ describe('Flujo completo servicio tecnico (e2e)', () => {
     }
 
     if (idTecnico) {
+      await prisma.$executeRaw`DELETE FROM refresh_tokens WHERE id_usuario = ${idTecnico}`;
+      await prisma.$executeRaw`DELETE FROM revoked_access_tokens WHERE id_usuario = ${idTecnico}`;
       await prisma.$executeRaw`DELETE FROM detalles_tecnicos WHERE id_usuario = ${idTecnico}`;
       await prisma.$executeRaw`DELETE FROM usuarios WHERE id_usuario = ${idTecnico}`;
     }
 
     if (idCliente) {
+      await prisma.$executeRaw`DELETE FROM refresh_tokens WHERE id_usuario = ${idCliente}`;
+      await prisma.$executeRaw`DELETE FROM revoked_access_tokens WHERE id_usuario = ${idCliente}`;
       await prisma.$executeRaw`DELETE FROM usuarios WHERE id_usuario = ${idCliente}`;
     }
 

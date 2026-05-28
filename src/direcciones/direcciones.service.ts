@@ -25,25 +25,32 @@ export class DireccionesService {
       actor,
     );
     const id_direccion = this.generarIdDireccion();
+    const es_default = createDireccionDto.es_default ?? false;
+
+    if (es_default) {
+      await this.clearDefaultForUser(id_usuario);
+    }
 
     await this.prisma.$executeRaw`
-			INSERT INTO direcciones (
-				id_direccion,
-				id_usuario,
-				direccion,
-				tipo_edificio,
-				informacion,
-				nota
-			)
-			VALUES (
-				${id_direccion},
-				${id_usuario},
-				${createDireccionDto.direccion},
-				${createDireccionDto.tipo_edificio},
-				${createDireccionDto.informacion ?? null},
-				${createDireccionDto.nota ?? null}
-			)
-		`;
+      INSERT INTO direcciones (
+        id_direccion,
+        id_usuario,
+        direccion,
+        tipo_edificio,
+        informacion,
+        nota,
+        es_default
+      )
+      VALUES (
+        ${id_direccion},
+        ${id_usuario},
+        ${createDireccionDto.direccion},
+        ${createDireccionDto.tipo_edificio},
+        ${createDireccionDto.informacion ?? null},
+        ${createDireccionDto.nota ?? null},
+        ${es_default}
+      )
+    `;
 
     return {
       id_direccion,
@@ -52,58 +59,59 @@ export class DireccionesService {
       tipo_edificio: createDireccionDto.tipo_edificio,
       informacion: createDireccionDto.informacion ?? null,
       nota: createDireccionDto.nota ?? null,
+      es_default,
     };
   }
 
   async findAll(actor: Actor) {
     const isAdmin = actor.rol === RolEnum.ADMIN;
 
-    const direcciones = isAdmin
-      ? await this.prisma.$queryRaw`
-					SELECT
-						d.id_direccion,
-						d.id_usuario,
-						d.direccion,
-						d.tipo_edificio,
-						d.informacion,
-						d.nota,
-						d.id_usuario
-					FROM direcciones d
-					ORDER BY d.id_direccion DESC
-				`
-      : await this.prisma.$queryRaw`
-					SELECT
-						d.id_direccion,
-						d.id_usuario,
-						d.direccion,
-						d.tipo_edificio,
-						d.informacion,
-						d.nota
-					FROM direcciones d
-					WHERE d.id_usuario = ${actor.userId}
-					ORDER BY d.id_direccion DESC
-				`;
-
-    return direcciones;
+    return isAdmin
+      ? this.prisma.$queryRaw`
+          SELECT
+            d.id_direccion,
+            d.id_usuario,
+            d.direccion,
+            d.tipo_edificio,
+            d.informacion,
+            d.nota,
+            d.es_default
+          FROM direcciones d
+          ORDER BY d.es_default DESC, d.id_direccion DESC
+        `
+      : this.prisma.$queryRaw`
+          SELECT
+            d.id_direccion,
+            d.id_usuario,
+            d.direccion,
+            d.tipo_edificio,
+            d.informacion,
+            d.nota,
+            d.es_default
+          FROM direcciones d
+          WHERE d.id_usuario = ${actor.userId}
+          ORDER BY d.es_default DESC, d.id_direccion DESC
+        `;
   }
 
   async findOne(id_direccion: string, actor: Actor) {
     const direcciones = await this.prisma.$queryRaw`
-			SELECT
-				d.id_direccion,
-				d.id_usuario,
-				d.direccion,
-				d.tipo_edificio,
-				d.informacion,
-				d.nota
-			FROM direcciones d
-			WHERE d.id_direccion = ${id_direccion}
-			LIMIT 1
-		`;
+      SELECT
+        d.id_direccion,
+        d.id_usuario,
+        d.direccion,
+        d.tipo_edificio,
+        d.informacion,
+        d.nota,
+        d.es_default
+      FROM direcciones d
+      WHERE d.id_direccion = ${id_direccion}
+      LIMIT 1
+    `;
 
     const direccion = Array.isArray(direcciones) ? direcciones[0] : null;
     if (!direccion) {
-      throw new NotFoundException(`Dirección '${id_direccion}' no encontrada`);
+      throw new NotFoundException(`Direccion '${id_direccion}' no encontrada`);
     }
 
     this.assertOwnership(direccion.id_usuario, actor);
@@ -113,20 +121,19 @@ export class DireccionesService {
   async findByUsuario(id_usuario: string, actor: Actor) {
     this.assertCanAccessUser(id_usuario, actor);
 
-    const direcciones = await this.prisma.$queryRaw`
-			SELECT
-				d.id_direccion,
-				d.id_usuario,
-				d.direccion,
-				d.tipo_edificio,
-				d.informacion,
-				d.nota
-			FROM direcciones d
-			WHERE d.id_usuario = ${id_usuario}
-			ORDER BY d.id_direccion DESC
-		`;
-
-    return direcciones;
+    return this.prisma.$queryRaw`
+      SELECT
+        d.id_direccion,
+        d.id_usuario,
+        d.direccion,
+        d.tipo_edificio,
+        d.informacion,
+        d.nota,
+        d.es_default
+      FROM direcciones d
+      WHERE d.id_usuario = ${id_usuario}
+      ORDER BY d.es_default DESC, d.id_direccion DESC
+    `;
   }
 
   async update(
@@ -136,17 +143,36 @@ export class DireccionesService {
   ) {
     const direccionActual = await this.findOne(id_direccion, actor);
 
+    if (
+      updateDireccionDto.direccion === undefined &&
+      updateDireccionDto.tipo_edificio === undefined &&
+      updateDireccionDto.informacion === undefined &&
+      updateDireccionDto.nota === undefined &&
+      updateDireccionDto.es_default === undefined
+    ) {
+      throw new BadRequestException(
+        'Debe enviar al menos un campo para actualizar',
+      );
+    }
+
+    if (updateDireccionDto.es_default === true) {
+      await this.clearDefaultForUser(direccionActual.id_usuario);
+    }
+
     await this.prisma.$executeRaw`
-			UPDATE direcciones
-			SET
-				direccion = ${updateDireccionDto.direccion ?? direccionActual.direccion},
-				tipo_edificio = ${updateDireccionDto.tipo_edificio ?? direccionActual.tipo_edificio},
-				informacion = ${
+      UPDATE direcciones
+      SET
+        direccion = ${updateDireccionDto.direccion ?? direccionActual.direccion},
+        tipo_edificio = ${updateDireccionDto.tipo_edificio ?? direccionActual.tipo_edificio},
+        informacion = ${
           updateDireccionDto.informacion ?? direccionActual.informacion ?? null
         },
-				nota = ${updateDireccionDto.nota ?? direccionActual.nota ?? null}
-			WHERE id_direccion = ${id_direccion}
-		`;
+        nota = ${updateDireccionDto.nota ?? direccionActual.nota ?? null},
+        es_default = ${
+          updateDireccionDto.es_default ?? direccionActual.es_default
+        }
+      WHERE id_direccion = ${id_direccion}
+    `;
 
     return this.findOne(id_direccion, actor);
   }
@@ -155,13 +181,33 @@ export class DireccionesService {
     const direccion = await this.findOne(id_direccion, actor);
 
     await this.prisma.$executeRaw`
-			DELETE FROM direcciones
-			WHERE id_direccion = ${id_direccion}
-		`;
+      DELETE FROM direcciones
+      WHERE id_direccion = ${id_direccion}
+    `;
 
     return {
-      message: `Dirección ${direccion.id_direccion} eliminada exitosamente`,
+      message: `Direccion ${direccion.id_direccion} eliminada exitosamente`,
     };
+  }
+
+  async belongsToUser(id_direccion: string, id_usuario: string) {
+    const direcciones = await this.prisma.$queryRaw`
+      SELECT id_direccion
+      FROM direcciones
+      WHERE id_direccion = ${id_direccion}
+        AND id_usuario = ${id_usuario}
+      LIMIT 1
+    `;
+
+    return Array.isArray(direcciones) && direcciones.length > 0;
+  }
+
+  private async clearDefaultForUser(id_usuario: string) {
+    await this.prisma.$executeRaw`
+      UPDATE direcciones
+      SET es_default = false
+      WHERE id_usuario = ${id_usuario}
+    `;
   }
 
   private resolveOwnerId(id_usuario: string | undefined, actor: Actor) {
@@ -189,7 +235,7 @@ export class DireccionesService {
 
     if (actor.userId !== id_usuario) {
       throw new UnauthorizedException(
-        'No tiene permisos para acceder a esta dirección',
+        'No tiene permisos para acceder a esta direccion',
       );
     }
   }
