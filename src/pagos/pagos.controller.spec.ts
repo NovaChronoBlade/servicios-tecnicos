@@ -27,9 +27,15 @@ describe('PagosController', () => {
   });
 
   it('calls createPago on service', async () => {
-    (pagosService.createPago as jest.Mock).mockResolvedValue({ id_pago: 'PAG-1' });
+    (pagosService.createPago as jest.Mock).mockResolvedValue({
+      id_pago: 'PAG-1',
+    });
     const req: any = { user: { userId: 'cli-1' } };
-    const dto: CreatePagoDto = { id_ss: 'SS-1', monto: 100, metodo_pago: 'tarjeta' };
+    const dto: CreatePagoDto = {
+      id_ss: 'SS-1',
+      monto: 100,
+      metodo_pago: 'tarjeta',
+    };
     const result = await controller.create(dto, req as any);
     expect(pagosService.createPago).toHaveBeenCalledWith(dto, 'cli-1');
     expect(result).toEqual({ id_pago: 'PAG-1' });

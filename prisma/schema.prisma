@@ -112,6 +112,26 @@ model usuarios {
   comentarios_comentarios_id_tecnicoTousuarios                 comentarios[]         @relation("comentarios_id_tecnicoTousuarios")
   detalles_tecnicos                                            detalles_tecnicos?
   direcciones                                                  direcciones[]
+  refresh_tokens                                               refresh_tokens[]
+  revoked_access_tokens                                        revoked_access_tokens[]
   solicitud_servicios_solicitud_servicios_id_clienteTousuarios solicitud_servicios[] @relation("solicitud_servicios_id_clienteTousuarios")
   solicitud_servicios_solicitud_servicios_id_tecnicoTousuarios solicitud_servicios[] @relation("solicitud_servicios_id_tecnicoTousuarios")
+}
+
+model refresh_tokens {
+  id_refresh    String    @id @db.VarChar(50)
+  id_usuario    String    @db.VarChar(50)
+  token_hash    String    @unique @db.VarChar(64)
+  expires_at    DateTime  @db.Timestamp(6)
+  revoked_at    DateTime? @db.Timestamp(6)
+  created_at    DateTime  @default(now()) @db.Timestamp(6)
+  usuarios      usuarios  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade, map: "fk_refresh_usuario")
+}
+
+model revoked_access_tokens {
+  id_jti     String   @id @db.VarChar(50)
+  id_usuario String   @db.VarChar(50)
+  expires_at DateTime @db.Timestamp(6)
+  revoked_at DateTime @default(now()) @db.Timestamp(6)
+  usuarios   usuarios @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade, map: "fk_revoked_access_usuario")
 }

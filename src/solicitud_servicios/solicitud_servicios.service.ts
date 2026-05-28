@@ -275,7 +275,11 @@ export class SolicitudServiciosService {
   // ----------------------------------------------------------------
   // Asignar un técnico a una solicitud
   // ----------------------------------------------------------------
-  async asignarTecnico(id_ss: string, id_tecnico: string, actor?: { userId?: string; rol?: string }) {
+  async asignarTecnico(
+    id_ss: string,
+    id_tecnico: string,
+    actor?: { userId?: string; rol?: string },
+  ) {
     const solicitud = await this.findOne(id_ss);
 
     if (solicitud.estado !== 'pendiente') {
@@ -288,7 +292,9 @@ export class SolicitudServiciosService {
     const actorRol = actor?.rol;
     const actorId = actor?.userId;
     if (actorRol !== 'admin' && actorId !== id_tecnico) {
-      throw new UnauthorizedException('No tiene permisos para asignar este técnico');
+      throw new UnauthorizedException(
+        'No tiene permisos para asignar este técnico',
+      );
     }
 
     await this.prisma.$executeRaw`
@@ -312,11 +318,15 @@ export class SolicitudServiciosService {
     const solicitud = await this.findOne(id_ss);
 
     if (solicitud.id_cliente !== actorId) {
-      throw new UnauthorizedException('Solo el cliente propietario puede confirmar');
+      throw new UnauthorizedException(
+        'Solo el cliente propietario puede confirmar',
+      );
     }
 
     if (solicitud.estado === 'cancelado') {
-      throw new BadRequestException('No se puede confirmar una solicitud cancelada');
+      throw new BadRequestException(
+        'No se puede confirmar una solicitud cancelada',
+      );
     }
 
     await this.prisma.$executeRaw`
@@ -347,11 +357,15 @@ export class SolicitudServiciosService {
     const solicitud = await this.findOne(id_ss);
 
     if (solicitud.id_tecnico !== actorId) {
-      throw new UnauthorizedException('Solo el técnico asignado puede confirmar');
+      throw new UnauthorizedException(
+        'Solo el técnico asignado puede confirmar',
+      );
     }
 
     if (solicitud.estado === 'cancelado') {
-      throw new BadRequestException('No se puede confirmar una solicitud cancelada');
+      throw new BadRequestException(
+        'No se puede confirmar una solicitud cancelada',
+      );
     }
 
     await this.prisma.$executeRaw`

@@ -20,7 +20,10 @@ export class DireccionesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createDireccionDto: CreateDireccionDto, actor: Actor) {
-    const id_usuario = this.resolveOwnerId(createDireccionDto.id_usuario, actor);
+    const id_usuario = this.resolveOwnerId(
+      createDireccionDto.id_usuario,
+      actor,
+    );
     const id_direccion = this.generarIdDireccion();
     const es_default = createDireccionDto.es_default ?? false;
 
@@ -217,7 +220,9 @@ export class DireccionesService {
     }
 
     if (id_usuario && id_usuario !== actor.userId) {
-      throw new UnauthorizedException('No puede crear direcciones para otro usuario');
+      throw new UnauthorizedException(
+        'No puede crear direcciones para otro usuario',
+      );
     }
 
     return actor.userId;
@@ -229,7 +234,9 @@ export class DireccionesService {
     }
 
     if (actor.userId !== id_usuario) {
-      throw new UnauthorizedException('No tiene permisos para acceder a esta direccion');
+      throw new UnauthorizedException(
+        'No tiene permisos para acceder a esta direccion',
+      );
     }
   }
 
@@ -239,7 +246,9 @@ export class DireccionesService {
     }
 
     if (actor.userId !== id_usuario) {
-      throw new UnauthorizedException('No tiene permisos para ver estas direcciones');
+      throw new UnauthorizedException(
+        'No tiene permisos para ver estas direcciones',
+      );
     }
   }
 

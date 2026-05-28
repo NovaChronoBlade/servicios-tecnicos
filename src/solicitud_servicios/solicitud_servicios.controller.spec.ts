@@ -22,7 +22,9 @@ describe('SolicitudServiciosController', () => {
       ],
     }).compile();
 
-    controller = module.get<SolicitudServiciosController>(SolicitudServiciosController);
+    controller = module.get<SolicitudServiciosController>(
+      SolicitudServiciosController,
+    );
   });
 
   it('should be defined', () => {

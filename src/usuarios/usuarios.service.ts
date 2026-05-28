@@ -92,7 +92,7 @@ export class UsuariosService {
     `,
       ...params,
     );
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: usuarios,
@@ -152,7 +152,7 @@ export class UsuariosService {
     `,
       ...params,
     );
-    const total = Array.isArray(totalResult) ? totalResult[0]?.total ?? 0 : 0;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
 
     return {
       data: tecnicos,
@@ -373,7 +373,7 @@ export class UsuariosService {
         LIMIT 1
       `;
 
-    return Array.isArray(usuarios) ? usuarios[0] : null;
+    return Array.isArray(usuarios) ? (usuarios[0] ?? null) : null;
   }
 
   async findByDocumento(documento: string) {
@@ -384,7 +384,7 @@ export class UsuariosService {
         LIMIT 1
       `;
 
-    return Array.isArray(usuarios) ? usuarios[0] : null;
+    return Array.isArray(usuarios) ? (usuarios[0] ?? null) : null;
   }
 
   async findByTelefono(telefono: string) {
@@ -394,7 +394,7 @@ export class UsuariosService {
         WHERE telefono = ${telefono}
         LIMIT 1
       `;
-    return Array.isArray(usuarios) ? usuarios[0] : null;
+    return Array.isArray(usuarios) ? (usuarios[0] ?? null) : null;
   }
 
   private async findDetallesTecnicos(id_tecnico: string) {

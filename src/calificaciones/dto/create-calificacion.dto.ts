@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDateString,
@@ -25,29 +26,41 @@ export const CALIFICACION_RESPONSE_EXAMPLE = {
 };
 
 export class CreateCalificacionDto {
+  @ApiProperty({ example: 'USR-TEC-abc123' })
   @IsString()
   @IsNotEmpty()
   id_tecnico!: string;
 
+  @ApiProperty({ example: 'USR-CLI-abc123' })
   @IsString()
   @IsNotEmpty()
   id_cliente!: string;
 
+  @ApiProperty({ example: 'SS-abc123' })
   @IsString()
   @IsNotEmpty()
   id_ss!: string;
 
+  @ApiProperty({ example: 5, minimum: 1, maximum: 5 })
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(5)
   puntuacion!: number;
 
+  @ApiPropertyOptional({
+    example: 'Excelente servicio y puntualidad.',
+    maxLength: 500,
+  })
   @IsOptional()
   @IsString()
   @MaxLength(500)
   comentario?: string;
 
+  @ApiPropertyOptional({
+    example: '2026-05-23T22:37:10.000Z',
+    format: 'date-time',
+  })
   @IsOptional()
   @IsDateString()
   fecha_calificacion?: string;
