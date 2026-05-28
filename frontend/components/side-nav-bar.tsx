@@ -10,68 +10,68 @@ interface SideNavBarProps {
 }
 
 const clientNavItems = [
-  { icon: "dashboard", label: "Overview", href: "/client", id: "overview" },
+  { icon: "dashboard", label: "Descripción General", href: "/client", id: "overview" },
   {
     icon: "build",
-    label: "Service Requests",
+    label: "Solicitudes de Servicio",
     href: "/client/requests",
     id: "requests",
   },
   {
     icon: "engineering",
-    label: "Technicians",
+    label: "Técnicos",
     href: "/client/technicians",
     id: "technicians",
   },
   {
     icon: "monitoring",
-    label: "Analytics",
+    label: "Analítica",
     href: "/client/analytics",
     id: "analytics",
   },
   {
     icon: "inventory_2",
-    label: "Inventory",
+    label: "Inventario",
     href: "/client/inventory",
     id: "inventory",
   },
   {
     icon: "settings",
-    label: "Settings",
+    label: "Configuración",
     href: "/client/settings",
     id: "settings",
   },
 ];
 
 const adminNavItems = [
-  { icon: "dashboard", label: "Overview", href: "/admin", id: "overview" },
+  { icon: "dashboard", label: "Descripción General", href: "/admin", id: "overview" },
   {
     icon: "build",
-    label: "Service Requests",
+    label: "Solicitudes de Servicio",
     href: "/admin/requests",
     id: "requests",
   },
   {
     icon: "engineering",
-    label: "Technicians",
+    label: "Técnicos",
     href: "/admin/technicians",
     id: "technicians",
   },
   {
     icon: "monitoring",
-    label: "Analytics",
+    label: "Analítica",
     href: "/admin/analytics",
     id: "analytics",
   },
   {
     icon: "inventory_2",
-    label: "Inventory",
+    label: "Inventario",
     href: "/admin/inventory",
     id: "inventory",
   },
   {
     icon: "settings",
-    label: "Settings",
+    label: "Configuración",
     href: "/admin/settings",
     id: "settings",
   },
@@ -84,7 +84,7 @@ export function SideNavBar({ userType, activeTab }: SideNavBarProps) {
   return (
     <>
       {/* Mobile Nav Header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-4 bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
+      <header className="md:hidden flex items-center justify-between px-6 py-4 bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
         <h1 className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold font-black text-primary">
           TechServe Pro
         </h1>
@@ -98,11 +98,11 @@ export function SideNavBar({ userType, activeTab }: SideNavBarProps) {
 
       {/* Sidebar */}
       <nav
-        className={`h-screen w-72 fixed left-0 top-0 bg-surface border-r border-outline-variant/30 flex flex-col py-md z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`h-screen w-80 fixed left-0 top-0 bg-surface border-r border-outline-variant/30 flex flex-col py-8 z-40 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        <div className="flex items-center justify-between px-4 mb-8">
+        <div className="flex items-center justify-between px-10 mb-10">
           <div className="text-[24px] leading-[32px] tracking-[-0.01em] font-semibold font-black text-primary">
             TechServe Pro
           </div>
@@ -114,7 +114,7 @@ export function SideNavBar({ userType, activeTab }: SideNavBarProps) {
           </button>
         </div>
 
-        <div className="px-4 mb-6">
+        <div className="px-6 mb-6">
           <div className="flex items-center gap-3 p-3 bg-surface-container rounded-lg">
             <Image
               alt="User Profile"
@@ -125,23 +125,23 @@ export function SideNavBar({ userType, activeTab }: SideNavBarProps) {
             />
             <div>
               <p className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-primary">
-                {userType === "admin" ? "Admin Console" : "Client Dashboard"}
+                {userType === "admin" ? "Consola de Administrador" : "Panel de Cliente"}
               </p>
               <p className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant">
-                Technical Operations
+                Operaciones Técnicas
               </p>
             </div>
           </div>
         </div>
 
-        <div className="px-4 mb-6">
+        <div className="px-6 mb-6">
           <button className="w-full bg-primary text-on-primary text-[14px] leading-[20px] tracking-[0.01em] font-medium py-3 rounded-lg hover:bg-on-tertiary-fixed transition-colors flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-[18px]">add</span>
-            New Service
+            Nuevo Servicio
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-1 px-4">
+        <div className="flex-1 overflow-y-auto space-y-1 px-6">
           {navItems.map((item) => (
             <Link
               key={item.id}
@@ -168,23 +168,23 @@ export function SideNavBar({ userType, activeTab }: SideNavBarProps) {
           ))}
         </div>
 
-        <div className="px-4 mt-auto pt-4 border-t border-outline-variant/30 space-y-1">
+        <div className="px-8 mt-auto pt-6 pb-8 border-t border-outline-variant/30 space-y-2">
           <Link
             href="#"
-            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95"
+            className="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95"
           >
             <span className="material-symbols-outlined">help</span>
             <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-              Support
+              Soporte
             </span>
           </Link>
           <Link
             href="/login"
-            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95"
+            className="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg hover:translate-x-1 duration-200 active:scale-95"
           >
             <span className="material-symbols-outlined">logout</span>
             <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium">
-              Sign Out
+              Cerrar Sesión
             </span>
           </Link>
         </div>

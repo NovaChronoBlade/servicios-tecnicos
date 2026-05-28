@@ -20,7 +20,7 @@ export default function RegisterPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-primary-container/80 to-primary-container/95"></div>
         </div>
-        <div className="relative z-10 flex flex-col justify-between p-lg h-full w-full">
+        <div className="relative z-10 flex flex-col justify-between px-12 py-14 h-full w-full">
           <div className="flex items-center gap-sm">
             <span
               className="material-symbols-outlined text-[32px] text-secondary-container"
@@ -32,13 +32,12 @@ export default function RegisterPage() {
               TechServe Pro
             </span>
           </div>
-          <div className="max-w-md">
+          <div className="max-w-lg">
             <h1 className="text-[48px] leading-[56px] tracking-[-0.02em] font-bold text-on-primary mb-md">
-              Precision engineering in service delivery.
+              Profesionales Técnicos Verificados, Servicios de Calidad Garantizada
             </h1>
             <p className="text-[18px] leading-[28px] text-on-primary-container">
-              Join an elite network of vetted technical professionals. Elevate
-              your practice with our comprehensive management tools.
+              Regístrate gratis. Accede a plomeros, electricistas, carpinteros y más. Los enviamos a tu domicilio, con alta rigurosidad en la selección y garantía de satisfacción.
             </p>
           </div>
           <div className="flex items-center gap-sm">
@@ -51,15 +50,15 @@ export default function RegisterPage() {
               </div>
             </div>
             <span className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-on-primary-container ml-sm">
-              Trusted by 5,000+ professionals
+              Cuenta con la confianza de más de 500 profesionales
             </span>
           </div>
         </div>
       </div>
 
       {/* Right Screen: Registration Form */}
-      <div className="w-full md:w-7/12 lg:w-1/2 flex items-center justify-center p-gutter sm:p-lg min-h-screen bg-surface">
-        <div className="w-full max-w-[520px]">
+      <div className="w-full md:w-7/12 lg:w-1/2 flex items-center justify-center px-8 py-12 lg:px-16 min-h-screen bg-surface">        
+        <div className="w-full max-w-[620px]">
           {/* Mobile Header (Visible only on mobile) */}
           <div className="md:hidden flex items-center gap-sm mb-xl">
             <span
@@ -72,26 +71,26 @@ export default function RegisterPage() {
               TechServe Pro
             </span>
           </div>
-          <div className="mb-lg">
+          <div className="mb-10">
             <h2 className="text-[30px] leading-[38px] tracking-[-0.01em] font-semibold text-on-surface mb-xs">
-              Create an Account
+              Crear una Cuenta
             </h2>
             <p className="text-[16px] leading-[24px] text-on-surface-variant">
-              Enter your details to apply for the professional network.
+              Ingresa tu información para solicitar acceso a nuestra red de profesionales técnicos.
             </p>
           </div>
-          <form className="space-y-md" onSubmit={(e) => e.preventDefault()}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
+          <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Full Name */}
-              <div className="space-y-xs">
+              <div className="space-y-2">
                 <label
                   className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                   htmlFor="fullName"
                 >
-                  Full Name
+                  Nombre Completo
                 </label>
                 <input
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                  className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                   id="fullName"
                   name="fullName"
                   placeholder="Jane Doe"
@@ -100,15 +99,15 @@ export default function RegisterPage() {
                 />
               </div>
               {/* Email */}
-              <div className="space-y-xs">
+              <div className="space-y-2">
                 <label
                   className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                   htmlFor="email"
                 >
-                  Email Address
+                  Dirección de Email
                 </label>
                 <input
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                  className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                   id="email"
                   name="email"
                   placeholder="jane@example.com"
@@ -117,15 +116,15 @@ export default function RegisterPage() {
                 />
               </div>
               {/* Phone Number */}
-              <div className="space-y-xs">
+              <div className="space-y-2">
                 <label
                   className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                   htmlFor="phone"
                 >
-                  Phone Number
+                  Número de Teléfono
                 </label>
                 <input
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                  className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                   id="phone"
                   name="phone"
                   placeholder="+1 (555) 000-0000"
@@ -134,15 +133,15 @@ export default function RegisterPage() {
                 />
               </div>
               {/* Birth Date */}
-              <div className="space-y-xs">
+              <div className="space-y-2">
                 <label
                   className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                   htmlFor="dob"
                 >
-                  Birth Date
+                  Fecha de Nacimiento
                 </label>
                 <input
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                  className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                   id="dob"
                   name="dob"
                   required
@@ -151,15 +150,15 @@ export default function RegisterPage() {
               </div>
             </div>
             {/* Identity Document */}
-            <div className="space-y-xs">
+            <div className="space-y-2">
               <label
                 className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                 htmlFor="identityDoc"
               >
-                Identity Document Number (SSN/Tax ID)
+                Documento de Identidad (SSN/Tax ID)
               </label>
               <input
-                className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                 id="identityDoc"
                 name="identityDoc"
                 placeholder="XXX-XX-XXXX"
@@ -168,15 +167,15 @@ export default function RegisterPage() {
               />
             </div>
             {/* Address */}
-            <div className="space-y-xs">
+            <div className="space-y-2">
               <label
                 className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                 htmlFor="address"
               >
-                Business Address
+                Dirección
               </label>
               <textarea
-                className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition resize-none focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition resize-none focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                 id="address"
                 name="address"
                 placeholder={`123 Tech Lane, Suite 100\nSan Francisco, CA 94105`}
@@ -185,16 +184,16 @@ export default function RegisterPage() {
               />
             </div>
             {/* Password */}
-            <div className="space-y-xs">
+            <div className="space-y-2">
               <label
                 className="block text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-on-surface-variant uppercase tracking-widest"
                 htmlFor="password"
               >
-                Password
+                Contraseña
               </label>
               <div className="relative">
                 <input
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                  className="w-full px-4 py-4 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-[16px] leading-[24px] text-on-surface placeholder-on-surface-variant/50 input-ring-transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20"
                   id="password"
                   name="password"
                   placeholder="••••••••"
@@ -212,7 +211,7 @@ export default function RegisterPage() {
                 </button>
               </div>
               <p className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-outline mt-1 font-normal tracking-normal text-[11px]">
-                Must be at least 8 characters, including a number and symbol.
+                Debe tener al menos 8 caracteres, incluido un número y un símbolo.
               </p>
             </div>
             {/* CTA */}
@@ -221,7 +220,7 @@ export default function RegisterPage() {
                 className="w-full bg-primary-container text-on-primary py-4 rounded-lg text-[14px] leading-[20px] tracking-[0.01em] font-medium shadow-sm hover:shadow-md hover:bg-tertiary-container transition-all duration-200 flex items-center justify-center gap-2"
                 type="submit"
               >
-                Sign Up
+                Registrarse
                 <span className="material-symbols-outlined text-[18px]">
                   arrow_forward
                 </span>
@@ -230,12 +229,12 @@ export default function RegisterPage() {
           </form>
           <div className="mt-xl text-center">
             <p className="text-[16px] leading-[24px] text-on-surface-variant">
-              Already have an account?{" "}
+              ¿Ya tienes una cuenta?{" "}
               <Link
                 className="text-[14px] leading-[20px] tracking-[0.01em] font-medium text-secondary hover:text-secondary-container transition-colors ml-1"
                 href="/login"
               >
-                Sign in
+                Inicia sesión
               </Link>
             </p>
           </div>
