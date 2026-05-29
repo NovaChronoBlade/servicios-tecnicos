@@ -1,293 +1,155 @@
-# 🚀 Guía de Colaboración — NestJS + Prisma + Git
+# Documentacion del proyecto
 
-> Guía para que el equipo pueda clonar, configurar y colaborar en el proyecto correctamente.
+## Descripcion del sistema
 
----
+La plataforma de servicios tecnicos a domicilio conecta clientes con tecnicos registrados. El backend esta construido con NestJS, Prisma y PostgreSQL, y cubre autenticacion, usuarios, direcciones, servicios, solicitudes, pagos, calificaciones y comentarios.
 
-## 1. Clonar el repositorio (primera vez)
+## Integrantes
 
-```bash
-git clone https://github.com/tu-usuario/tu-repo.git
-cd tu-repo
+- Andres Felipe Ruiz Vasallo
+- Juan Camilo Mosquera Palomino
+- Pablo Garzon Gomez
+- Kevin David Rincon Valencia
+- Andres David Murillo Castro
+
+## Requisitos previos
+
+- Node.js 22 o compatible.
+- npm para instalar dependencias y ejecutar scripts.
+- PostgreSQL para la base de datos.
+- VS Code, IntelliJ IDEA, WebStorm o un editor compatible.
+- Git para clonar el repositorio y trabajar con ramas.
+
+## Instalacion
+
+```powershell
+git clone https://github.com/NovaChronoBlade/servicios-tecnicos.git
+cd servicios-tecnicos
+npm.cmd install
+npx.cmd prisma migrate deploy
+npx.cmd prisma generate
+npm.cmd run start:dev
 ```
 
----
+## Casos de uso principales
 
-## 2. Instalar dependencias
+| Caso de uso | Actor | Resumen |
+|---|---|---|
+| Registrarse e iniciar sesion | Cliente, tecnico, admin | El usuario crea cuenta o inicia sesion y recibe tokens de acceso. |
+| Gestionar direcciones | Cliente | El cliente crea, consulta, actualiza o elimina sus direcciones. |
+| Solicitar servicio | Cliente | El cliente selecciona servicio, direccion y fecha programada. |
+| Atender solicitud | Tecnico | El tecnico consulta solicitudes disponibles y acepta una solicitud. |
+| Administrar plataforma | Admin | El administrador gestiona usuarios, servicios, pagos y reasignaciones. |
+| Calificar servicio | Cliente | El cliente califica y comenta una solicitud propia. |
 
-```bash
-npm install
-```
+## Requerimientos funcionales
 
-> Nunca subas la carpeta `node_modules` al repo. Cada quien la genera con este comando.
+- Registro, login, refresh token y logout de usuarios.
+- Gestion de direcciones del cliente, incluyendo direccion principal.
+- Creacion y seguimiento de solicitudes de servicio.
+- Gestion de servicios, categorias y reportes SQL.
+- Registro de pagos, referencias y reembolsos.
+- Calificaciones, comentarios y ranking de tecnicos.
 
----
+## Modelo entidad-relacion
 
-## 3. Configurar el archivo `.env`
+![Diagrama ER](docs/Diagrama_ER.png)
 
-El archivo `.env` **no se sube al repositorio** (está en `.gitignore`). Cada integrante debe crearlo manualmente en la raíz del proyecto.
+El modelo se compone de estas entidades principales:
 
-Crea el archivo `.env` y pega esto:
+- `usuarios`
+- `detalles_tecnicos`
+- `direcciones`
+- `categorias_servicios`
+- `servicios`
+- `solicitud_servicios`
+- `pagos`
+- `calificaciones`
+- `comentarios`
+- `refresh_tokens`
+- `revoked_access_tokens`
 
-```dotenv
-DATABASE_URL="postgresql://postgres:TU_PASSWORD@localhost:5432/nombre_db?schema=public"
-```
+## Diccionario de datos resumido
 
-> Pídele al líder del equipo el valor correcto de `DATABASE_URL`.  
-> Cada quien puede tener su propia base de datos local, solo asegúrense de usar el mismo nombre.
+| Tabla | Campos principales | Proposito |
+|---|---|---|
+| `usuarios` | `id_usuario`, `documento`, `nombre`, `correo`, `telefono`, `rol`, `activo` | Guarda clientes, tecnicos y administradores. |
+| `detalles_tecnicos` | `id_usuario`, `especialidad`, `licencia_profesional`, `disponible`, `calificacion_promedio` | Perfil extendido de tecnicos. |
+| `direcciones` | `id_direccion`, `id_usuario`, `direccion`, `tipo_edificio`, `es_default` | Direcciones de clientes. |
+| `categorias_servicios` | `id_categoria`, `nombre`, `descripcion`, `activo` | Clasificacion de servicios. |
+| `servicios` | `id_servicio`, `nombre`, `descripcion`, `precio`, `activo`, `id_categoria` | Catalogo de servicios. |
+| `solicitud_servicios` | `id_ss`, `id_cliente`, `id_tecnico`, `id_servicio`, `id_direccion`, `estado`, `fecha_programada` | Solicitudes creadas por clientes. |
+| `pagos` | `id_pago`, `id_ss`, `monto`, `metodo_pago`, `estado`, `numero_referencia` | Pagos asociados a solicitudes. |
+| `calificaciones` | `id_calificacion`, `id_tecnico`, `id_cliente`, `id_ss`, `puntuacion` | Calificaciones de servicios. |
+| `comentarios` | `id_comentario`, `id_tecnico`, `id_cliente`, `id_ss`, `contenido` | Comentarios sobre solicitudes. |
 
----
+## Restricciones y reglas de negocio
 
-## 4. Generar el cliente de Prisma
+- `documento`, `correo` y `telefono` son unicos en `usuarios`.
+- `rol` solo puede ser `cliente`, `tecnico` o `admin`.
+- El precio de un servicio debe ser mayor o igual a `0.01`.
+- La puntuacion de una calificacion debe estar entre `1` y `5`.
+- Los estados de solicitud permitidos son `pendiente`, `aceptado`, `en_curso`, `completado` y `cancelado`.
+- Los estados de pago permitidos son `pendiente`, `pagado` y `reembolsado`.
+- Una solicitud debe usar una direccion del cliente autenticado.
+- Una direccion marcada como principal usa el campo `es_default`.
 
-Después de instalar dependencias, **siempre** correr:
+## Llaves foraneas
 
-```bash
-npx prisma generate
-```
-
-Esto genera los tipos de Prisma a partir del `schema.prisma` que viene en el repo.
-
----
-
-## 5. Sincronizar la base de datos local
-
-### Opción A — Si el proyecto usa migraciones (recomendado en equipos)
-
-```bash
-npx prisma migrate dev
-```
-
-Aplica todas las migraciones pendientes a tu base de datos local.
-
-### Opción B — Si no hay migraciones y usan `db push`
-
-```bash
-npx prisma db push
-```
-
-Sincroniza el `schema.prisma` directo a tu base de datos sin crear archivos de migración.
-
----
-
-## 6. Levantar el proyecto
-
-```bash
-npm run start:dev
-```
-
-Si todo está bien verás algo así:
-
-```
-[NestApplication] Nest application successfully started
-```
-
----
-
-## 7. Flujo diario para colaborar con Git
-
-### Antes de empezar a trabajar
-
-```bash
-# Asegúrate de estar en la rama principal
-git checkout main
-
-# Traer los últimos cambios del equipo
-git pull origin main
-```
-
-### Crear tu rama para trabajar
-
-```bash
-# Crea una rama con tu nombre o la feature que vas a hacer
-git checkout -b feature/nombre-de-lo-que-haces
-
-# Ejemplos:
-git checkout -b feature/modulo-productos
-git checkout -b fix/error-login
-git checkout -b feature/juan-usuarios
-```
-
-### Guardar y subir tu trabajo
-
-```bash
-# Ver qué archivos cambiaste
-git status
-
-# Agregar tus cambios
-git add .
-
-# Hacer commit con un mensaje claro
-git commit -m "feat: agrega módulo de productos con CRUD"
-
-# Subir tu rama al repositorio
-git push origin feature/nombre-de-lo-que-haces
-```
-
-Luego abre un **Pull Request** en GitHub para que el equipo revise antes de hacer merge a `main`.
-
----
-
-## 8. Cuando un compañero cambia el schema de Prisma
-
-Si alguien modificó `prisma/schema.prisma` y lo subió, después de hacer `git pull` debes correr:
-
-```bash
-# 1. Traer los cambios
-git pull origin main
-
-# 2. Regenerar el cliente de Prisma
-npx prisma generate
-
-# 3. Aplicar cambios a tu base de datos local
-npx prisma migrate dev
-# o si usan db push:
-npx prisma db push
-```
-
-> ⚠️ Si no corres `prisma generate` después de un pull que trae cambios al schema, tendrás errores de tipos en TypeScript.
-
----
-
-## 9. Generar un nuevo módulo
-
-```bash
-nest g resource nombre-modulo
-```
-
-Selecciona:
-- `REST API`
-- `Yes` para generar CRUD
-
-Luego conecta Prisma en el servicio generado:
-
-```typescript
-// nombre-modulo.service.ts
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-
-@Injectable()
-export class NombreModuloService {
-  constructor(private prisma: PrismaService) {}
-
-  findAll() {
-    return this.prisma.nombreModelo.findMany();
-  }
-
-  findOne(id: number) {
-    return this.prisma.nombreModelo.findUnique({ where: { id } });
-  }
-
-  create(data: any) {
-    return this.prisma.nombreModelo.create({ data });
-  }
-
-  update(id: number, data: any) {
-    return this.prisma.nombreModelo.update({ where: { id }, data });
-  }
-
-  remove(id: number) {
-    return this.prisma.nombreModelo.delete({ where: { id } });
-  }
-}
-```
-
----
-
-## 10. Comandos de referencia rápida
-
-| Acción | Comando |
+| Relacion | Descripcion |
 |---|---|
-| Clonar repo | `git clone <url>` |
-| Instalar dependencias | `npm install` |
-| Generar cliente Prisma | `npx prisma generate` |
-| Aplicar migraciones | `npx prisma migrate dev` |
-| Sincronizar schema (sin migraciones) | `npx prisma db push` |
-| Ver BD en el navegador | `npx prisma studio` |
-| Levantar el servidor | `npm run start:dev` |
-| Traer últimos cambios | `git pull origin main` |
-| Crear rama nueva | `git checkout -b feature/nombre` |
-| Subir tu rama | `git push origin feature/nombre` |
-| Generar módulo NestJS | `nest g resource nombre` |
+| `direcciones.id_usuario -> usuarios.id_usuario` | Direcciones de un usuario. |
+| `detalles_tecnicos.id_usuario -> usuarios.id_usuario` | Datos tecnicos de un tecnico. |
+| `servicios.id_categoria -> categorias_servicios.id_categoria` | Servicio asociado a categoria. |
+| `solicitud_servicios.id_cliente -> usuarios.id_usuario` | Cliente que solicita. |
+| `solicitud_servicios.id_tecnico -> usuarios.id_usuario` | Tecnico asignado. |
+| `solicitud_servicios.id_servicio -> servicios.id_servicio` | Servicio solicitado. |
+| `solicitud_servicios.id_direccion -> direcciones.id_direccion` | Direccion del servicio. |
+| `pagos.id_ss -> solicitud_servicios.id_ss` | Pago de una solicitud. |
+| `calificaciones.id_ss -> solicitud_servicios.id_ss` | Calificacion de una solicitud. |
+| `comentarios.id_ss -> solicitud_servicios.id_ss` | Comentario de una solicitud. |
 
----
+## Vista, subconsulta y datos de prueba
 
-## ⚠️ Reglas del equipo
+El archivo `sql/servicios_tecnicos.sql` contiene la creacion de tablas, datos de prueba, restricciones `CHECK`, una vista y una subconsulta comentada.
 
-- **Nunca** trabajes directo en `main`. Siempre crea tu propia rama.
-- **Nunca** subas el archivo `.env` al repositorio.
-- **Siempre** haz `git pull` antes de empezar a trabajar.
-- **Siempre** corre `npx prisma generate` después de un pull que modifique el schema.
-- Los mensajes de commit deben ser descriptivos: `feat:`, `fix:`, `chore:`, `refactor:`.
+- Vista: `vista_resumen_servicios_categoria`.
+- Endpoint que usa la vista: `GET /servicios/reportes/resumen-categorias`.
+- Subconsulta: servicios activos con precio superior al promedio.
+- Endpoint que usa la subconsulta: `GET /servicios/reportes/precio-sobre-promedio`.
 
-para crear sql crudo 
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+## Endpoints
 
-@Injectable()
-export class UsuariosService {
+La documentacion interactiva esta disponible en `/api/docs`.
 
-  constructor(private prisma: PrismaService) {}
-
-  // SELECT
-  async findAll() {
-    return this.prisma.$queryRaw`
-      SELECT * FROM usuarios
-    `;
-  }
-
-  // SELECT BY ID
-  async findOne(id: string) {
-    return this.prisma.$queryRaw`
-      SELECT *
-      FROM usuarios
-      WHERE id_usuario = ${id}
-    `;
-  }
-
-  // INSERT
-  async create(data: any) {
-    return this.prisma.$executeRaw`
-      INSERT INTO usuarios (
-        id_usuario,
-        documento,
-        fecha_nacimiento,
-        nombre,
-        correo,
-        contrasena,
-        telefono,
-        rol
-      )
-      VALUES (
-        ${data.id_usuario},
-        ${data.documento},
-        ${data.fecha_nacimiento},
-        ${data.nombre},
-        ${data.correo},
-        ${data.contrasena},
-        ${data.telefono},
-        ${data.rol}
-      )
-    `;
-  }
-
-  // UPDATE
-  async update(id: string, nombre: string) {
-    return this.prisma.$executeRaw`
-      UPDATE usuarios
-      SET nombre = ${nombre}
-      WHERE id_usuario = ${id}
-    `;
-  }
-
-  // DELETE
-  async remove(id: string) {
-    return this.prisma.$executeRaw`
-      DELETE FROM usuarios
-      WHERE id_usuario = ${id}
-    `;
-  }
-}
-
-executeRaw para queries
-queryRaw para selects
+| Metodo | Ruta | Descripcion |
+|---|---|---|
+| POST | `/auth/register` | Registra usuario. |
+| POST | `/auth/login` | Inicia sesion. |
+| POST | `/auth/refresh` | Renueva token. |
+| POST | `/auth/logout` | Cierra sesion. |
+| GET | `/usuarios` | Lista usuarios. |
+| GET | `/usuarios/tecnicos` | Lista tecnicos. |
+| GET | `/usuarios/:id` | Obtiene usuario. |
+| PATCH | `/usuarios/:id` | Actualiza usuario. |
+| PATCH | `/usuarios/:id/desactivar` | Desactiva usuario. |
+| POST | `/direcciones` | Crea direccion. |
+| GET | `/direcciones` | Lista direcciones. |
+| PATCH | `/direcciones/:id` | Actualiza direccion. |
+| DELETE | `/direcciones/:id` | Elimina direccion. |
+| POST | `/servicios` | Crea servicio. |
+| GET | `/servicios` | Lista servicios. |
+| GET | `/servicios/buscar` | Busca servicios. |
+| GET | `/servicios/reportes/resumen-categorias` | Reporte desde vista. |
+| GET | `/servicios/reportes/precio-sobre-promedio` | Reporte con subconsulta. |
+| POST | `/solicitudes-servicio` | Crea solicitud. |
+| GET | `/solicitudes-servicio` | Lista solicitudes. |
+| PATCH | `/solicitudes-servicio/:id/estado` | Cambia estado. |
+| PATCH | `/solicitudes-servicio/:id/cancelar` | Cancela solicitud. |
+| POST | `/pagos` | Crea pago. |
+| GET | `/pagos/solicitud/:id_ss` | Pagos por solicitud. |
+| GET | `/pagos/cliente/:id_cliente` | Pagos por cliente. |
+| POST | `/calificaciones` | Crea calificacion. |
+| GET | `/calificaciones/top-tecnicos` | Ranking de tecnicos. |
+| POST | `/comentarios` | Crea comentario. |
+| GET | `/comentarios/solicitud/:id_ss` | Comentarios por solicitud. |

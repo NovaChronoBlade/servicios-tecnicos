@@ -115,4 +115,22 @@ describe('ServiciosService', () => {
       { id_servicio: 'SRV-1' },
     ]);
   });
+
+  it('reads the category summary view', async () => {
+    prismaMock.$queryRaw.mockResolvedValueOnce([
+      { nombre_categoria: 'Electricidad', total_servicios: 2 },
+    ]);
+
+    await expect(service.findResumenPorCategorias()).resolves.toEqual([
+      { nombre_categoria: 'Electricidad', total_servicios: 2 },
+    ]);
+  });
+
+  it('lists services above average price using a subquery', async () => {
+    prismaMock.$queryRaw.mockResolvedValueOnce([{ id_servicio: 'SRV-CARO' }]);
+
+    await expect(service.findServiciosSobrePromedio()).resolves.toEqual([
+      { id_servicio: 'SRV-CARO' },
+    ]);
+  });
 });
