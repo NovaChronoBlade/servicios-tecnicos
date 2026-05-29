@@ -6,15 +6,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import { useContext } from 'react';
-import { ColorModeContext } from '@/theme/ThemeProvider';
-import { useTheme } from '@mui/material/styles';
+import { ThemeToggleButton } from '../ThemeToggle/ThemeToggleButton';
 
 export function TopNavBar() {
-  const colorMode = useContext(ColorModeContext);
-  const theme = useTheme();
-
   return (
     <AppBar
       position="sticky"
@@ -56,17 +50,7 @@ export function TopNavBar() {
             <Button variant="contained">Regístrate</Button>
           </Link>
 
-          <IconButton
-            aria-label="toggle theme"
-            onClick={() => colorMode.toggleColorMode()}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontVariationSettings: "'FILL' 0" }}
-            >
-              {theme.palette.mode === 'dark' ? 'dark_mode' : 'light_mode'}
-            </span>
-          </IconButton>
+          <ThemeToggleButton />
         </Box>
       </Toolbar>
     </AppBar>
