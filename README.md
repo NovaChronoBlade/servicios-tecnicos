@@ -29,21 +29,17 @@ API REST construida con NestJS, Prisma y PostgreSQL para administrar una platafo
 - El administrador puede gestionar usuarios, servicios, pagos y reasignaciones.
 - El cliente puede pagar, calificar y comentar una solicitud atendida.
 
+## Requisitos previos
+
+- Node.js 22 o compatible.
+- npm para instalar dependencias y ejecutar scripts.
+- PostgreSQL para la base de datos.
+- VS Code, IntelliJ IDEA, WebStorm o un editor compatible.
+- Git para clonar el repositorio y trabajar con ramas.
+
 ## Diagrama ER
 
-```mermaid
-erDiagram
-  usuarios ||--o{ direcciones : tiene
-  usuarios ||--o| detalles_tecnicos : tecnico
-  usuarios ||--o{ solicitud_servicios : cliente
-  usuarios ||--o{ solicitud_servicios : tecnico
-  categorias_servicios ||--o{ servicios : agrupa
-  servicios ||--o{ solicitud_servicios : solicitado
-  direcciones ||--o{ solicitud_servicios : usada_en
-  solicitud_servicios ||--o| pagos : genera
-  solicitud_servicios ||--o{ calificaciones : recibe
-  solicitud_servicios ||--o{ comentarios : recibe
-```
+![Diagrama ER](docs/Diagrama_ER.png)
 
 ## Base de datos y SQL
 
@@ -87,6 +83,8 @@ PAYMENT_GATEWAY_TIMEOUT_MS=10000
 ## Instalacion y ejecucion
 
 ```powershell
+git clone https://github.com/NovaChronoBlade/servicios-tecnicos.git
+cd servicios-tecnicos
 npm.cmd install
 npx.cmd prisma migrate deploy
 npx.cmd prisma generate

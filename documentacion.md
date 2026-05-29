@@ -4,6 +4,33 @@
 
 La plataforma de servicios tecnicos a domicilio conecta clientes con tecnicos registrados. El backend esta construido con NestJS, Prisma y PostgreSQL, y cubre autenticacion, usuarios, direcciones, servicios, solicitudes, pagos, calificaciones y comentarios.
 
+## Integrantes
+
+- Andres Felipe Ruiz Vasallo
+- Juan Camilo Mosquera Palomino
+- Pablo Garzon Gomez
+- Kevin David Rincon Valencia
+- Andres David Murillo Castro
+
+## Requisitos previos
+
+- Node.js 22 o compatible.
+- npm para instalar dependencias y ejecutar scripts.
+- PostgreSQL para la base de datos.
+- VS Code, IntelliJ IDEA, WebStorm o un editor compatible.
+- Git para clonar el repositorio y trabajar con ramas.
+
+## Instalacion
+
+```powershell
+git clone https://github.com/NovaChronoBlade/servicios-tecnicos.git
+cd servicios-tecnicos
+npm.cmd install
+npx.cmd prisma migrate deploy
+npx.cmd prisma generate
+npm.cmd run start:dev
+```
+
 ## Casos de uso principales
 
 | Caso de uso | Actor | Resumen |
@@ -15,7 +42,18 @@ La plataforma de servicios tecnicos a domicilio conecta clientes con tecnicos re
 | Administrar plataforma | Admin | El administrador gestiona usuarios, servicios, pagos y reasignaciones. |
 | Calificar servicio | Cliente | El cliente califica y comenta una solicitud propia. |
 
+## Requerimientos funcionales
+
+- Registro, login, refresh token y logout de usuarios.
+- Gestion de direcciones del cliente, incluyendo direccion principal.
+- Creacion y seguimiento de solicitudes de servicio.
+- Gestion de servicios, categorias y reportes SQL.
+- Registro de pagos, referencias y reembolsos.
+- Calificaciones, comentarios y ranking de tecnicos.
+
 ## Modelo entidad-relacion
+
+![Diagrama ER](docs/Diagrama_ER.png)
 
 El modelo se compone de estas entidades principales:
 
@@ -30,8 +68,6 @@ El modelo se compone de estas entidades principales:
 - `comentarios`
 - `refresh_tokens`
 - `revoked_access_tokens`
-
-El diagrama ER debe incluirse como imagen en el documento final del proyecto. Si la imagen se guarda en el repositorio, se puede referenciar como `Diagrama_ER.png`.
 
 ## Diccionario de datos resumido
 
