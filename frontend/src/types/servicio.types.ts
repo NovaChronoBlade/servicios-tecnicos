@@ -13,6 +13,7 @@ export interface Servicio {
   activo: boolean;
   id_categoria?: string | null;
   categoria?: CategoriaServicio | null;
+  nombre_categoria?: string | null;
 }
 
 export interface CreateServicioRequest {
@@ -54,6 +55,12 @@ export interface SolicitudServicio {
   motivo_cancelacion?: string | null;
   fecha: string;
   fecha_programada?: string | null;
+  nombre_cliente?: string;
+  nombre_tecnico?: string | null;
+  nombre_servicio?: string;
+  precio_servicio?: string | number | null;
+  direccion_servicio?: string;
+  tipo_edificio?: string;
 }
 
 export interface CreateSolicitudRequest {

@@ -1,21 +1,37 @@
-import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
-import { APP_ROUTES } from '@/constants/routes.constants';
-import { solicitudesAsignadasMock } from '@/mocks/tecnico-pages.mock';
-import { Box, Button, Chip, Divider, LinearProgress, Paper, Typography } from '@mui/material';
+'use client';
+
 import Link from 'next/link';
+import { Alert, Box, Button, Chip, Divider, LinearProgress, Paper, Typography } from '@mui/material';
+
+import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
+import { APP_ROUTES } from '@/constants/routes.constants';
+import { useApiData } from '@/hooks/useApiData';
+import { listSolicitudesByTecnico } from '@/services/solicitudes.service';
+import { useAuthStore } from '@/store/authStore';
 
 export default function TecnicoMisSolicitudesPage() {
+  const { user } = useAuthStore();
+  const { data: solicitudes, loading, error } = useApiData(
+    () => (user?.id_usuario ? listSolicitudesByTecnico(user.id_usuario) : Promise.resolve([])),
+    [user?.id_usuario],
+    [],
+  );
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
       <ClientPageHeader
         eyebrow="Agenda"
         title="Mis solicitudes"
         description="Servicios aceptados o en curso con informacion tecnica para la visita."
-        chips={[{ label: `${solicitudesAsignadasMock.length} asignadas` }]}
+        chips={[{ label: `${solicitudes.length} asignadas` }]}
       />
       <Divider sx={{ mb: 3 }} />
+      {error ? <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert> : null}
       <Box sx={{ display: 'grid', gap: 2 }}>
-        {solicitudesAsignadasMock.map((solicitud) => (
+        {solicitudes.map((solicitud) => (
           <Paper key={solicitud.id_ss} variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
               <Box>
@@ -34,6 +50,7 @@ export default function TecnicoMisSolicitudesPage() {
             </Box>
           </Paper>
         ))}
+        {solicitudes.length === 0 ? <Typography variant="body2" color="text.secondary">No tienes solicitudes asignadas.</Typography> : null}
       </Box>
     </Box>
   );

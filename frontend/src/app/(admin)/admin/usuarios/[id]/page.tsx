@@ -1,12 +1,25 @@
+'use client';
+
+import { use } from 'react';
+import { Alert, Box, Chip, Divider, Paper, Typography } from '@mui/material';
+
 import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
-import { getAdminUserById } from '@/mocks/admin-pages.mock';
-import { Box, Chip, Divider, Paper, Typography } from '@mui/material';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
+import { useApiData } from '@/hooks/useApiData';
+import { getUsuarioById } from '@/services/usuarios.service';
 
 type PageProps = { params: Promise<{ id: string }> };
 
-export default async function AdminUsuarioDetallePage({ params }: PageProps) {
-  const { id } = await params;
-  const user = getAdminUserById(id);
+export default function AdminUsuarioDetallePage({ params }: PageProps) {
+  const { id } = use(params);
+  const { data: user, loading, error } = useApiData(
+    () => getUsuarioById(id),
+    [id],
+    null,
+  );
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return <Alert severity="error">{error ?? 'Usuario no encontrado'}</Alert>;
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
@@ -26,7 +39,7 @@ export default async function AdminUsuarioDetallePage({ params }: PageProps) {
             </Paper>
           ))}
         </Box>
-        <Box sx={{ mt: 2 }}><Chip label="Vista administrativa basica" variant="outlined" /></Box>
+        <Box sx={{ mt: 2 }}><Chip label="Vista administrativa" variant="outlined" /></Box>
       </Paper>
     </Box>
   );

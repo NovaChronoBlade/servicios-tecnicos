@@ -1,14 +1,27 @@
-import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
-import { APP_ROUTES } from '@/constants/routes.constants';
-import { getAdminSolicitudById } from '@/mocks/admin-pages.mock';
-import { Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+'use client';
+
+import { use } from 'react';
 import Link from 'next/link';
+import { Alert, Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+
+import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
+import { APP_ROUTES } from '@/constants/routes.constants';
+import { useApiData } from '@/hooks/useApiData';
+import { getSolicitudById } from '@/services/solicitudes.service';
 
 type PageProps = { params: Promise<{ id: string }> };
 
-export default async function AdminSolicitudDetallePage({ params }: PageProps) {
-  const { id } = await params;
-  const solicitud = getAdminSolicitudById(id);
+export default function AdminSolicitudDetallePage({ params }: PageProps) {
+  const { id } = use(params);
+  const { data: solicitud, loading, error } = useApiData(
+    () => getSolicitudById(id),
+    [id],
+    null,
+  );
+
+  if (loading) return <LoadingSpinner />;
+  if (!solicitud) return <Alert severity="error">{error ?? 'Solicitud no encontrada'}</Alert>;
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
@@ -23,8 +36,8 @@ export default async function AdminSolicitudDetallePage({ params }: PageProps) {
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
           {[
-            ['Cliente', solicitud.id_cliente],
-            ['Tecnico', solicitud.id_tecnico ?? 'Sin asignar'],
+            ['Cliente', solicitud.nombre_cliente ?? solicitud.id_cliente],
+            ['Tecnico', solicitud.nombre_tecnico ?? solicitud.id_tecnico ?? 'Sin asignar'],
             ['Servicio', solicitud.id_servicio],
             ['Fecha', new Date(solicitud.fecha_programada ?? solicitud.fecha).toLocaleString('es-CO')],
           ].map(([label, value]) => (

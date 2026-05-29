@@ -3,11 +3,6 @@
 import { useCallback } from "react";
 import { loginRequest } from "../services/auth.service";
 import { useAuthStore } from "../store/authStore";
-import { UserRole } from "../types/user.types";
-
-function isClientRole(role?: string | null) {
-  return role === UserRole.CLIENTE;
-}
 
 export function useAuth() {
   const store = useAuthStore();
@@ -15,11 +10,10 @@ export function useAuth() {
   const login = useCallback(
     async (email: string, password: string) => {
       const res = await loginRequest({ email, password });
-      const currentUser = res.user ?? res.usuario ?? { email };
+      const currentUser = res.user ?? res.usuario;
 
-      if (!isClientRole(currentUser.rol)) {
-        store.logout();
-        throw new Error("Esta interfaz solo permite acceso para clientes.");
+      if (!currentUser) {
+        throw new Error("El backend no devolvio los datos del usuario.");
       }
 
       store.setAuth(res.token, currentUser);

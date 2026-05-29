@@ -1,13 +1,13 @@
 "use client";
 
 import { APP_ROUTES } from '@/constants/routes.constants';
-import type { DashboardServicioMock } from '@/mocks/client-dashboard.mock';
+import type { ServicioListItem } from '@/services/servicios.service';
 import { Box, Button, Card, CardActions, CardContent, Chip } from '@mui/material';
 import { ArrowRight, Clock3, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type ServicioCardProps = {
-	servicio: DashboardServicioMock;
+	servicio: ServicioListItem;
 	compact?: boolean;
 };
 

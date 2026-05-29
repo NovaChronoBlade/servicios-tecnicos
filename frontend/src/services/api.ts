@@ -13,9 +13,11 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  if (authToken) {
+  const token = getAuthToken();
+
+  if (token) {
     config.headers = config.headers ?? {};
-    config.headers.Authorization = `Bearer ${authToken}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
   return config;
@@ -32,7 +34,9 @@ export function setAuthToken(token: string | null) {
         window.localStorage.removeItem("auth.token");
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    // El acceso a storage puede fallar en entornos restringidos del navegador.
+  }
 }
 
 export function getAuthToken() {
@@ -46,7 +50,9 @@ export function getAuthToken() {
         return storedToken;
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    // El acceso a storage puede fallar en entornos restringidos del navegador.
+  }
 
   return null;
 }

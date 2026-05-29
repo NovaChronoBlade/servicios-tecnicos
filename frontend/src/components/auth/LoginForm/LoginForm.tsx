@@ -19,16 +19,23 @@ import { useAuth } from '../../../hooks/useAuth';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useAuthStore } from '@/store/authStore';
 import { getAuthErrorMessage, getAuthFieldErrors } from '@/services/auth.service';
+import { UserRole } from '@/types/user.types';
 
 function getSafeRedirectPath(candidate: string | null): string {
-  if (!candidate) return APP_ROUTES.CLIENT.DASHBOARD;
+  if (!candidate) return '';
   if (!candidate.startsWith('/')) return APP_ROUTES.CLIENT.DASHBOARD;
   return candidate;
 }
 
+function getDashboardByRole(role?: UserRole | string | null) {
+  if (role === UserRole.ADMIN) return APP_ROUTES.ADMIN.DASHBOARD;
+  if (role === UserRole.TECNICO) return APP_ROUTES.TECNICO.DASHBOARD;
+  return APP_ROUTES.CLIENT.DASHBOARD;
+}
+
 export default function LoginForm() {
   const { login } = useAuth();
-  const { isAuthenticated, isHydrated, logout } = useAuthStore();
+  const { isAuthenticated, isHydrated, logout, user } = useAuthStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -56,9 +63,9 @@ export default function LoginForm() {
     }
 
     if (isAuthenticated) {
-      router.replace(redirectTo);
+      router.replace(redirectTo || getDashboardByRole(user?.rol));
     }
-  }, [isAuthenticated, isHydrated, redirectTo, router, searchParams]);
+  }, [isAuthenticated, isHydrated, redirectTo, router, searchParams, user?.rol]);
 
   const validate = () => {
     let valid = true;
@@ -96,9 +103,10 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      await login(email, password);
+      const response = await login(email, password);
+      const role = response.user?.rol ?? response.usuario?.rol;
 
-      router.replace(redirectTo);
+      router.replace(redirectTo || getDashboardByRole(role));
     } catch (err: any) {
       setError(getAuthErrorMessage(err, 'Error al iniciar sesión'));
 

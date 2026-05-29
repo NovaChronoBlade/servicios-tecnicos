@@ -1,14 +1,56 @@
+'use client';
+
+import { use, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Alert, Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+
 import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { getSolicitudDisponibleById } from '@/mocks/tecnico-pages.mock';
-import { Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
-import Link from 'next/link';
+import { useApiData } from '@/hooks/useApiData';
+import { getApiErrorMessage } from '@/services/api-error';
+import {
+  asignarTecnico,
+  getSolicitudById,
+  listSolicitudesPendientesDisponibles,
+} from '@/services/solicitudes.service';
+import { useAuthStore } from '@/store/authStore';
 
 type PageProps = { params: Promise<{ id: string }> };
 
-export default async function SolicitudDisponibleDetallePage({ params }: PageProps) {
-  const { id } = await params;
-  const solicitud = getSolicitudDisponibleById(id);
+export default function SolicitudDisponibleDetallePage({ params }: PageProps) {
+  const { id } = use(params);
+  const router = useRouter();
+  const { user } = useAuthStore();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const { data: solicitud, loading, error } = useApiData(
+    async () => {
+      const disponibles = await listSolicitudesPendientesDisponibles();
+      return disponibles.find((item) => item.id_ss === id) ?? getSolicitudById(id);
+    },
+    [id],
+    null,
+  );
+
+  const handleAccept = async () => {
+    if (!user?.id_usuario) return;
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await asignarTecnico(id, user.id_usuario);
+      router.push(APP_ROUTES.TECNICO.MIS_SOLICITUDES.ROOT);
+    } catch (err) {
+      setSubmitError(getApiErrorMessage(err, 'No se pudo aceptar la solicitud.'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (!solicitud) return <Alert severity="error">{error ?? 'Solicitud no encontrada'}</Alert>;
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
@@ -16,10 +58,11 @@ export default async function SolicitudDisponibleDetallePage({ params }: PagePro
         eyebrow="Detalle pendiente"
         title={solicitud.servicioNombre}
         description={solicitud.direccionResumen}
-        chips={[{ label: solicitud.prioridad }, { label: solicitud.valorEstimado }, { label: `${solicitud.distanciaKm.toFixed(1)} km` }]}
-        actions={<Button component={Link} href={APP_ROUTES.TECNICO.MIS_SOLICITUDES.ROOT} variant="contained">Aceptar solicitud</Button>}
+        chips={[{ label: solicitud.prioridad }, { label: solicitud.valorEstimado }, { label: solicitud.estado }]}
+        actions={<Button onClick={handleAccept} variant="contained" disabled={submitting}>{submitting ? 'Aceptando...' : 'Aceptar solicitud'}</Button>}
       />
       <Divider sx={{ mb: 3 }} />
+      {(error || submitError) ? <Alert severity="error" sx={{ mb: 3 }}>{submitError ?? error}</Alert> : null}
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
           {[

@@ -1,13 +1,13 @@
 "use client";
 
 import { APP_ROUTES } from '@/constants/routes.constants';
-import type { DashboardSolicitudMock } from '@/mocks/client-dashboard.mock';
+import type { SolicitudView } from '@/services/solicitudes.service';
 import { Box, Button, Card, CardActions, CardContent, Chip, Divider } from '@mui/material';
 import { ArrowRight, CalendarClock, MapPin, MessageCircle, UserRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type SolicitudCardProps = {
-	solicitud: DashboardSolicitudMock;
+	solicitud: SolicitudView;
 	compact?: boolean;
 };
 

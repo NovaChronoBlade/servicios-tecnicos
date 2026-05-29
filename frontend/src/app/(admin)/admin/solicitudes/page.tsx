@@ -1,16 +1,26 @@
-import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
-import { APP_ROUTES } from '@/constants/routes.constants';
-import { clientRequestsMock } from '@/mocks/client-pages.mock';
-import { Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+'use client';
+
 import Link from 'next/link';
+import { Alert, Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+
+import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
+import { APP_ROUTES } from '@/constants/routes.constants';
+import { useApiData } from '@/hooks/useApiData';
+import { listSolicitudes } from '@/services/solicitudes.service';
 
 export default function AdminSolicitudesPage() {
+  const { data: solicitudes, loading, error } = useApiData(listSolicitudes, [], []);
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
-      <ClientPageHeader eyebrow="Solicitudes" title="Gestion de solicitudes" description="Seguimiento general de estados, cliente y tecnico asignado." chips={[{ label: `${clientRequestsMock.length} solicitudes` }]} />
+      <ClientPageHeader eyebrow="Solicitudes" title="Gestion de solicitudes" description="Seguimiento general de estados, cliente y tecnico asignado." chips={[{ label: `${solicitudes.length} solicitudes` }]} />
       <Divider sx={{ mb: 3 }} />
+      {error ? <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert> : null}
       <Box sx={{ display: 'grid', gap: 2 }}>
-        {clientRequestsMock.map((solicitud) => (
+        {solicitudes.map((solicitud) => (
           <Paper key={solicitud.id_ss} variant="outlined" sx={{ p: 2.5, borderRadius: 3, display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>{solicitud.servicioNombre}</Typography>

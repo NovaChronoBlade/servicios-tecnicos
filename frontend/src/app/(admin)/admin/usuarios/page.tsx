@@ -1,17 +1,30 @@
-import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
-import { APP_ROUTES } from '@/constants/routes.constants';
-import { adminSummaryMock, adminUsersMock } from '@/mocks/admin-pages.mock';
-import { Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+'use client';
+
 import Link from 'next/link';
+import { Alert, Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+
+import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
+import { APP_ROUTES } from '@/constants/routes.constants';
+import { useApiData } from '@/hooks/useApiData';
+import { listUsuarios } from '@/services/usuarios.service';
+import { UserRole } from '@/types';
 
 export default function AdminUsuariosPage() {
+  const { data: users, loading, error } = useApiData(listUsuarios, [], []);
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
       <ClientPageHeader
         eyebrow="Usuarios"
         title="Gestion de usuarios"
         description="Consulta clientes, tecnicos y administradores registrados."
-        chips={[{ label: `${adminSummaryMock.clientes} clientes` }, { label: `${adminSummaryMock.tecnicos} tecnicos` }]}
+        chips={[
+          { label: `${users.filter((user) => user.rol === UserRole.CLIENTE).length} clientes` },
+          { label: `${users.filter((user) => user.rol === UserRole.TECNICO).length} tecnicos` },
+        ]}
         actions={
           <>
             <Button component={Link} href={APP_ROUTES.ADMIN.USUARIOS.CLIENTES} variant="contained">Clientes</Button>
@@ -20,8 +33,9 @@ export default function AdminUsuariosPage() {
         }
       />
       <Divider sx={{ mb: 3 }} />
+      {error ? <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert> : null}
       <Box sx={{ display: 'grid', gap: 2 }}>
-        {adminUsersMock.map((user) => (
+        {users.map((user) => (
           <Paper key={user.id_usuario} variant="outlined" sx={{ p: 2.5, borderRadius: 3, display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>{user.nombre}</Typography>

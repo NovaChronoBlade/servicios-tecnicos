@@ -1,11 +1,11 @@
 "use client";
 
-import type { TecnicoCalificacionMock } from '@/mocks/tecnico-pages.mock';
+import type { CalificacionListItem } from '@/services/calificaciones.service';
 import { Box, Card, CardContent, Chip, Typography } from '@mui/material';
 import { Star } from 'lucide-react';
 
 type CalificacionCardProps = {
-	calificacion: TecnicoCalificacionMock;
+	calificacion: CalificacionListItem;
 };
 
 export function CalificacionCard({ calificacion }: CalificacionCardProps) {

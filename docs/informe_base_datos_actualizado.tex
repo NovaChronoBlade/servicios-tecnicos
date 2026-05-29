@@ -1,0 +1,507 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[a4paper,top=1.45cm,bottom=1.55cm,left=1.55cm,right=1.55cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{xurl}
+
+\setstretch{1.05}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.18em}
+\setlength{\tabcolsep}{3.6pt}
+\renewcommand{\arraystretch}{1.14}
+\emergencystretch=3em
+
+\definecolor{HeaderBlue}{HTML}{1F4E79}
+\definecolor{LightBlue}{HTML}{EAF2F8}
+\definecolor{RuleGray}{HTML}{B7C9D6}
+\arrayrulecolor{RuleGray}
+
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\newcommand{\tableheader}{\rowcolor{HeaderBlue}\color{white}}
+\newcommand{\code}[1]{\texttt{\scriptsize\detokenize{#1}}}
+\newcommand{\route}[1]{\begingroup\scriptsize\urlstyle{tt}\path{#1}\endgroup}
+\captionsetup{font=small,labelfont=bf}
+\setlist[itemize]{leftmargin=*,nosep}
+\setlist[enumerate]{leftmargin=*,nosep}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\begin{document}
+\pagenumbering{arabic}
+
+\begin{center}
+\IfFileExists{Escudo.png}{\includegraphics[width=0.16\textwidth]{Escudo.png}\\[-0.05cm]}{}
+{\Large\textbf{Plataforma de Servicios a Domicilio}}\\[-0.02cm]
+{\normalsize Informe compacto de base de datos, API y ejecucion del proyecto}\\[0.08cm]
+\rule{\textwidth}{0.5pt}\\[-0.04cm]
+{\small
+\textbf{Autores:} Andres Felipe Ruiz Vasallo -- 20231020146;
+Juan Camilo Mosquera Palomino -- 20241020120;
+Pablo Garzon Gomez -- 20232020341;
+Kevin David Rincon Valencia -- 20232020356;
+Andres David Murillo Castro -- 20222020230\\
+\textbf{Profesor:} Rene Alejandro Lobo Quintero \quad
+\textbf{Asignatura:} Bases de Datos \quad
+\textbf{Universidad Distrital Francisco Jose de Caldas} \quad
+\textbf{Bogota, Junio 2026}
+}
+\rule{\textwidth}{0.5pt}
+\end{center}
+
+\begin{multicols}{2}
+\renewcommand{\contentsname}{Indice}
+\tableofcontents
+\end{multicols}
+
+% ---------------------------------------------------------------------------
+\section{Descripcion del Sistema}
+% ---------------------------------------------------------------------------
+
+El sistema es una API REST construida con NestJS, Prisma y PostgreSQL para conectar clientes que necesitan servicios tecnicos a domicilio con tecnicos calificados. Cubre el flujo completo: autenticacion, gestion de usuarios, direcciones, servicios, solicitudes, pagos, calificaciones y comentarios.
+
+\begin{multicols}{2}
+\textbf{Roles principales}
+\begin{itemize}
+    \item \textbf{Cliente}: solicita servicios, administra direcciones, paga y califica.
+    \item \textbf{Tecnico}: consulta solicitudes disponibles, acepta servicios y recibe calificaciones.
+    \item \textbf{Admin}: administra usuarios, servicios, solicitudes, pagos y categorias.
+\end{itemize}
+
+\columnbreak
+\textbf{Modulos por responsable}
+\begin{itemize}
+    \item \textbf{@persona1}: documentacion Swagger/OpenAPI, README y pruebas.
+    \item \textbf{@persona2}: seguridad, autenticacion e infraestructura.
+    \item \textbf{@persona3}: usuarios y direcciones.
+    \item \textbf{@Persona4}: servicios, solicitudes, pagos, calificaciones y comentarios.
+\end{itemize}
+\end{multicols}
+
+\textbf{Funcionalidades principales}
+\begin{enumerate}
+    \item Registro, login, refresh token, logout e invalidacion del JWT activo.
+    \item CRUD y filtros de usuarios, tecnicos, direcciones, servicios, categorias y comentarios.
+    \item Solicitudes con paginacion, filtros combinados, fecha programada, asignacion, reasignacion, cancelacion con motivo y confirmaciones.
+    \item Pagos con pasarela mock/http, numero de referencia, historial por cliente, estados controlados y reembolsos.
+    \item Calificaciones con validacion de pertenencia, paginacion y ranking de mejores tecnicos.
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\section{Casos de Uso}
+% ---------------------------------------------------------------------------
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{L{0.23\textwidth} L{0.17\textwidth} L{0.52\textwidth}}
+\toprule
+\tableheader\textbf{Caso de uso} & \textbf{Actor} & \textbf{Descripcion} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{Caso de uso} & \textbf{Actor} & \textbf{Descripcion} \\
+\midrule
+\endhead
+Registro y login & Cliente, Tecnico, Admin & El usuario crea cuenta o inicia sesion. El login valida credenciales, cuenta activa y devuelve \code{access_token} y \code{refresh_token}. \\
+Renovar o cerrar sesion & Usuario autenticado & Permite renovar el JWT con \code{/auth/refresh} o invalidar token activo y refresh token con \code{/auth/logout}. \\
+Gestionar usuarios & Admin, Propietario & El admin lista, filtra y desactiva usuarios; el propietario o admin consulta/actualiza el perfil. \\
+Gestionar datos tecnicos & Tecnico, Admin & Crea o actualiza especialidad, licencia, disponibilidad y promedio evitando duplicados. \\
+Gestionar direcciones & Cliente, Admin & CRUD de direcciones, validacion de pertenencia y direccion principal mediante \code{es_default}. \\
+Gestionar servicios y categorias & Admin, Tecnico & CRUD de servicios, busqueda parcial por nombre, paginacion, precio minimo, estado activo e integracion con categorias. \\
+Crear solicitud & Cliente, Admin & El cliente elige servicio, direccion propia y fecha programada; la solicitud queda \code{pendiente}. \\
+Asignar o reasignar tecnico & Tecnico, Admin & Un tecnico puede tomar solicitudes pendientes; el admin puede reasignar solicitudes aceptadas. \\
+Cancelar solicitud & Cliente, Tecnico, Admin & Cancela solicitudes no cerradas registrando \code{motivo_cancelacion}. \\
+Pagar y reembolsar & Cliente, Admin & Registra pago con pasarela, genera referencia y permite transiciones \code{pendiente -> pagado -> reembolsado}. \\
+Calificar y comentar & Cliente, Admin & El cliente califica solicitudes propias, comenta y consulta historial por tecnico, cliente o solicitud. \\
+\bottomrule
+\caption{Casos de uso actualizados segun la rama main}
+\end{longtable}
+\normalsize
+
+% ---------------------------------------------------------------------------
+\section{Modelo Entidad-Relacion}
+% ---------------------------------------------------------------------------
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{Diagrama_ER.png}{%
+        \includegraphics[width=0.78\linewidth]{Diagrama_ER.png}
+    }{%
+        \fbox{\parbox[c][3.1cm][c]{0.78\linewidth}{\centering Diagrama\_ER.png\\Actualizar con usuarios, direcciones, detalles\_tecnicos, categorias\_servicios, servicios, solicitud\_servicios, pagos, calificaciones, comentarios, refresh\_tokens y revoked\_access\_tokens.}}
+    }
+    \caption{Diagrama Entidad-Relacion del sistema}
+\end{figure}
+
+% ---------------------------------------------------------------------------
+\section{Diccionario de Datos}
+% ---------------------------------------------------------------------------
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{L{0.17\textwidth} L{0.58\textwidth} L{0.18\textwidth}}
+\toprule
+\tableheader\textbf{Tabla} & \textbf{Columnas principales} & \textbf{Relaciones y notas} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{Tabla} & \textbf{Columnas principales} & \textbf{Relaciones y notas} \\
+\midrule
+\endhead
+\code{usuarios} &
+\code{id_usuario VARCHAR(50) PK}; \code{documento VARCHAR(20) UNIQUE}; \code{fecha_nacimiento DATE}; \code{nombre VARCHAR(100)}; \code{correo VARCHAR(100) UNIQUE}; \code{contrasena VARCHAR(255)}; \code{telefono VARCHAR(20) UNIQUE}; \code{rol VARCHAR(20)}; \code{activo BOOLEAN DEFAULT TRUE}. &
+Base de clientes, tecnicos y admins. Relaciona direcciones, solicitudes, calificaciones, comentarios y tokens. \\
+\code{detalles_tecnicos} &
+\code{id_usuario VARCHAR(50) PK/FK}; \code{especialidad VARCHAR(100)}; \code{licencia_profesional VARCHAR(50)}; \code{disponible BOOLEAN DEFAULT TRUE}; \code{calificacion_promedio DECIMAL(3,2) DEFAULT 0.0}. &
+Perfil extendido de usuarios con rol tecnico. \\
+\code{direcciones} &
+\code{id_direccion VARCHAR(50) PK}; \code{id_usuario VARCHAR(50) FK}; \code{direccion VARCHAR(200)}; \code{tipo_edificio VARCHAR(50)}; \code{informacion VARCHAR(200) NULL}; \code{nota VARCHAR(200) NULL}; \code{es_default BOOLEAN DEFAULT FALSE}. &
+Cada cliente puede tener varias direcciones; el servicio limpia otras direcciones por defecto cuando una nueva queda como principal. \\
+\code{categorias_servicios} &
+\code{id_categoria VARCHAR(50) PK}; \code{nombre VARCHAR(100) UNIQUE}; \code{descripcion VARCHAR(500) NULL}; \code{activo BOOLEAN DEFAULT TRUE}. &
+Agrupa servicios por tipo. \\
+\code{servicios} &
+\code{id_servicio VARCHAR(50) PK}; \code{nombre VARCHAR(100)}; \code{descripcion VARCHAR(500)}; \code{precio DECIMAL(10,2)}; \code{activo BOOLEAN DEFAULT TRUE}; \code{id_categoria VARCHAR(50) FK NULL}. &
+El precio se valida en DTO con minimo \code{0.01}. La eliminacion logica usa \code{activo=false}. \\
+\code{solicitud_servicios} &
+\code{id_ss VARCHAR(50) PK}; \code{id_cliente VARCHAR(50) FK}; \code{id_tecnico VARCHAR(50) FK NULL}; \code{id_servicio VARCHAR(50) FK}; \code{id_direccion VARCHAR(50) FK}; \code{estado VARCHAR(20) DEFAULT 'pendiente'}; \code{confirmacion_cliente BOOLEAN DEFAULT FALSE}; \code{confirmacion_tecnico BOOLEAN DEFAULT FALSE}; \code{motivo_cancelacion VARCHAR(500) NULL}; \code{fecha TIMESTAMP DEFAULT NOW()}; \code{fecha_programada TIMESTAMP NULL}. &
+Centro del flujo operativo. Estados validos: pendiente, aceptado, en\_curso, completado y cancelado. \\
+\code{pagos} &
+\code{id_pago VARCHAR(50) PK}; \code{id_ss VARCHAR(50) UNIQUE/FK}; \code{monto DECIMAL(10,2)}; \code{metodo_pago VARCHAR(50)}; \code{estado VARCHAR(20)}; \code{numero_referencia VARCHAR(50) UNIQUE NULL}; \code{fecha_pago TIMESTAMP DEFAULT NOW()}. &
+Un pago por solicitud. Estados permitidos por negocio: pendiente, pagado y reembolsado. \\
+\code{calificaciones} &
+\code{id_calificacion VARCHAR(50) PK}; \code{id_tecnico VARCHAR(50) FK}; \code{id_cliente VARCHAR(50) FK}; \code{id_ss VARCHAR(50) FK}; \code{puntuacion INT}; \code{comentario VARCHAR(500) NULL}; \code{fecha_calificacion TIMESTAMP DEFAULT NOW()}. &
+El cliente solo puede calificar solicitudes propias. \\
+\code{comentarios} &
+\code{id_comentario VARCHAR(50) PK}; \code{id_tecnico VARCHAR(50) FK}; \code{id_cliente VARCHAR(50) FK}; \code{id_ss VARCHAR(50) FK}; \code{contenido VARCHAR(500)}; \code{fecha_comentario TIMESTAMP DEFAULT NOW()}. &
+Modulo NestJS completo para CRUD y consulta por solicitud. \\
+\code{refresh_tokens} &
+\code{id_refresh VARCHAR(50) PK}; \code{id_usuario VARCHAR(50) FK}; \code{token_hash VARCHAR(64) UNIQUE}; \code{expires_at TIMESTAMP}; \code{revoked_at TIMESTAMP NULL}; \code{created_at TIMESTAMP DEFAULT NOW()}. &
+Tokens renovables; se guardan hasheados y se revocan al refrescar o cerrar sesion. \\
+\code{revoked_access_tokens} &
+\code{id_jti VARCHAR(50) PK}; \code{id_usuario VARCHAR(50) FK}; \code{expires_at TIMESTAMP}; \code{revoked_at TIMESTAMP DEFAULT NOW()}. &
+Lista negra de JWT activos invalidados por logout. \\
+\bottomrule
+\caption{Diccionario de datos consolidado}
+\end{longtable}
+\normalsize
+
+% ---------------------------------------------------------------------------
+\section{Restricciones y Reglas de Negocio}
+% ---------------------------------------------------------------------------
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{L{0.21\textwidth} L{0.25\textwidth} L{0.46\textwidth}}
+\toprule
+\tableheader\textbf{Ambito} & \textbf{Restriccion} & \textbf{Detalle} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{Ambito} & \textbf{Restriccion} & \textbf{Detalle} \\
+\midrule
+\endhead
+Usuarios & Unicidad & \code{documento}, \code{correo} y \code{telefono} son unicos. \\
+Usuarios & Cuenta activa & El login solo permite usuarios con \code{activo=true}; el borrado es soft delete con \code{activo=false}. \\
+Roles & Acceso por rol & Se usan \code{JwtAuthGuard}, \code{RolesGuard} y roles cliente, tecnico y admin. \\
+Auth & Refresh token & El refresh token se almacena como hash, tiene expiracion y se revoca al usarlo. \\
+Auth & Logout & Invalida el JWT activo por \code{jti} y opcionalmente revoca el refresh token recibido. \\
+Auth & Rate limiting & \code{POST /auth/login} usa \code{@nestjs/throttler} con limites configurables por entorno. \\
+Direcciones & Propiedad & Un cliente solo puede crear, listar, editar o borrar sus propias direcciones; admin puede operar sobre todas. \\
+Direcciones & Principal & Si una direccion se marca \code{es_default=true}, las demas del mismo usuario pasan a \code{false}. \\
+Solicitudes & Direccion propia & Al crear solicitud se verifica que \code{id_direccion} pertenezca al cliente autenticado. \\
+Solicitudes & Estados & Transiciones: pendiente -> aceptado/cancelado; aceptado -> en\_curso/cancelado; en\_curso -> completado/cancelado. \\
+Solicitudes & Cancelacion & Solo propietario, tecnico asignado o admin pueden cancelar; se exige \code{motivo_cancelacion}. \\
+Solicitudes & Reasignacion & Solo admin reasigna y solo cuando la solicitud esta en estado \code{aceptado}. \\
+Servicios & Precio minimo & \code{precio >= 0.01} por DTO; \code{activo=false} desactiva sin borrar. \\
+Pagos & Un pago por solicitud & \code{id_ss} es unico en pagos. No se permite pagar una solicitud ya completada ni registrar doble pago. \\
+Pagos & Maquina de estados & Transiciones permitidas: \code{pendiente -> pagado -> reembolsado}. \\
+Calificaciones & Propiedad & El cliente solo califica solicitudes propias. \code{puntuacion} debe estar en el rango definido por validacion de DTO. \\
+Errores & Filtro global & El filtro HTTP captura errores comunes y \code{PrismaClientKnownRequestError} para respuestas limpias. \\
+\bottomrule
+\caption{Restricciones de base de datos y reglas implementadas en servicios/DTOs}
+\end{longtable}
+\normalsize
+
+% ---------------------------------------------------------------------------
+\section{Llaves Foraneas}
+% ---------------------------------------------------------------------------
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{L{0.34\textwidth} L{0.31\textwidth} C{0.09\textwidth} C{0.09\textwidth}}
+\toprule
+\tableheader\textbf{FK} & \textbf{Referencia} & \textbf{ON DELETE} & \textbf{ON UPDATE} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{FK} & \textbf{Referencia} & \textbf{ON DELETE} & \textbf{ON UPDATE} \\
+\midrule
+\endhead
+\code{direcciones.id_usuario} & \code{usuarios.id_usuario} & CASCADE & CASCADE \\
+\code{detalles_tecnicos.id_usuario} & \code{usuarios.id_usuario} & CASCADE & CASCADE \\
+\code{refresh_tokens.id_usuario} & \code{usuarios.id_usuario} & CASCADE & CASCADE \\
+\code{revoked_access_tokens.id_usuario} & \code{usuarios.id_usuario} & CASCADE & CASCADE \\
+\code{solicitud_servicios.id_cliente} & \code{usuarios.id_usuario} & RESTRICT & CASCADE \\
+\code{solicitud_servicios.id_tecnico} & \code{usuarios.id_usuario} & SET NULL & CASCADE \\
+\code{solicitud_servicios.id_servicio} & \code{servicios.id_servicio} & RESTRICT & CASCADE \\
+\code{solicitud_servicios.id_direccion} & \code{direcciones.id_direccion} & RESTRICT & CASCADE \\
+\code{servicios.id_categoria} & \code{categorias_servicios.id_categoria} & SET NULL & CASCADE \\
+\code{pagos.id_ss} & \code{solicitud_servicios.id_ss} & RESTRICT & CASCADE \\
+\code{calificaciones.id_cliente} & \code{usuarios.id_usuario} & RESTRICT & CASCADE \\
+\code{calificaciones.id_tecnico} & \code{usuarios.id_usuario} & RESTRICT & CASCADE \\
+\code{calificaciones.id_ss} & \code{solicitud_servicios.id_ss} & RESTRICT & CASCADE \\
+\code{comentarios.id_cliente} & \code{usuarios.id_usuario} & RESTRICT & CASCADE \\
+\code{comentarios.id_tecnico} & \code{usuarios.id_usuario} & RESTRICT & CASCADE \\
+\code{comentarios.id_ss} & \code{solicitud_servicios.id_ss} & RESTRICT & CASCADE \\
+\bottomrule
+\caption{Llaves foraneas segun migraciones Prisma}
+\end{longtable}
+\normalsize
+
+% ---------------------------------------------------------------------------
+\section{Endpoints de la API}
+% ---------------------------------------------------------------------------
+
+La documentacion interactiva se expone en \route{/api/docs}. Las rutas protegidas usan \code{Authorization: Bearer <access_token>}.
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{C{0.08\textwidth} L{0.38\textwidth} L{0.36\textwidth} L{0.12\textwidth}}
+\toprule
+\tableheader\textbf{Metodo} & \textbf{URL} & \textbf{Descripcion} & \textbf{Acceso} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{Metodo} & \textbf{URL} & \textbf{Descripcion} & \textbf{Acceso} \\
+\midrule
+\endhead
+GET & \route{/} & Mensaje raiz de la API. & Publica \\
+POST & \route{/auth/register} & Registro de usuario y emision de tokens. & Publica \\
+POST & \route{/auth/login} & Login con limitacion de intentos. & Publica \\
+POST & \route{/auth/refresh} & Renueva JWT usando refresh token. & Publica \\
+POST & \route{/auth/logout} & Invalida JWT activo y refresh token opcional. & JWT \\
+\midrule
+GET & \route{/usuarios?page=&limit=&rol=&activo=} & Lista usuarios con paginacion y filtros. & Admin \\
+GET & \route{/usuarios/tecnicos} & Lista tecnicos con detalles y promedio. & Cliente/Admin \\
+GET & \route{/usuarios/:id} & Obtiene perfil por id. & JWT propio/Admin \\
+PATCH & \route{/usuarios/:id} & Actualiza datos del perfil. & JWT propio/Admin \\
+PATCH & \route{/usuarios/:id/desactivar} & Desactiva usuario con soft delete. & Admin \\
+POST & \route{/usuarios/:id_tecnico/datos-tecnicos} & Crea datos tecnicos evitando duplicados. & Tecnico/Admin \\
+PATCH & \route{/usuarios/:id/detalles-tecnicos} & Actualiza especialidad, licencia o disponibilidad. & Tecnico/Admin \\
+\midrule
+POST & \route{/direcciones} & Crea direccion para cliente. & Cliente/Admin \\
+GET & \route{/direcciones} & Lista direcciones propias o todas si es admin. & Cliente/Admin \\
+GET & \route{/direcciones/usuario/:id_usuario} & Lista direcciones de un usuario. & Propio/Admin \\
+GET & \route{/direcciones/:id} & Obtiene direccion por id. & Propio/Admin \\
+PATCH & \route{/direcciones/:id} & Actualiza direccion y \code{es_default}. & Propio/Admin \\
+DELETE & \route{/direcciones/:id} & Elimina direccion. & Propio/Admin \\
+\midrule
+POST & \route{/servicios} & Crea servicio. & Tecnico/Admin \\
+GET & \route{/servicios?page=&limit=} & Lista servicios paginados. & JWT \\
+POST & \route{/servicios/categorias} & Crea categoria. & Admin \\
+GET & \route{/servicios/categorias} & Lista categorias. & JWT \\
+GET & \route{/servicios/buscar?nombre=} & Busca por nombre parcial. & JWT \\
+GET & \route{/servicios/rango-precio?min=&max=} & Filtra por rango de precio. & JWT \\
+GET & \route{/servicios/:id} & Obtiene servicio por id. & JWT \\
+PATCH & \route{/servicios/:id} & Actualiza servicio. & Admin \\
+DELETE & \route{/servicios/:id} & Desactiva servicio. & Admin \\
+PATCH & \route{/servicios/:id/activar} & Reactiva servicio. & Admin \\
+\midrule
+POST & \route{/solicitudes-servicio} & Crea solicitud con direccion propia y fecha programada. & Cliente/Admin \\
+GET & \route{/solicitudes-servicio?page=&limit=&estado=&id_tecnico=&desde=} & Lista solicitudes con paginacion y filtros. & Admin \\
+GET & \route{/solicitudes-servicio/estado?estado=} & Lista solicitudes por estado. & Admin \\
+GET & \route{/solicitudes-servicio/cliente/:id_cliente} & Solicitudes de cliente. & Cliente/Admin \\
+GET & \route{/solicitudes-servicio/tecnico/:id_tecnico} & Solicitudes de tecnico. & Tecnico/Admin \\
+GET & \route{/solicitudes-servicio/pendientes-disponibles} & Solicitudes pendientes sin tecnico. & Tecnico/Admin \\
+GET & \route{/solicitudes-servicio/:id} & Obtiene solicitud por id. & JWT \\
+PATCH & \route{/solicitudes-servicio/:id/estado} & Actualiza estado respetando transiciones. & Tecnico/Admin \\
+PATCH & \route{/solicitudes-servicio/:id/cancelar} & Cancela con motivo. & Cliente/Tecnico/Admin \\
+PATCH & \route{/solicitudes-servicio/:id/reasignar-tecnico} & Reasigna tecnico. & Admin \\
+PATCH & \route{/solicitudes-servicio/:id/asignar-tecnico/:id_tecnico} & Asigna tecnico y pasa a aceptado. & Tecnico/Admin \\
+PATCH & \route{/solicitudes-servicio/:id/confirmar/cliente} & Confirmacion del cliente. & Cliente \\
+PATCH & \route{/solicitudes-servicio/:id/confirmar/tecnico} & Confirmacion del tecnico. & Tecnico \\
+\midrule
+POST & \route{/pagos} & Crea pago, consulta pasarela y retorna referencia. & Cliente/Admin \\
+GET & \route{/pagos/solicitud/:id_ss} & Lista pagos de una solicitud. & JWT \\
+GET & \route{/pagos/cliente/:id_cliente} & Historial de pagos de cliente. & Cliente/Admin \\
+GET & \route{/pagos/:id} & Obtiene pago por id. & JWT \\
+PATCH & \route{/pagos/:id/estado} & Cambia estado permitido. & Admin \\
+PATCH & \route{/pagos/:id/reembolsar} & Reembolsa pago. & Admin \\
+\midrule
+POST & \route{/comentarios} & Crea comentario. & Cliente/Admin \\
+GET & \route{/comentarios} & Lista comentarios. & JWT \\
+GET & \route{/comentarios/solicitud/:id_ss} & Lista comentarios por solicitud. & JWT \\
+GET & \route{/comentarios/:id} & Obtiene comentario por id. & JWT \\
+PATCH & \route{/comentarios/:id} & Actualiza comentario. & Cliente/Admin \\
+DELETE & \route{/comentarios/:id} & Elimina comentario. & Admin \\
+\midrule
+POST & \route{/calificaciones} & Crea calificacion de solicitud propia. & Cliente/Admin \\
+GET & \route{/calificaciones/top-tecnicos} & Ranking de tecnicos por promedio. & JWT \\
+GET & \route{/calificaciones/tecnico/:id_tecnico?page=&limit=} & Calificaciones por tecnico. & JWT \\
+GET & \route{/calificaciones/tecnico/:id_tecnico/promedio} & Promedio de tecnico. & JWT \\
+GET & \route{/calificaciones/cliente/:id_cliente?page=&limit=} & Calificaciones emitidas por cliente. & JWT \\
+GET & \route{/calificaciones/:id} & Obtiene calificacion por id. & JWT \\
+\bottomrule
+\caption{Endpoints actuales del backend}
+\end{longtable}
+\normalsize
+
+% ---------------------------------------------------------------------------
+\section{Infraestructura, Seguridad y Calidad}
+% ---------------------------------------------------------------------------
+
+\begin{multicols}{2}
+\textbf{Documentacion de API}
+\begin{itemize}
+    \item Swagger/OpenAPI instalado con \code{@nestjs/swagger}.
+    \item DTOs y controladores decorados con \code{@ApiProperty}, \code{@ApiOperation}, \code{@ApiTags} y respuestas.
+    \item UI disponible en \route{/api/docs}.
+\end{itemize}
+
+\textbf{Seguridad}
+\begin{itemize}
+    \item JWT con \code{access_token}, \code{refresh_token} y \code{jti}.
+    \item Logout con lista negra en \code{revoked_access_tokens}.
+    \item Login protegido por rate limiting.
+    \item CORS configurable desde \code{CORS_ORIGINS}.
+\end{itemize}
+
+\textbf{Calidad}
+\begin{itemize}
+    \item Configuracion tipada con \code{@nestjs/config} y Joi.
+    \item Logger estructurado con Pino/NestJS Pino.
+    \item Filtro global para errores HTTP y errores conocidos de Prisma.
+    \item Jest con umbral global minimo de cobertura del 70\%.
+\end{itemize}
+
+\textbf{Testing}
+\begin{itemize}
+    \item Pruebas unitarias en archivos \code{*.spec.ts}.
+    \item Mock reutilizable en \code{src/common/testing/prisma-service.mock.ts}.
+    \item Pruebas e2e con Supertest en \code{test/app.e2e-spec.ts}.
+    \item Comandos: \code{npm.cmd test}, \code{npm.cmd run test:e2e}, \code{npm.cmd run test:cov}.
+\end{itemize}
+\end{multicols}
+
+% ---------------------------------------------------------------------------
+\section{Variables de Entorno}
+% ---------------------------------------------------------------------------
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{L{0.32\textwidth} L{0.58\textwidth}}
+\toprule
+\tableheader\textbf{Variable} & \textbf{Uso} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{Variable} & \textbf{Uso} \\
+\midrule
+\endhead
+\code{DATABASE_URL} & Conexion PostgreSQL usada por Prisma. \\
+\code{JWT_SECRET} & Secreto para firmar JWT. \\
+\code{JWT_ACCESS_EXPIRES_IN} & Duracion del access token, por ejemplo \code{1h}. \\
+\code{JWT_REFRESH_EXPIRES_IN_DAYS} & Dias de vigencia del refresh token. \\
+\code{CORS_ORIGINS} & Origenes permitidos separados por coma. \\
+\code{PORT} & Puerto de la API, por defecto \code{3000}. \\
+\code{LOG_LEVEL} & Nivel de logs Pino: fatal, error, warn, info, debug, trace o silent. \\
+\code{LOGIN_THROTTLE_TTL} & Ventana de tiempo para limitar login. \\
+\code{LOGIN_THROTTLE_LIMIT} & Maximo de intentos en la ventana de login. \\
+\code{PAYMENT_GATEWAY_MODE} & \code{mock} para local o \code{http} para pasarela externa. \\
+\code{PAYMENT_GATEWAY_URL} & URL del proveedor cuando el modo es \code{http}. \\
+\code{PAYMENT_GATEWAY_API_KEY} & API key opcional para autenticar con la pasarela. \\
+\code{PAYMENT_GATEWAY_TIMEOUT_MS} & Timeout de la llamada HTTP a la pasarela. \\
+\bottomrule
+\caption{Variables usadas por el backend y la pasarela}
+\end{longtable}
+\normalsize
+
+Ejemplo minimo de \code{.env}:
+\begin{verbatim}
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/servicioTecnico?schema=public"
+JWT_SECRET="cambia-este-secreto"
+JWT_ACCESS_EXPIRES_IN="1h"
+JWT_REFRESH_EXPIRES_IN_DAYS=7
+CORS_ORIGINS="http://localhost:3000,http://localhost:3001,http://localhost:3002"
+PORT=3000
+LOG_LEVEL="info"
+LOGIN_THROTTLE_TTL=60000
+LOGIN_THROTTLE_LIMIT=5
+PAYMENT_GATEWAY_MODE=mock
+PAYMENT_GATEWAY_URL=
+PAYMENT_GATEWAY_API_KEY=
+PAYMENT_GATEWAY_TIMEOUT_MS=10000
+\end{verbatim}
+
+% ---------------------------------------------------------------------------
+\section{Migraciones y Ejecucion}
+% ---------------------------------------------------------------------------
+
+\rowcolors{2}{LightBlue}{white}
+\scriptsize
+\begin{longtable}{L{0.34\textwidth} L{0.56\textwidth}}
+\toprule
+\tableheader\textbf{Migracion} & \textbf{Cambios principales} \\
+\midrule
+\endfirsthead
+\toprule
+\tableheader\textbf{Migracion} & \textbf{Cambios principales} \\
+\midrule
+\endhead
+\code{20260526020319_inicializar_bd} & Crea tablas base: usuarios, direcciones, detalles tecnicos, servicios, solicitudes, pagos, calificaciones y comentarios. \\
+\code{20260528022243_add_es_default_to_direcciones} & Agrega \code{direcciones.es_default BOOLEAN NOT NULL DEFAULT false}. \\
+\code{20260528033000_add_auth_tokens} & Crea \code{refresh_tokens} y \code{revoked_access_tokens}. \\
+\code{20260528043000_persona4_service_payments} & Agrega categorias de servicios, \code{servicios.activo}, \code{servicios.id_categoria}, \code{pagos.numero_referencia}, \code{solicitud_servicios.motivo_cancelacion} y \code{fecha_programada}. \\
+\bottomrule
+\caption{Migraciones Prisma relevantes}
+\end{longtable}
+\normalsize
+
+\textbf{Como correr el proyecto en PowerShell}
+\begin{verbatim}
+cd "D:\THE PC MASTER RACE\Escritorio\ServiciosTecnicosProyecto\servicios-tecnicos"
+npm.cmd install
+npx.cmd prisma migrate deploy
+npx.cmd prisma generate
+npm.cmd run start:dev
+\end{verbatim}
+
+La API queda en \route{http://localhost:3000} y Swagger en \route{http://localhost:3000/api/docs}.
+
+\textbf{Comandos de verificacion}
+\begin{verbatim}
+npm.cmd run format
+npm.cmd run build
+npm.cmd test
+npm.cmd run test:e2e
+npm.cmd run test:cov
+\end{verbatim}
+
+\textbf{Notas de operacion}
+\begin{itemize}
+    \item Para levantar PostgreSQL con Docker, usar \code{docker compose up -d} si el entorno tiene Docker disponible.
+    \item Despues de cambiar \code{schema.prisma}, ejecutar migracion y \code{npx.cmd prisma generate}.
+    \item Para validar manualmente endpoints, iniciar sesion, copiar \code{access_token} y usar Swagger con \code{Authorize}.
+\end{itemize}
+
+\end{document}
