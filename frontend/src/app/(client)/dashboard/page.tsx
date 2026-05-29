@@ -32,9 +32,7 @@ import { useAuthStore } from '@/store/authStore';
 
 import { dashboardMock, dashboardSummary } from '@/mocks/client-dashboard.mock';
 
-import { DashboardFooter } from '@/components/common/Footer/DashboardFooter';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
-import { NavbarCliente } from '@/components/common/Navbar/NavbarCliente';
 
 import { ServicioCard } from '@/components/cliente/ServicioCard/ServicioCard';
 import { SolicitudCard } from '@/components/cliente/SolicitudCard/SolicitudCard';
@@ -70,6 +68,7 @@ const quickStats = [
   },
 ];
 
+
 export default function ClienteDashboardPage() {
   const { user, isHydrated } = useAuthStore();
 
@@ -82,35 +81,7 @@ export default function ClienteDashboardPage() {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-
-        background: `linear-gradient(
-          180deg,
-          ${alpha(theme.palette.background.default, 0.96)} 0%,
-          ${theme.palette.background.paper} 100%
-        )`,
-      }}
-    >
-      <NavbarCliente />
-
-      <Box
-        component="main"
-        sx={{
-          flex: 1,
-          px: { xs: 2, md: 4 },
-          py: { xs: 3, md: 5 },
-        }}
-      >
-        <Box
-          sx={{
-            maxWidth: 1440,
-            mx: 'auto',
-          }}
-        >
+    <Box sx={{ maxWidth: 1440, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 } }}>
           <Grid container spacing={3}>
             {/* HERO */}
             <Grid size={12}>
@@ -529,10 +500,6 @@ export default function ClienteDashboardPage() {
               </Paper>
             </Grid>
           </Grid>
-        </Box>
-      </Box>
-
-      <DashboardFooter />
     </Box>
   );
 }

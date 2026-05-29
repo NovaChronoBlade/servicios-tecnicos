@@ -7,7 +7,7 @@ import { UserRole } from "@/types/user.types";
 export function useUserRole() {
 	const { user, isHydrated } = useAuthStore();
 
-	const role = user?.rol ?? user?.role ?? null;
+	const role = user?.rol ?? null;
 
 	return useMemo(
 		() => ({

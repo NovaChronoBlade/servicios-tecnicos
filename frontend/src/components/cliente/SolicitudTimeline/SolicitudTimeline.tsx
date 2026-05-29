@@ -3,10 +3,12 @@
 import type { SolicitudEstado } from '@/types';
 
 import {
+  alpha,
   Box,
   Chip,
   Paper,
   Step,
+  StepContent,
   StepConnector,
   stepConnectorClasses,
   StepLabel,
@@ -80,7 +82,7 @@ export function SolicitudTimeline({
     <Paper
       variant="outlined"
       sx={{
-        p: 3,
+        p: { xs: 2.5, md: 3 },
         borderRadius: 4,
         borderColor: 'divider',
       }}
@@ -139,11 +141,16 @@ export function SolicitudTimeline({
 
                 borderLeftWidth: 2,
 
-                minHeight: 24,
+                minHeight: 30,
               },
             }}
           />
         }
+        sx={{
+          '& .MuiStep-root': {
+            pb: 1.75,
+          },
+        }}
       >
         {steps.map((step, index) => {
           const Icon = step.icon;
@@ -187,7 +194,35 @@ export function SolicitudTimeline({
                     </Box>
                   ),
                 }}
-              ></StepLabel>
+                sx={{
+                  '& .MuiStepLabel-labelContainer': {
+                    pl: 1,
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    bgcolor: active || completed ? alpha('#2563eb', 0.08) : 'transparent',
+                    border: '1px solid',
+                    borderColor: active || completed ? alpha('#2563eb', 0.22) : 'divider',
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                    {step.label}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {step.description}
+                  </Typography>
+                </Box>
+              </StepLabel>
+
+              <StepContent sx={{ ml: 1.5, borderLeftColor: 'divider' }}>
+                <Typography variant="caption" color="text.secondary">
+                  Estado {index + 1} de {steps.length}
+                </Typography>
+              </StepContent>
             </Step>
           );
         })}

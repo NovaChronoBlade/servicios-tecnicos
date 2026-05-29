@@ -60,6 +60,7 @@ export const APP_ROUTES = {
     },
 
     CALIFICACIONES: {
+      ROOT:   '/calificaciones',
       DETAIL: (id?: string) => id ? `/calificaciones/${id}` : '/calificaciones/:id',
     },
 

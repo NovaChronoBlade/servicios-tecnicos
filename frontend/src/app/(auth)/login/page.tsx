@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -75,7 +76,9 @@ export default function LoginPage() {
                 Inicia sesión en tu cuenta para continuar.
               </Typography>
 
-              <LoginForm />
+              <Suspense fallback={null}>
+                <LoginForm />
+              </Suspense>
             </Box>
           </Grid>
         </Grid>

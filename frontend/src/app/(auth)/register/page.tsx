@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -76,7 +77,9 @@ export default function RegisterPage() {
                 backend.
               </Typography>
 
-              <RegisterForm />
+              <Suspense fallback={null}>
+                <RegisterForm />
+              </Suspense>
             </Box>
           </Grid>
         </Grid>

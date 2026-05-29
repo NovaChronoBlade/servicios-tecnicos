@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AuthGuard } from '@/components/common/ProtectedRoute/ProtectedRoute';
-import { UserRole } from '@/types/user.types';
+import { ClientLayoutFrame } from '@/components/common/ClientLayout/ClientLayoutFrame';
 
 export default function ClientLayout({
   children,
@@ -10,5 +9,5 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   // return <AuthGuard allowedRoles={[UserRole.CLIENTE]}>{children}</AuthGuard>;
-  return children;
+  return <ClientLayoutFrame>{children}</ClientLayoutFrame>;
 }
