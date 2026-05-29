@@ -1,0 +1,288 @@
+servicios-tecnicos-frontend/
+├── public/
+│   ├── icons/
+│   ├── images/
+│   └── fonts/
+│
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx                 # Layout principal con ThemeProvider
+│   │   ├── page.tsx                   # Landing page
+│   │   ├── globals.css                # Reset de estilos globales
+│   │   ├── (auth)/                    # Grupo de rutas autenticación
+│   │   │   ├── login/
+│   │   │   │   └── page.tsx
+│   │   │   ├── register/
+│   │   │   │   └── page.tsx
+│   │   │   └── recover-password/
+│   │   │       └── page.tsx
+│   │   │
+│   │   ├── (client)/                  # Rutas del cliente
+│   │   │   ├── layout.tsx             # Layout con navbar cliente
+│   │   │   ├── dashboard/
+│   │   │   │   └── page.tsx
+│   │   │   ├── solicitar-servicio/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── page.tsx       # Detalles de solicitud
+│   │   │   │   └── success/
+│   │   │   │       └── page.tsx
+│   │   │   ├── mis-solicitudes/
+│   │   │   │   └── page.tsx
+│   │   │   ├── servicios/
+│   │   │   │   ├── page.tsx           # Catálogo de servicios
+│   │   │   │   └── [id]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── direcciones/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [id]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── pagos/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [id]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── calificaciones/
+│   │   │   │   └── [id]/
+│   │   │   │       └── page.tsx
+│   │   │   └── perfil/
+│   │   │       ├── page.tsx
+│   │   │       └── editar/
+│   │   │           └── page.tsx
+│   │   │
+│   │   ├── (tecnico)/                 # Rutas del técnico
+│   │   │   ├── layout.tsx             # Layout con navbar técnico
+│   │   │   ├── dashboard/
+│   │   │   │   └── page.tsx
+│   │   │   ├── solicitudes-disponibles/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [id]/
+│   │   │   │       └── page.tsx       # Detalles para aceptar
+│   │   │   ├── mis-solicitudes/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [id]/
+│   │   │   │       ├── page.tsx
+│   │   │   │       └── completar/
+│   │   │   │           └── page.tsx
+│   │   │   ├── datos-tecnicos/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── editar/
+│   │   │   │       └── page.tsx
+│   │   │   ├── disponibilidad/
+│   │   │   │   └── page.tsx
+│   │   │   ├── calificaciones/
+│   │   │   │   └── page.tsx
+│   │   │   └── perfil/
+│   │   │       └── page.tsx
+│   │   │
+│   │   └── (admin)/                   # Rutas del administrador
+│   │       ├── layout.tsx             # Layout con sidebar admin
+│   │       ├── dashboard/
+│   │       │   └── page.tsx
+│   │       ├── usuarios/
+│   │       │   ├── page.tsx
+│   │       │   ├── clientes/
+│   │       │   │   └── page.tsx
+│   │       │   ├── tecnicos/
+│   │       │   │   └── page.tsx
+│   │       │   └── [id]/
+│   │       │       ├── page.tsx
+│   │       │       └── editar/
+│   │       │           └── page.tsx
+│   │       ├── servicios/
+│   │       │   ├── page.tsx
+│   │       │   ├── crear/
+│   │       │   │   └── page.tsx
+│   │       │   ├── categorias/
+│   │       │   │   └── page.tsx
+│   │       │   └── [id]/
+│   │       │       ├── page.tsx
+│   │       │       └── editar/
+│   │       │           └── page.tsx
+│   │       ├── solicitudes/
+│   │       │   ├── page.tsx
+│   │       │   └── [id]/
+│   │       │       ├── page.tsx
+│   │       │       └── asignar-tecnico/
+│   │       │           └── page.tsx
+│   │       ├── pagos/
+│   │       │   └── page.tsx
+│   │       ├── reportes/
+│   │       │   ├── page.tsx
+│   │       │   ├── ingresos/
+│   │       │   │   └── page.tsx
+│   │       │   └── solicitudes/
+│   │       │       └── page.tsx
+│   │       ├── administracion/
+│   │       │   ├── configuracion/
+│   │       │   │   └── page.tsx
+│   │       │   └── auditoria/
+│   │       │       └── page.tsx
+│   │       └── calificaciones/
+│   │           └── page.tsx
+│   │
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Navbar/
+│   │   │   │   ├── Navbar.tsx
+│   │   │   │   ├── NavbarCliente.tsx
+│   │   │   │   ├── NavbarTecnico.tsx
+│   │   │   │   └── NavbarAdmin.tsx
+│   │   │   ├── Sidebar/
+│   │   │   │   └── Sidebar.tsx
+│   │   │   ├── Footer/
+│   │   │   │   └── Footer.tsx
+│   │   │   ├── LoadingSpinner/
+│   │   │   │   └── LoadingSpinner.tsx
+│   │   │   └── ProtectedRoute/
+│   │   │       └── ProtectedRoute.tsx
+│   │   │
+│   │   ├── auth/
+│   │   │   ├── LoginForm/
+│   │   │   │   └── LoginForm.tsx
+│   │   │   ├── RegisterForm/
+│   │   │   │   └── RegisterForm.tsx
+│   │   │   └── RecoverPasswordForm/
+│   │   │       └── RecoverPasswordForm.tsx
+│   │   │
+│   │   ├── cliente/
+│   │   │   ├── SolicitudCard/
+│   │   │   │   └── SolicitudCard.tsx
+│   │   │   ├── ServicioCard/
+│   │   │   │   └── ServicioCard.tsx
+│   │   │   ├── SolicitudForm/
+│   │   │   │   └── SolicitudForm.tsx
+│   │   │   ├── DireccionForm/
+│   │   │   │   └── DireccionForm.tsx
+│   │   │   ├── CalificacionForm/
+│   │   │   │   └── CalificacionForm.tsx
+│   │   │   ├── PagoForm/
+│   │   │   │   └── PagoForm.tsx
+│   │   │   └── SolicitudTimeline/
+│   │   │       └── SolicitudTimeline.tsx
+│   │   │
+│   │   ├── tecnico/
+│   │   │   ├── SolicitudDisponibleCard/
+│   │   │   │   └── SolicitudDisponibleCard.tsx
+│   │   │   ├── DatosTecnicosForm/
+│   │   │   │   └── DatosTecnicosForm.tsx
+│   │   │   ├── DisponibilidadForm/
+│   │   │   │   └── DisponibilidadForm.tsx
+│   │   │   ├── CompletarServicioForm/
+│   │   │   │   └── CompletarServicioForm.tsx
+│   │   │   └── CalificacionCard/
+│   │   │       └── CalificacionCard.tsx
+│   │   │
+│   │   ├── admin/
+│   │   │   ├── UsersTable/
+│   │   │   │   └── UsersTable.tsx
+│   │   │   ├── ServiciosTable/
+│   │   │   │   └── ServiciosTable.tsx
+│   │   │   ├── SolicitudesTable/
+│   │   │   │   └── SolicitudesTable.tsx
+│   │   │   ├── PagosTable/
+│   │   │   │   └── PagosTable.tsx
+│   │   │   ├── AsignarTecnicoModal/
+│   │   │   │   └── AsignarTecnicoModal.tsx
+│   │   │   ├── ReportesChart/
+│   │   │   │   └── ReportesChart.tsx
+│   │   │   ├── EstadisticasCard/
+│   │   │   │   └── EstadisticasCard.tsx
+│   │   │   └── ConfiguracionForm/
+│   │   │       └── ConfiguracionForm.tsx
+│   │   │
+│   │   └── shared/
+│   │       ├── Modal/
+│   │       │   └── Modal.tsx
+│   │       ├── Button/
+│   │       │   └── Button.tsx
+│   │       ├── Card/
+│   │       │   └── Card.tsx
+│   │       ├── Dialog/
+│   │       │   └── Dialog.tsx
+│   │       ├── DataTable/
+│   │       │   └── DataTable.tsx
+│   │       ├── SearchBar/
+│   │       │   └── SearchBar.tsx
+│   │       ├── Filter/
+│   │       │   └── Filter.tsx
+│   │       ├── Pagination/
+│   │       │   └── Pagination.tsx
+│   │       ├── Toast/
+│   │       │   └── Toast.tsx
+│   │       └── Avatar/
+│   │           └── Avatar.tsx
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.ts                 # Hook para autenticación
+│   │   ├── useFetch.ts                # Hook para peticiones HTTP
+│   │   ├── useForm.ts                 # Hook para manejo de formularios
+│   │   ├── useLocalStorage.ts         # Hook para localStorage
+│   │   ├── useDebounce.ts             # Hook para debounce
+│   │   ├── useModal.ts                # Hook para modal state
+│   │   ├── useClientData.ts           # Hook para datos cliente
+│   │   ├── useTecnicoData.ts          # Hook para datos técnico
+│   │   └── useUserRole.ts             # Hook para verificar rol
+│   │
+│   ├── services/
+│   │   ├── api.ts                     # Configuración de axios/fetch
+│   │   ├── auth.service.ts            # Servicios de autenticación
+│   │   ├── usuario.service.ts         # Servicios de usuarios
+│   │   ├── direccion.service.ts       # Servicios de direcciones
+│   │   ├── servicio.service.ts        # Servicios técnicos
+│   │   ├── solicitud.service.ts       # Servicios de solicitudes
+│   │   ├── pago.service.ts            # Servicios de pagos
+│   │   ├── calificacion.service.ts    # Servicios de calificaciones
+│   │   ├── cliente.service.ts         # Servicios específicos cliente
+│   │   ├── tecnico.service.ts         # Servicios específicos técnico
+│   │   └── admin.service.ts           # Servicios específicos admin
+│   │
+│   ├── store/                         # Context API o Zustand
+│   │   ├── authStore.ts               # Estado de autenticación
+│   │   ├── userStore.ts               # Estado de usuario
+│   │   ├── solicitudStore.ts          # Estado de solicitudes
+│   │   ├── filterStore.ts             # Estado de filtros
+│   │   └── notificationStore.ts       # Estado de notificaciones
+│   │
+│   ├── types/
+│   │   ├── index.ts                   # Exporta todos los tipos
+│   │   ├── auth.types.ts              # Tipos de autenticación
+│   │   ├── user.types.ts              # Tipos de usuario
+│   │   ├── direccion.types.ts         # Tipos de dirección
+│   │   ├── servicio.types.ts          # Tipos de servicio
+│   │   ├── solicitud.types.ts         # Tipos de solicitud
+│   │   ├── pago.types.ts              # Tipos de pago
+│   │   ├── calificacion.types.ts      # Tipos de calificación
+│   │   └── api.types.ts               # Tipos de respuestas API
+│   │
+│   ├── utils/
+│   │   ├── constants.ts               # Constantes globales
+│   │   ├── validators.ts              # Funciones de validación
+│   │   ├── formatters.ts              # Funciones de formateo
+│   │   ├── helpers.ts                 # Funciones helper generales
+│   │   ├── dates.ts                   # Utilidades de fechas
+│   │   └── storage.ts                 # Utilidades de localStorage
+│   │
+│   ├── middleware/
+│   │   ├── auth.middleware.ts         # Middleware de autenticación
+│   │   └── logging.middleware.ts      # Middleware de logging
+│   │
+│   ├── theme/
+│   │   ├── index.ts                   # Exporta theme y componentes
+│   │   ├── palettes.ts                # Configuración de colores y paletas
+│   │   └── ThemeProvider.tsx          # Proveedor de tema personalizado
+│   │
+│   ├── config/
+│   │   ├── env.ts                     # Variables de entorno
+│   │   └── api.config.ts              # Configuración de API
+│   │
+│   └── lib/
+│       └── axiosInstance.ts           # Instancia de axios configurada
+│
+├── .env.local                         # Variables de entorno locales
+├── .env.example                       # Ejemplo de variables de entorno
+├── .gitignore
+├── package.json
+├── tsconfig.json
+├── next.config.js
+├── README.md
+└── .eslintrc.json
