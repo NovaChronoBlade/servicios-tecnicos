@@ -72,29 +72,29 @@ export const APP_ROUTES = {
 
   // ── Técnico ───────────────────────────────────────────
   TECNICO: {
-    DASHBOARD: '/dashboard',
+    DASHBOARD: '/tecnico/dashboard',
 
     SOLICITUDES_DISPONIBLES: {
-      ROOT:   '/solicitudes-disponibles',
-      DETAIL: (id?: string) => id ? `/solicitudes-disponibles/${id}` : '/solicitudes-disponibles/:id',
+      ROOT:   '/tecnico/solicitudes-disponibles',
+      DETAIL: (id?: string) => id ? `/tecnico/solicitudes-disponibles/${id}` : '/tecnico/solicitudes-disponibles/:id',
     },
 
     MIS_SOLICITUDES: {
-      ROOT:      '/mis-solicitudes',
-      DETAIL:    (id?: string) => id ? `/mis-solicitudes/${id}` : '/mis-solicitudes/:id',
-      COMPLETAR: (id?: string) => id ? `/mis-solicitudes/${id}/completar` : '/mis-solicitudes/:id/completar',
+      ROOT:      '/tecnico/mis-solicitudes',
+      DETAIL:    (id?: string) => id ? `/tecnico/mis-solicitudes/${id}` : '/tecnico/mis-solicitudes/:id',
+      COMPLETAR: (id?: string) => id ? `/tecnico/mis-solicitudes/${id}/completar` : '/tecnico/mis-solicitudes/:id/completar',
     },
 
     DATOS_TECNICOS: {
-      ROOT:   '/datos-tecnicos',
-      EDITAR: '/datos-tecnicos/editar',
+      ROOT:   '/tecnico/datos-tecnicos',
+      EDITAR: '/tecnico/datos-tecnicos/editar',
     },
 
-    DISPONIBILIDAD: '/disponibilidad',
-    CALIFICACIONES: '/calificaciones',
+    DISPONIBILIDAD: '/tecnico/disponibilidad',
+    CALIFICACIONES: '/tecnico/calificaciones',
 
     PERFIL: {
-      ROOT: '/perfil',
+      ROOT: '/tecnico/perfil',
     },
   },
 
