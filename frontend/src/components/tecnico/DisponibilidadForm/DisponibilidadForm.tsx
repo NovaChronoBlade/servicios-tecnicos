@@ -17,7 +17,7 @@ type DisponibilidadFormProps = {
 	onCancel?: () => void;
 };
 
-const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
 
 export function DisponibilidadForm({ initialValues, onSubmit, onCancel }: DisponibilidadFormProps) {
 	const [dia, setDia] = useState(initialValues.dia);
@@ -29,7 +29,7 @@ export function DisponibilidadForm({ initialValues, onSubmit, onCancel }: Dispon
 	return (
 		<Box component="form" onSubmit={(event) => { event.preventDefault(); onSubmit({ dia, inicio, fin, activa, nota: nota.trim() || undefined }); }} sx={{ display: 'grid', gap: 2 }}>
 			<Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3 }}>
-				<TextField select label="Día" value={dia} onChange={(event) => setDia(event.target.value)} fullWidth>
+				<TextField select label="Dia" value={dia} onChange={(event) => setDia(event.target.value)} fullWidth>
 					{dias.map((option) => <MenuItem key={option} value={option}>{option}</MenuItem>)}
 				</TextField>
 			</Paper>

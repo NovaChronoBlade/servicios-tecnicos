@@ -43,6 +43,22 @@ model detalles_tecnicos {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model disponibilidad_tecnicos {
+  id_disponibilidad String   @id @db.VarChar(50)
+  id_tecnico        String   @db.VarChar(50)
+  dia_semana        Int
+  hora_inicio       DateTime @db.Time(6)
+  hora_fin          DateTime @db.Time(6)
+  activo            Boolean  @default(true)
+  nota              String?  @db.VarChar(200)
+  created_at        DateTime @default(now()) @db.Timestamp(6)
+  updated_at        DateTime @default(now()) @db.Timestamp(6)
+  usuarios          usuarios @relation(fields: [id_tecnico], references: [id_usuario], onDelete: Cascade, map: "fk_disponibilidad_tecnico")
+
+  @@unique([id_tecnico, dia_semana, hora_inicio, hora_fin], map: "disponibilidad_tecnicos_bloque_key")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model direcciones {
   id_direccion        String                @id @db.VarChar(50)
   id_usuario          String                @db.VarChar(50)
@@ -125,6 +141,7 @@ model usuarios {
   comentarios_comentarios_id_clienteTousuarios                 comentarios[]         @relation("comentarios_id_clienteTousuarios")
   comentarios_comentarios_id_tecnicoTousuarios                 comentarios[]         @relation("comentarios_id_tecnicoTousuarios")
   detalles_tecnicos                                            detalles_tecnicos?
+  disponibilidad_tecnicos                                      disponibilidad_tecnicos[]
   direcciones                                                  direcciones[]
   refresh_tokens                                               refresh_tokens[]
   revoked_access_tokens                                        revoked_access_tokens[]

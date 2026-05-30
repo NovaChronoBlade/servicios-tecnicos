@@ -73,6 +73,12 @@ export const DIRECCIONES_ENDPOINTS = {
   DELETE:     (id: string) => `/direcciones/${id}`,                   // DELETE
 } as const;
 
+export const DISPONIBILIDAD_ENDPOINTS = {
+  MINE:       '/disponibilidad/me',                          // GET/POST
+  BY_TECNICO: (id: string) => `/disponibilidad/tecnico/${id}`, // GET/POST
+  DETAIL:     (id: string) => `/disponibilidad/${id}`,        // PATCH/DELETE
+} as const;
+
 // ── Pagos ─────────────────────────────────────────────────
 export const PAGOS_ENDPOINTS = {
   CREATE:        '/pagos',                                             // POST
