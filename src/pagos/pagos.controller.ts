@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -40,6 +41,15 @@ export class PagosController {
   @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
   create(@Body() createPagoDto: CreatePagoDto, @Request() req) {
     return this.pagosService.createPago(createPagoDto, req.user.userId);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Listar pagos para administradores' })
+  @ApiResponse({ status: 200, description: 'Pagos encontrados' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.ADMIN)
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.pagosService.findAll({ page, limit });
   }
 
   @Get('solicitud/:id_ss')

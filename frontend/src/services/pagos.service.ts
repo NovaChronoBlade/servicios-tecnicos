@@ -28,6 +28,14 @@ export async function createPago(payload: CreatePagoRequest) {
   return normalizePago(data);
 }
 
+export async function listPagos() {
+  const { data } = await api.get<{ data?: PagoListItem[] } | PagoListItem[]>(
+    PAGOS_ENDPOINTS.LIST,
+  );
+  const pagos = Array.isArray(data) ? data : (data.data ?? []);
+  return pagos.map(normalizePago);
+}
+
 export async function listPagosBySolicitud(idSolicitud: string) {
   const { data } = await api.get<PagoListItem[]>(
     PAGOS_ENDPOINTS.BY_SOLICITUD(idSolicitud),

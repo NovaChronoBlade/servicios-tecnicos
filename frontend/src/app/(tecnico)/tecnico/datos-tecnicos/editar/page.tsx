@@ -10,9 +10,9 @@ import { DatosTecnicosForm, type DatosTecnicosFormValues } from '@/components/te
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useApiData } from '@/hooks/useApiData';
 import { getApiErrorMessage } from '@/services/api-error';
-import { getPromedioTecnico } from '@/services/calificaciones.service';
 import {
   createDetallesTecnicos,
+  getMisDetallesTecnicos,
   updateDetallesTecnicos,
 } from '@/services/usuarios.service';
 import { useAuthStore } from '@/store/authStore';
@@ -23,18 +23,18 @@ export default function EditarDatosTecnicosPage() {
   const [saved, setSaved] = useState(false);
   const [savingError, setSavingError] = useState<string | null>(null);
 
-  const { data: promedio, loading } = useApiData(
-    () => (user?.id_usuario ? getPromedioTecnico(user.id_usuario).catch(() => null) : Promise.resolve(null)),
+  const { data: detalles, loading } = useApiData(
+    () => (user?.id_usuario ? getMisDetallesTecnicos().catch(() => null) : Promise.resolve(null)),
     [user?.id_usuario],
     null,
   );
 
   const initialValues: DatosTecnicosFormValues = {
-    especialidad: promedio?.especialidad ?? '',
-    licencia_profesional: '',
-    zonaCobertura: '',
-    bio: '',
-    disponible: Boolean(promedio?.disponible ?? true),
+    especialidad: detalles?.especialidad ?? '',
+    licencia_profesional: detalles?.licencia_profesional ?? '',
+    zonaCobertura: detalles?.zona_cobertura ?? '',
+    bio: detalles?.bio ?? '',
+    disponible: Boolean(detalles?.disponible ?? true),
   };
 
   const handleSubmit = async (values: DatosTecnicosFormValues) => {

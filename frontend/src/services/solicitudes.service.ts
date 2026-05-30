@@ -17,6 +17,8 @@ export type SolicitudView = SolicitudServicio & {
   precio_servicio?: string | number | null;
   direccion_servicio?: string;
   tipo_edificio?: string;
+  informacion_direccion?: string | null;
+  nota_direccion?: string | null;
   servicioNombre: string;
   servicioCategoria: string;
   direccionResumen: string;
@@ -49,6 +51,8 @@ type SolicitudBackend = Partial<SolicitudServicio> & {
   precio_servicio?: string | number | null;
   direccion_servicio?: string;
   tipo_edificio?: string;
+  informacion_direccion?: string | null;
+  nota_direccion?: string | null;
 };
 
 function getPriority(estado?: string): 'Alta' | 'Media' | 'Baja' {
@@ -90,6 +94,8 @@ export function normalizeSolicitud(solicitud: SolicitudBackend): SolicitudView {
     precio_servicio: solicitud.precio_servicio,
     direccion_servicio: solicitud.direccion_servicio,
     tipo_edificio: solicitud.tipo_edificio,
+    informacion_direccion: solicitud.informacion_direccion,
+    nota_direccion: solicitud.nota_direccion,
     servicioNombre,
     servicioCategoria: solicitud.tipo_edificio ?? 'Servicio tecnico',
     direccionResumen,

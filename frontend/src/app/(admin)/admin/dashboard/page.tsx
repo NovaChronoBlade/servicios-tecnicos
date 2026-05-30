@@ -8,7 +8,7 @@ import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeade
 import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useApiData } from '@/hooks/useApiData';
-import { listPagosBySolicitud } from '@/services/pagos.service';
+import { listPagos } from '@/services/pagos.service';
 import { listServicios } from '@/services/servicios.service';
 import { listSolicitudes } from '@/services/solicitudes.service';
 import { listUsuarios } from '@/services/usuarios.service';
@@ -17,14 +17,12 @@ import { UserRole } from '@/types';
 export default function AdminDashboardPage() {
   const { data, loading, error } = useApiData(
     async () => {
-      const [usuarios, servicios, solicitudes] = await Promise.all([
+      const [usuarios, servicios, solicitudes, pagos] = await Promise.all([
         listUsuarios(),
         listServicios(),
         listSolicitudes(),
+        listPagos(),
       ]);
-      const pagos = (await Promise.all(
-        solicitudes.slice(0, 30).map((solicitud) => listPagosBySolicitud(solicitud.id_ss).catch(() => [])),
-      )).flat();
       return { usuarios, servicios, solicitudes, pagos };
     },
     [],

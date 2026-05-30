@@ -8,16 +8,15 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinne
 import { DisponibilidadForm, type DisponibilidadFormValues } from '@/components/tecnico/DisponibilidadForm/DisponibilidadForm';
 import { useApiData } from '@/hooks/useApiData';
 import { getApiErrorMessage } from '@/services/api-error';
-import { getPromedioTecnico } from '@/services/calificaciones.service';
-import { updateDetallesTecnicos } from '@/services/usuarios.service';
+import { getMisDetallesTecnicos, updateDetallesTecnicos } from '@/services/usuarios.service';
 import { useAuthStore } from '@/store/authStore';
 
 export default function TecnicoDisponibilidadPage() {
   const { user } = useAuthStore();
   const [saved, setSaved] = useState(false);
   const [savingError, setSavingError] = useState<string | null>(null);
-  const { data: promedio, loading, error, reload } = useApiData(
-    () => (user?.id_usuario ? getPromedioTecnico(user.id_usuario).catch(() => null) : Promise.resolve(null)),
+  const { data: detalles, loading, error, reload } = useApiData(
+    () => (user?.id_usuario ? getMisDetallesTecnicos().catch(() => null) : Promise.resolve(null)),
     [user?.id_usuario],
     null,
   );
@@ -26,7 +25,7 @@ export default function TecnicoDisponibilidadPage() {
     dia: 'Lunes',
     inicio: '08:00',
     fin: '17:00',
-    activa: Boolean(promedio?.disponible ?? true),
+    activa: Boolean(detalles?.disponible ?? true),
     nota: 'La agenda semanal no tiene endpoint dedicado; se actualiza disponibilidad global.',
   };
 
@@ -60,7 +59,7 @@ export default function TecnicoDisponibilidadPage() {
             El backend actual permite actualizar `detalles_tecnicos.disponible`, pero no expone bloques semanales de agenda.
           </Typography>
           <Box sx={{ mt: 2 }}>
-            <Chip label={promedio?.disponible ? 'Disponible' : 'No disponible'} color={promedio?.disponible ? 'success' : 'default'} />
+            <Chip label={detalles?.disponible ? 'Disponible' : 'No disponible'} color={detalles?.disponible ? 'success' : 'default'} />
           </Box>
         </Paper>
       </Box>

@@ -165,11 +165,16 @@ export class SolicitudServiciosService {
         u_cli.nombre  AS nombre_cliente,
         u_tec.nombre  AS nombre_tecnico,
         s.nombre      AS nombre_servicio,
-        s.precio      AS precio_servicio
+        s.precio      AS precio_servicio,
+        d.direccion   AS direccion_servicio,
+        d.tipo_edificio,
+        d.informacion AS informacion_direccion,
+        d.nota        AS nota_direccion
       FROM solicitud_servicios ss
       JOIN usuarios u_cli      ON u_cli.id_usuario = ss.id_cliente
       LEFT JOIN usuarios u_tec ON u_tec.id_usuario = ss.id_tecnico
       JOIN servicios s         ON s.id_servicio    = ss.id_servicio
+      JOIN direcciones d       ON d.id_direccion   = ss.id_direccion
       WHERE ss.id_ss = ${id}
       LIMIT 1
     `;

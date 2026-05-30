@@ -15,6 +15,7 @@ const navigation = [
   { label: 'Usuarios', href: APP_ROUTES.ADMIN.USUARIOS.ROOT },
   { label: 'Servicios', href: APP_ROUTES.ADMIN.SERVICIOS.ROOT },
   { label: 'Solicitudes', href: APP_ROUTES.ADMIN.SOLICITUDES.ROOT },
+  { label: 'Comentarios', href: APP_ROUTES.ADMIN.COMENTARIOS },
   { label: 'Reportes', href: APP_ROUTES.ADMIN.REPORTES.ROOT },
 ];
 

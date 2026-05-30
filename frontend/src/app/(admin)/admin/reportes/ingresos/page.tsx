@@ -5,20 +5,10 @@ import { Alert, Box, Divider, Paper, Typography } from '@mui/material';
 import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
 import { useApiData } from '@/hooks/useApiData';
-import { listPagosBySolicitud } from '@/services/pagos.service';
-import { listSolicitudes } from '@/services/solicitudes.service';
+import { listPagos } from '@/services/pagos.service';
 
 export default function AdminReporteIngresosPage() {
-  const { data: pagos, loading, error } = useApiData(
-    async () => {
-      const solicitudes = await listSolicitudes();
-      return (await Promise.all(
-        solicitudes.map((solicitud) => listPagosBySolicitud(solicitud.id_ss).catch(() => [])),
-      )).flat();
-    },
-    [],
-    [],
-  );
+  const { data: pagos, loading, error } = useApiData(listPagos, [], []);
   const total = pagos.reduce((sum, pago) => sum + Number(pago.monto), 0);
 
   if (loading) return <LoadingSpinner />;

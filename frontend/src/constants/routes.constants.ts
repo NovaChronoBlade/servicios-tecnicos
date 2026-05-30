@@ -125,6 +125,7 @@ export const APP_ROUTES = {
     },
 
     PAGOS: '/admin/pagos',
+    COMENTARIOS: '/admin/comentarios',
 
     REPORTES: {
       ROOT:         '/admin/reportes',

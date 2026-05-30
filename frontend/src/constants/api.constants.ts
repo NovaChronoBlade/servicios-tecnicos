@@ -22,11 +22,12 @@ export const AUTH_ENDPOINTS = {
 export const USUARIOS_ENDPOINTS = {
   LIST:              '/usuarios',                                                  // GET
   TECNICOS:          '/usuarios/tecnicos',                                         // GET
+  MIS_DETALLES_TECNICOS: '/usuarios/me/detalles-tecnicos',                         // GET
   DETAIL:            (id: string) => `/usuarios/${id}`,                           // GET
   UPDATE:            (id: string) => `/usuarios/${id}`,                           // PATCH
   DESACTIVAR:        (id: string) => `/usuarios/${id}/desactivar`,                // PATCH
   DATOS_TECNICOS:    (id: string) => `/usuarios/${id}/datos-tecnicos`,            // POST
-  DETALLES_TECNICOS: (id: string) => `/usuarios/${id}/detalles-tecnicos`,         // PATCH
+  DETALLES_TECNICOS: (id: string) => `/usuarios/${id}/detalles-tecnicos`,         // GET/PATCH
 } as const;
 
 // ── Servicios ─────────────────────────────────────────────
@@ -75,6 +76,7 @@ export const DIRECCIONES_ENDPOINTS = {
 // ── Pagos ─────────────────────────────────────────────────
 export const PAGOS_ENDPOINTS = {
   CREATE:        '/pagos',                                             // POST
+  LIST:          '/pagos',                                             // GET
   BY_SOLICITUD:  (id: string) => `/pagos/solicitud/${id}`,            // GET
   BY_CLIENTE:    (id: string) => `/pagos/cliente/${id}`,              // GET
   DETAIL:        (id: string) => `/pagos/${id}`,                      // GET
@@ -100,4 +102,9 @@ export const COMENTARIOS_ENDPOINTS = {
   DETAIL:       (id: string) => `/comentarios/${id}`,                   // GET
   UPDATE:       (id: string) => `/comentarios/${id}`,                   // PATCH
   DELETE:       (id: string) => `/comentarios/${id}`,                   // DELETE
+} as const;
+
+export const ADMIN_ENDPOINTS = {
+  CONFIGURACION: '/admin/configuracion', // GET
+  AUDITORIA: '/admin/auditoria',         // GET
 } as const;

@@ -23,6 +23,8 @@ export type TecnicoListItem = Partial<User> &
     correo: string;
     telefono?: string;
     activo?: boolean;
+    zona_cobertura?: string | null;
+    bio?: string | null;
   };
 
 export type TecnicoFilters = {
@@ -70,6 +72,20 @@ export async function listTecnicos(filters: TecnicoFilters = {}) {
 
 export async function getUsuarioById(id: string) {
   const { data } = await api.get<User>(USUARIOS_ENDPOINTS.DETAIL(id));
+  return data;
+}
+
+export async function getMisDetallesTecnicos() {
+  const { data } = await api.get<TecnicoListItem>(
+    USUARIOS_ENDPOINTS.MIS_DETALLES_TECNICOS,
+  );
+  return data;
+}
+
+export async function getDetallesTecnicos(idTecnico: string) {
+  const { data } = await api.get<TecnicoListItem>(
+    USUARIOS_ENDPOINTS.DETALLES_TECNICOS(idTecnico),
+  );
   return data;
 }
 

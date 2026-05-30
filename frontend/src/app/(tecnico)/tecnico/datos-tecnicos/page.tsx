@@ -7,13 +7,13 @@ import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeade
 import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useApiData } from '@/hooks/useApiData';
-import { getPromedioTecnico } from '@/services/calificaciones.service';
+import { getMisDetallesTecnicos } from '@/services/usuarios.service';
 import { useAuthStore } from '@/store/authStore';
 
 export default function DatosTecnicosPage() {
   const { user } = useAuthStore();
-  const { data: promedio, loading, error } = useApiData(
-    () => (user?.id_usuario ? getPromedioTecnico(user.id_usuario).catch(() => null) : Promise.resolve(null)),
+  const { data: detalles, loading, error } = useApiData(
+    () => (user?.id_usuario ? getMisDetallesTecnicos().catch(() => null) : Promise.resolve(null)),
     [user?.id_usuario],
     null,
   );
@@ -26,7 +26,7 @@ export default function DatosTecnicosPage() {
         eyebrow="Perfil tecnico"
         title="Datos tecnicos"
         description="Informacion profesional visible para administracion y asignacion de solicitudes."
-        chips={[{ label: promedio?.disponible ? 'Disponible' : 'Disponibilidad sin lectura directa' }]}
+        chips={[{ label: detalles?.disponible ? 'Disponible' : 'No disponible' }]}
         actions={<Button component={Link} href={APP_ROUTES.TECNICO.DATOS_TECNICOS.EDITAR} variant="contained">Editar datos</Button>}
       />
       <Divider sx={{ mb: 3 }} />
@@ -34,10 +34,10 @@ export default function DatosTecnicosPage() {
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
           {[
-            ['Especialidad', promedio?.especialidad ?? 'No disponible'],
-            ['Calificacion promedio', String(promedio?.promedio ?? 0)],
-            ['Total calificaciones', String(promedio?.total_calificaciones ?? 0)],
-            ['Disponibilidad', promedio?.disponible === undefined ? 'No expuesta por endpoint de perfil tecnico' : (promedio.disponible ? 'Disponible' : 'No disponible')],
+            ['Especialidad', detalles?.especialidad ?? 'No disponible'],
+            ['Licencia profesional', detalles?.licencia_profesional ?? 'No disponible'],
+            ['Calificacion promedio', String(detalles?.calificacion_promedio ?? 0)],
+            ['Disponibilidad', detalles?.disponible ? 'Disponible' : 'No disponible'],
           ].map(([label, value]) => (
             <Paper key={label} variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
               <Typography variant="caption" color="text.secondary">{label}</Typography>

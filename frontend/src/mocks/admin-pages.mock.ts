@@ -60,6 +60,29 @@ export const adminAuditMock = [
   { id: 'aud-03', evento: 'Pago reembolsado', modulo: 'Pagos', fecha: '2026-05-28T16:40:00.000Z' },
 ];
 
+export const adminComentariosMock = [
+  {
+    id_comentario: 'com-01',
+    id_ss: 'ss-1001',
+    id_cliente: 'cliente-1',
+    id_tecnico: 'tec-23',
+    nombre_cliente: 'Mariana Lopez',
+    nombre_tecnico: 'Andres Melo',
+    contenido: 'El tecnico explico el diagnostico y dejo recomendaciones claras.',
+    fecha_comentario: '2026-05-29T17:20:00.000Z',
+  },
+  {
+    id_comentario: 'com-02',
+    id_ss: 'ss-1003',
+    id_cliente: 'cliente-1',
+    id_tecnico: 'tec-08',
+    nombre_cliente: 'Mariana Lopez',
+    nombre_tecnico: 'Luisa Fernandez',
+    contenido: 'La reparacion quedo estable y se confirmo el cierre del servicio.',
+    fecha_comentario: '2026-05-24T14:10:00.000Z',
+  },
+];
+
 export const adminSettingsMock = [
   { label: 'CORS', value: 'Configurado por variable de entorno' },
   { label: 'JWT', value: 'Access y refresh token habilitados' },

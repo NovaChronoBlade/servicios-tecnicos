@@ -324,6 +324,38 @@ export class UsuariosService {
     return this.findDetallesTecnicos(id_tecnico);
   }
 
+  async findDetallesTecnicosPerfil(id_tecnico: string, actor?: Actor) {
+    this.assertSelfOrAdmin(id_tecnico, actor);
+
+    const detalles = await this.prisma.$queryRaw`
+      SELECT
+        u.id_usuario,
+        u.nombre,
+        u.correo,
+        u.telefono,
+        u.activo,
+        dt.especialidad,
+        dt.licencia_profesional,
+        dt.disponible,
+        dt.calificacion_promedio,
+        NULL::text AS zona_cobertura,
+        NULL::text AS bio
+      FROM usuarios u
+      JOIN detalles_tecnicos dt ON dt.id_usuario = u.id_usuario
+      WHERE u.id_usuario = ${id_tecnico}
+      LIMIT 1
+    `;
+
+    const detalle = Array.isArray(detalles) ? detalles[0] : null;
+    if (!detalle) {
+      throw new NotFoundException(
+        `Datos tecnicos del tecnico '${id_tecnico}' no encontrados`,
+      );
+    }
+
+    return detalle;
+  }
+
   async findOne(id: string) {
     const usuarios = await this.prisma.$queryRaw`
       SELECT * FROM usuarios
