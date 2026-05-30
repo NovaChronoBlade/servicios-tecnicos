@@ -42,6 +42,7 @@ export const APP_ROUTES = {
 
     MIS_SOLICITUDES: {
       ROOT: '/mis-solicitudes',
+      DETAIL: (id?: string) => id ? `/mis-solicitudes/${id}` : '/mis-solicitudes/:id',
     },
 
     SERVICIOS: {

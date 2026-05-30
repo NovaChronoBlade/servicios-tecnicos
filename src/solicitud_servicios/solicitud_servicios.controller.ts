@@ -23,6 +23,7 @@ import { RolEnum } from 'src/auth/enums/rol.enum';
 import { SolicitudServiciosService } from './solicitud_servicios.service';
 import { CancelarSolicitudDto } from './dto/cancelar-solicitud.dto';
 import { ReasignarTecnicoDto } from './dto/reasignar-tecnico.dto';
+import { CheckoutSolicitudServicioDto } from './dto/checkout-solicitud-servicio.dto';
 
 @ApiTags('Solicitudes de servicio')
 @ApiBearerAuth()
@@ -47,6 +48,18 @@ export class SolicitudServiciosController {
     @Request() req,
   ) {
     return this.solicitudServiciosService.create(createSolicitudDto, req.user);
+  }
+
+  @Post('checkout')
+  @ApiOperation({ summary: 'Pagar y crear solicitud con tecnico seleccionado' })
+  @ApiResponse({ status: 201, description: 'Solicitud y pago creados' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
+  checkout(
+    @Body() checkoutDto: CheckoutSolicitudServicioDto,
+    @Request() req,
+  ) {
+    return this.solicitudServiciosService.checkout(checkoutDto, req.user);
   }
 
   /**
@@ -99,8 +112,8 @@ export class SolicitudServiciosController {
   @ApiResponse({ status: 200, description: 'Solicitudes encontradas' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
-  findByCliente(@Param('id_cliente') id_cliente: string) {
-    return this.solicitudServiciosService.findByCliente(id_cliente);
+  findByCliente(@Param('id_cliente') id_cliente: string, @Request() req?) {
+    return this.solicitudServiciosService.findByCliente(id_cliente, req?.user);
   }
 
   /**
@@ -113,8 +126,8 @@ export class SolicitudServiciosController {
   @ApiResponse({ status: 200, description: 'Solicitudes encontradas' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
-  findByTecnico(@Param('id_tecnico') id_tecnico: string) {
-    return this.solicitudServiciosService.findByTecnico(id_tecnico);
+  findByTecnico(@Param('id_tecnico') id_tecnico: string, @Request() req?) {
+    return this.solicitudServiciosService.findByTecnico(id_tecnico, req?.user);
   }
 
   /**
@@ -140,8 +153,8 @@ export class SolicitudServiciosController {
   @ApiOperation({ summary: 'Obtener solicitud por id' })
   @ApiResponse({ status: 200, description: 'Solicitud encontrada' })
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.solicitudServiciosService.findOne(id);
+  findOne(@Param('id') id: string, @Request() req?) {
+    return this.solicitudServiciosService.findOne(id, req?.user);
   }
 
   /**
@@ -155,8 +168,12 @@ export class SolicitudServiciosController {
   @ApiResponse({ status: 200, description: 'Estado actualizado' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
-  updateEstado(@Param('id') id: string, @Body('estado') estado: string) {
-    return this.solicitudServiciosService.updateEstado(id, estado);
+  updateEstado(
+    @Param('id') id: string,
+    @Body('estado') estado: string,
+    @Request() req,
+  ) {
+    return this.solicitudServiciosService.updateEstado(id, estado, req.user);
   }
 
   @Patch(':id/cancelar')

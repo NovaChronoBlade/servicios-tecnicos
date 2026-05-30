@@ -1,7 +1,7 @@
 'use client';
 
 import type { SolicitudEstado } from '@/types';
-
+import { getSolicitudEstadoMeta, normalizeSolicitudEstado } from '@/utils/solicitud-state';
 import {
   alpha,
   Box,
@@ -15,13 +15,13 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-
 import {
   CheckCircle2,
   CircleDotDashed,
   Clock3,
   FileCheck2,
   Truck,
+  UserRound,
   XCircle,
 } from 'lucide-react';
 
@@ -34,24 +34,27 @@ const steps = [
   {
     key: 'pendiente',
     label: 'Pendiente',
-    description: 'La solicitud fue creada y está lista para asignarse.',
+    description: 'La solicitud fue creada y esta lista para asignarse.',
     icon: Clock3,
   },
-
+  {
+    key: 'asignado',
+    label: 'Tecnico asignado',
+    description: 'Ya hay un tecnico seleccionado para revisar el caso.',
+    icon: UserRound,
+  },
   {
     key: 'aceptado',
     label: 'Aceptada',
-    description: 'Un técnico tomó tu solicitud.',
+    description: 'El tecnico acepto la solicitud.',
     icon: FileCheck2,
   },
-
   {
     key: 'en_curso',
     label: 'En curso',
-    description: 'El técnico ya está trabajando en el servicio.',
+    description: 'El tecnico ya esta trabajando en el servicio.',
     icon: Truck,
   },
-
   {
     key: 'completado',
     label: 'Completada',
@@ -61,75 +64,40 @@ const steps = [
 ];
 
 function getActiveIndex(estado: SolicitudEstado) {
-  if (estado === 'cancelado') {
-    return -1;
-  }
+  const normalized = normalizeSolicitudEstado(estado);
+  if (normalized === 'cancelado') return -1;
 
-  const found = steps.findIndex((step) => step.key === estado);
-
+  const found = steps.findIndex((step) => step.key === normalized);
   return found === -1 ? 0 : found;
 }
 
-export function SolicitudTimeline({
-  estado,
-  fechaProgramada,
-}: SolicitudTimelineProps) {
+export function SolicitudTimeline({ estado, fechaProgramada }: SolicitudTimelineProps) {
   const activeIndex = getActiveIndex(estado);
-
-  const isCancelled = estado === 'cancelado';
+  const meta = getSolicitudEstadoMeta(estado);
+  const isCancelled = normalizeSolicitudEstado(estado) === 'cancelado';
 
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: { xs: 2.5, md: 3 },
-        borderRadius: 4,
-        borderColor: 'divider',
-      }}
-    >
-      {/* HEADER */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          gap: 2,
-          mb: 4,
-          flexWrap: 'wrap',
-        }}
-      >
+    <Paper variant="outlined" sx={{ p: { xs: 2.5, md: 3 }, borderRadius: 3, borderColor: 'divider' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 4, flexWrap: 'wrap' }}>
         <Box>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-            }}
-          >
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
             Seguimiento de solicitud
           </Typography>
-
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             {fechaProgramada
-              ? `Programada para ${new Date(fechaProgramada).toLocaleString(
-                  'es-CO',
-                )}`
-              : 'Sin programación registrada'}
+              ? `Programada para ${new Date(fechaProgramada).toLocaleString('es-CO')}`
+              : 'Sin programacion registrada'}
           </Typography>
         </Box>
 
         <Chip
-          icon={
-            isCancelled ? <XCircle size={16} /> : <CircleDotDashed size={16} />
-          }
-          label={
-            isCancelled ? 'Cancelada' : estado.replace('_', ' ').toUpperCase()
-          }
-          color={isCancelled ? 'error' : 'primary'}
+          icon={isCancelled ? <XCircle size={16} /> : <CircleDotDashed size={16} />}
+          label={isCancelled ? 'Cancelada' : meta.label}
+          color={isCancelled ? 'error' : meta.color}
           variant="outlined"
         />
       </Box>
 
-      {/* STEPPER */}
       <Stepper
         activeStep={activeIndex}
         orientation="vertical"
@@ -138,25 +106,17 @@ export function SolicitudTimeline({
             sx={{
               [`& .${stepConnectorClasses.line}`]: {
                 borderColor: 'divider',
-
                 borderLeftWidth: 2,
-
                 minHeight: 30,
               },
             }}
           />
         }
-        sx={{
-          '& .MuiStep-root': {
-            pb: 1.75,
-          },
-        }}
+        sx={{ '& .MuiStep-root': { pb: 1.75 } }}
       >
         {steps.map((step, index) => {
           const Icon = step.icon;
-
           const completed = activeIndex >= index && !isCancelled;
-
           const active = activeIndex === index;
 
           return (
@@ -171,22 +131,10 @@ export function SolicitudTimeline({
                         borderRadius: '50%',
                         display: 'grid',
                         placeItems: 'center',
-
                         transition: 'all .2s ease',
-
-                        bgcolor: completed
-                          ? 'primary.main'
-                          : active
-                            ? 'primary.light'
-                            : 'action.hover',
-
-                        color:
-                          completed || active
-                            ? 'primary.contrastText'
-                            : 'text.secondary',
-
+                        bgcolor: completed ? 'primary.main' : active ? 'primary.light' : 'action.hover',
+                        color: completed || active ? 'primary.contrastText' : 'text.secondary',
                         border: active && !completed ? '2px solid' : 'none',
-
                         borderColor: 'primary.main',
                       }}
                     >
@@ -194,11 +142,7 @@ export function SolicitudTimeline({
                     </Box>
                   ),
                 }}
-                sx={{
-                  '& .MuiStepLabel-labelContainer': {
-                    pl: 1,
-                  },
-                }}
+                sx={{ '& .MuiStepLabel-labelContainer': { pl: 1 } }}
               >
                 <Box
                   sx={{

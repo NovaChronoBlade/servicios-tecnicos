@@ -8,6 +8,12 @@ import { PrismaService } from 'src/prisma.service';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PaymentGatewayService } from './payment-gateway.service';
+import { RolEnum } from 'src/auth/enums/rol.enum';
+
+type Actor = {
+  userId?: string;
+  rol?: RolEnum | string;
+};
 
 @Injectable()
 export class PagosService {
@@ -26,9 +32,10 @@ export class PagosService {
     } = createPagoDto;
 
     const solicitudes = await this.prisma.$queryRaw`
-      SELECT id_ss, estado, id_cliente, id_servicio
-      FROM solicitud_servicios
-      WHERE id_ss = ${id_ss}
+      SELECT ss.id_ss, ss.estado, ss.id_cliente, ss.id_servicio, s.precio AS precio_servicio
+      FROM solicitud_servicios ss
+      JOIN servicios s ON s.id_servicio = ss.id_servicio
+      WHERE ss.id_ss = ${id_ss}
       LIMIT 1
     `;
     const solicitud = Array.isArray(solicitudes) ? solicitudes[0] : null;
@@ -42,9 +49,15 @@ export class PagosService {
       );
     }
 
-    if (solicitud.estado === 'completado') {
+    if (solicitud.estado === 'completado' || solicitud.estado === 'cancelado') {
       throw new BadRequestException(
-        'No se puede pagar una solicitud completada',
+        `No se puede pagar una solicitud en estado '${solicitud.estado}'`,
+      );
+    }
+
+    if (Number(monto) !== Number(solicitud.precio_servicio)) {
+      throw new BadRequestException(
+        'El monto del pago no coincide con el precio del servicio',
       );
     }
 
@@ -152,7 +165,13 @@ export class PagosService {
     `;
   }
 
-  async findByCliente(id_cliente: string) {
+  async findByCliente(id_cliente: string, actor?: Actor) {
+    if (actor && actor.rol !== RolEnum.ADMIN && actor.userId !== id_cliente) {
+      throw new UnauthorizedException(
+        'Solo el cliente propietario puede consultar estos pagos',
+      );
+    }
+
     return this.prisma.$queryRaw`
       SELECT
         p.id_pago,

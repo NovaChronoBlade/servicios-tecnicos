@@ -13,8 +13,10 @@ import {
   asignarTecnico,
   getSolicitudById,
   listSolicitudesPendientesDisponibles,
+  updateSolicitudEstado,
 } from '@/services/solicitudes.service';
 import { useAuthStore } from '@/store/authStore';
+import { canTechnicianAccept, getSolicitudEstadoMeta, normalizeSolicitudEstado } from '@/utils/solicitud-state';
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -35,12 +37,16 @@ export default function SolicitudDisponibleDetallePage({ params }: PageProps) {
   );
 
   const handleAccept = async () => {
-    if (!user?.id_usuario) return;
+    if (!user?.id_usuario || !solicitud) return;
     setSubmitting(true);
     setSubmitError(null);
 
     try {
-      await asignarTecnico(id, user.id_usuario);
+      if (canTechnicianAccept(solicitud, user.id_usuario)) {
+        await updateSolicitudEstado(id, 'aceptado');
+      } else {
+        await asignarTecnico(id, user.id_usuario);
+      }
       router.push(APP_ROUTES.TECNICO.MIS_SOLICITUDES.ROOT);
     } catch (err) {
       setSubmitError(getApiErrorMessage(err, 'No se pudo aceptar la solicitud.'));
@@ -51,6 +57,10 @@ export default function SolicitudDisponibleDetallePage({ params }: PageProps) {
 
   if (loading) return <LoadingSpinner />;
   if (!solicitud) return <Alert severity="error">{error ?? 'Solicitud no encontrada'}</Alert>;
+  const estado = getSolicitudEstadoMeta(solicitud.estado);
+  const canAccept =
+    (normalizeSolicitudEstado(solicitud.estado) === 'pendiente' && !solicitud.id_tecnico) ||
+    canTechnicianAccept(solicitud, user?.id_usuario);
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
@@ -58,8 +68,8 @@ export default function SolicitudDisponibleDetallePage({ params }: PageProps) {
         eyebrow="Detalle pendiente"
         title={solicitud.servicioNombre}
         description={solicitud.direccionResumen}
-        chips={[{ label: solicitud.prioridad }, { label: solicitud.valorEstimado }, { label: solicitud.estado }]}
-        actions={<Button onClick={handleAccept} variant="contained" disabled={submitting}>{submitting ? 'Aceptando...' : 'Aceptar solicitud'}</Button>}
+        chips={[{ label: solicitud.prioridad }, { label: solicitud.valorEstimado }, { label: estado.label, color: estado.color }]}
+        actions={<Button onClick={handleAccept} variant="contained" disabled={submitting || !canAccept}>{submitting ? 'Aceptando...' : 'Aceptar solicitud'}</Button>}
       />
       <Divider sx={{ mb: 3 }} />
       {(error || submitError) ? <Alert severity="error" sx={{ mb: 3 }}>{submitError ?? error}</Alert> : null}

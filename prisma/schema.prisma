@@ -116,6 +116,8 @@ model solicitud_servicios {
   motivo_cancelacion                                String?          @db.VarChar(500)
   fecha                                             DateTime         @default(now()) @db.Timestamp(6)
   fecha_programada                                  DateTime?        @db.Timestamp(6)
+  fecha_aceptacion                                  DateTime?        @db.Timestamp(6)
+  fecha_finalizacion                                DateTime?        @db.Timestamp(6)
   calificaciones                                    calificaciones[]
   comentarios                                       comentarios[]
   pagos                                             pagos?

@@ -21,11 +21,11 @@ export default function SolicitarServicioPage() {
       <ClientPageHeader
         eyebrow="Flujo"
         title="Solicitar servicio"
-        description="El cliente selecciona un servicio y una direccion propia para crear una solicitud pendiente, que luego podra seguir, pagar y calificar."
+        description="Selecciona un servicio, elige un tecnico disponible y confirma el pago antes de crear la solicitud."
         chips={[
-          { label: 'Solicitud pendiente' },
+          { label: 'Tecnico disponible' },
           { label: 'Direccion requerida' },
-          { label: 'Pago posterior' },
+          { label: 'Pago inmediato' },
         ]}
       />
 
@@ -42,7 +42,7 @@ export default function SolicitarServicioPage() {
           <Box sx={{ display: 'grid', gap: 1.5, mt: 3 }}>
             <Typography variant="body2" color="text.secondary">1. Elige un servicio del catalogo.</Typography>
             <Typography variant="body2" color="text.secondary">2. Selecciona tu direccion guardada.</Typography>
-            <Typography variant="body2" color="text.secondary">3. Envia la solicitud para asignacion o seguimiento.</Typography>
+            <Typography variant="body2" color="text.secondary">3. Confirma el pago para registrar la solicitud.</Typography>
           </Box>
 
           <Button

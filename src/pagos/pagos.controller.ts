@@ -61,8 +61,8 @@ export class PagosController {
   @Get('cliente/:id_cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
-  findByCliente(@Param('id_cliente') id_cliente: string) {
-    return this.pagosService.findByCliente(id_cliente);
+  findByCliente(@Param('id_cliente') id_cliente: string, @Request() req?) {
+    return this.pagosService.findByCliente(id_cliente, req?.user);
   }
 
   /**

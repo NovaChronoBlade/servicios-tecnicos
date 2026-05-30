@@ -9,8 +9,9 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinne
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useApiData } from '@/hooks/useApiData';
 import { getApiErrorMessage } from '@/services/api-error';
-import { asignarTecnico, getSolicitudById, reasignarTecnico, type SolicitudView } from '@/services/solicitudes.service';
+import { asignarTecnico, getSolicitudById, type SolicitudView } from '@/services/solicitudes.service';
 import { listTecnicos, type TecnicoListItem } from '@/services/usuarios.service';
+import { canAdminAssignTechnician, getSolicitudEstadoMeta } from '@/utils/solicitud-state';
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -37,11 +38,7 @@ export default function AdminAsignarTecnicoPage({ params }: PageProps) {
   const handleAssign = async (idTecnico: string) => {
     setSavingError(null);
     try {
-      if (data.solicitud?.id_tecnico) {
-        await reasignarTecnico(id, { id_tecnico: idTecnico });
-      } else {
-        await asignarTecnico(id, idTecnico);
-      }
+      await asignarTecnico(id, idTecnico);
       setSaved(true);
       router.push(APP_ROUTES.ADMIN.SOLICITUDES.DETAIL(id));
     } catch (err) {
@@ -51,12 +48,27 @@ export default function AdminAsignarTecnicoPage({ params }: PageProps) {
 
   if (loading) return <LoadingSpinner />;
   if (!data.solicitud) return <Alert severity="error">{error ?? 'Solicitud no encontrada'}</Alert>;
+  const canAssign = canAdminAssignTechnician(data.solicitud);
+  const estado = getSolicitudEstadoMeta(data.solicitud.estado);
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
-      <ClientPageHeader eyebrow="Reasignacion" title="Asignar tecnico" description={data.solicitud.servicioNombre} />
+      <ClientPageHeader
+        eyebrow="Asignacion"
+        title="Asignar tecnico"
+        description={data.solicitud.servicioNombre}
+        chips={[
+          { label: estado.label, color: estado.color },
+          ...(data.solicitud.id_tecnico ? [{ label: 'Tecnico asignado', color: 'success' as const }] : []),
+        ]}
+      />
       <Divider sx={{ mb: 3 }} />
       {(error || savingError) ? <Alert severity="error" sx={{ mb: 3 }}>{savingError ?? error}</Alert> : null}
+      {!canAssign ? (
+        <Alert severity="info" variant="outlined" sx={{ mb: 3 }}>
+          Esta solicitud ya tiene tecnico asignado. La asignacion queda bloqueada para evitar duplicados.
+        </Alert>
+      ) : null}
       <Box sx={{ display: 'grid', gap: 2 }}>
         {data.tecnicos.map((tecnico) => (
           <Paper key={tecnico.id_usuario} variant="outlined" sx={{ p: 2.5, borderRadius: 3, display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
@@ -66,7 +78,7 @@ export default function AdminAsignarTecnicoPage({ params }: PageProps) {
             </Box>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <Chip label={`${Number(tecnico.calificacion_promedio ?? 0).toFixed(1)} / 5`} color="primary" variant="outlined" />
-              <Button variant="contained" onClick={() => handleAssign(tecnico.id_usuario)}>Asignar</Button>
+              <Button variant="contained" onClick={() => handleAssign(tecnico.id_usuario)} disabled={!canAssign}>Asignar</Button>
             </Box>
           </Paper>
         ))}

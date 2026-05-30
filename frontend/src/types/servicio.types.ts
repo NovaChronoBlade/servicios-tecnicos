@@ -37,6 +37,7 @@ export interface ServicioFilters {
 
 export type SolicitudEstado =
   | "pendiente"
+  | "asignado"
   | "aceptado"
   | "en_curso"
   | "completado"
@@ -55,12 +56,26 @@ export interface SolicitudServicio {
   motivo_cancelacion?: string | null;
   fecha: string;
   fecha_programada?: string | null;
+  fecha_aceptacion?: string | null;
+  fecha_finalizacion?: string | null;
   nombre_cliente?: string;
   nombre_tecnico?: string | null;
+  telefono_cliente?: string | null;
+  correo_tecnico?: string | null;
+  telefono_tecnico?: string | null;
+  tecnico_especialidad?: string | null;
+  tecnico_disponible?: boolean | null;
+  tecnico_calificacion_promedio?: string | number | null;
   nombre_servicio?: string;
   precio_servicio?: string | number | null;
   direccion_servicio?: string;
   tipo_edificio?: string;
+  informacion_direccion?: string | null;
+  nota_direccion?: string | null;
+  id_pago?: string | null;
+  metodo_pago?: string | null;
+  estado_pago?: string | null;
+  numero_referencia?: string | null;
 }
 
 export interface CreateSolicitudRequest {
@@ -89,4 +104,31 @@ export interface SolicitudFilters {
   id_tecnico?: string;
   page?: number;
   limit?: number;
+}
+
+export interface CheckoutSolicitudRequest {
+  id_cliente: string;
+  id_tecnico: string;
+  id_servicio: string;
+  id_direccion: string;
+  metodo_pago: string;
+  token_pago?: string;
+  moneda?: string;
+  fecha_programada?: string;
+}
+
+export interface CheckoutSolicitudResponse {
+  solicitud: SolicitudServicio;
+  pago: {
+    id_pago: string;
+    id_ss: string;
+    monto: number | string;
+    metodo_pago: string;
+    estado: "pagado";
+    numero_referencia?: string | null;
+    pasarela?: {
+      provider: string;
+      approved: boolean;
+    };
+  };
 }

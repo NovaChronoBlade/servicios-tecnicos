@@ -9,7 +9,6 @@ import {
   Divider,
   Paper,
   Snackbar,
-  Stack,
   Typography,
 } from '@mui/material';
 
@@ -136,7 +135,7 @@ export default function TecnicoDisponibilidadPage() {
         </Paper>
 
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1.5, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' } }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>Agenda semanal</Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -144,12 +143,12 @@ export default function TecnicoDisponibilidadPage() {
               </Typography>
             </Box>
             <Chip label={detalles?.disponible ? 'Disponible global' : 'No disponible global'} color={detalles?.disponible ? 'success' : 'default'} />
-          </Stack>
+          </Box>
 
-          <Stack spacing={1.5} sx={{ mt: 3 }}>
+          <Box sx={{ display: 'grid', gap: 1.5, mt: 3 }}>
             {bloques.map((bloque) => (
               <Paper key={bloque.id_disponibilidad} variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1.5, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' } }}>
                   <Box>
                     <Typography sx={{ fontWeight: 800 }}>
                       {formatDia(bloque.dia_semana)} - {bloque.hora_inicio} a {bloque.hora_fin}
@@ -160,7 +159,7 @@ export default function TecnicoDisponibilidadPage() {
                       </Typography>
                     ) : null}
                   </Box>
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     <Chip label={bloque.activo ? 'Activo' : 'Inactivo'} color={bloque.activo ? 'success' : 'default'} size="small" />
                     <Button size="small" variant="outlined" onClick={() => handleToggle(bloque)}>
                       {bloque.activo ? 'Desactivar' : 'Activar'}
@@ -168,11 +167,11 @@ export default function TecnicoDisponibilidadPage() {
                     <Button size="small" color="error" onClick={() => handleDelete(bloque.id_disponibilidad)}>
                       Eliminar
                     </Button>
-                  </Stack>
-                </Stack>
+                  </Box>
+                </Box>
               </Paper>
             ))}
-          </Stack>
+          </Box>
         </Paper>
       </Box>
       <Snackbar open={saved} autoHideDuration={2500} onClose={() => setSaved(false)} message="Disponibilidad actualizada" />

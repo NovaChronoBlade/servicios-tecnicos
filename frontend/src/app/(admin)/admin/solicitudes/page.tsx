@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinne
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useApiData } from '@/hooks/useApiData';
 import { listSolicitudes } from '@/services/solicitudes.service';
+import { getSolicitudEstadoMeta, hasAssignedTechnician } from '@/utils/solicitud-state';
 
 export default function AdminSolicitudesPage() {
   const { data: solicitudes, loading, error } = useApiData(listSolicitudes, [], []);
@@ -27,7 +28,8 @@ export default function AdminSolicitudesPage() {
               <Typography variant="body2" color="text.secondary">{solicitud.direccionResumen}</Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <Chip label={solicitud.estado} />
+              <Chip label={solicitud.estadoLabel} color={getSolicitudEstadoMeta(solicitud.estado).color} variant="outlined" />
+              {hasAssignedTechnician(solicitud) ? <Chip label="Tecnico asignado" color="success" variant="outlined" /> : null}
               <Button component={Link} href={APP_ROUTES.ADMIN.SOLICITUDES.DETAIL(solicitud.id_ss)}>Detalle</Button>
             </Box>
           </Paper>

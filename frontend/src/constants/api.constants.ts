@@ -49,6 +49,7 @@ export const SERVICIOS_ENDPOINTS = {
 // ── Solicitudes ───────────────────────────────────────────
 export const SOLICITUDES_ENDPOINTS = {
   CREATE:                 '/solicitudes-servicio',                          // POST
+  CHECKOUT:               '/solicitudes-servicio/checkout',                 // POST
   LIST:                   '/solicitudes-servicio',                          // GET
   BY_ESTADO:              '/solicitudes-servicio/estado',                   // GET  ?estado=
   PENDIENTES_DISPONIBLES: '/solicitudes-servicio/pendientes-disponibles',   // GET
