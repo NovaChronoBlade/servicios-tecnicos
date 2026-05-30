@@ -1,22 +1,64 @@
 # Servicios Tecnicos
 
-API REST para gestionar un sistema de servicios tecnicos: registro e inicio de sesion de usuarios, tecnicos, servicios, direcciones, solicitudes de servicio, pagos y calificaciones.
+API REST construida con NestJS, Prisma y PostgreSQL para administrar una plataforma de servicios tecnicos a domicilio. El sistema permite registrar usuarios, gestionar direcciones, publicar servicios, crear solicitudes, asignar tecnicos, registrar pagos, calificar y comentar servicios realizados.
+
+## Integrantes
+
+- Andres Felipe Ruiz Vasallo
+- Juan Camilo Mosquera Palomino
+- Pablo Garzon Gomez
+- Kevin David Rincon Valencia
+- Andres David Murillo Castro
 
 ## Modulos
 
-- **Auth**: registro, login, refresh tokens y logout con invalidacion del JWT activo.
-- **Usuarios**: perfiles, tecnicos, desactivacion y datos tecnicos.
-- **Direcciones**: direcciones por cliente, direccion predeterminada con `es_default`.
-- **Servicios**: creacion, consulta, actualizacion y eliminacion de servicios.
-- **Solicitudes de servicio**: creacion, asignacion de tecnico, cambios de estado y confirmaciones.
-- **Pagos**: creacion y actualizacion de estado de pagos.
-- **Calificaciones**: calificaciones por solicitud, tecnico y cliente.
+- **Auth**: registro, login, refresh token, logout e invalidacion de tokens.
+- **Usuarios**: perfiles, tecnicos, filtros, actualizacion y desactivacion.
+- **Direcciones**: CRUD de direcciones y direccion principal con `es_default`.
+- **Servicios**: servicios, categorias, busqueda, paginacion y reportes SQL.
+- **Solicitudes de servicio**: creacion, asignacion, reasignacion, estados y cancelacion.
+- **Pagos**: pagos, historial, referencias y reembolsos.
+- **Calificaciones y comentarios**: calificaciones por solicitud, ranking y comentarios.
 
-## Requisitos
+## Requerimientos funcionales
+
+- El usuario puede registrarse, iniciar sesion, renovar token y cerrar sesion.
+- El cliente puede administrar sus direcciones y marcar una como principal.
+- El cliente puede crear solicitudes de servicio usando una direccion propia.
+- El tecnico puede consultar solicitudes disponibles y aceptar servicios.
+- El administrador puede gestionar usuarios, servicios, pagos y reasignaciones.
+- El cliente puede pagar, calificar y comentar una solicitud atendida.
+
+## Requisitos previos
 
 - Node.js 22 o compatible.
-- PostgreSQL accesible desde `DATABASE_URL`.
-- npm.
+- npm para instalar dependencias y ejecutar scripts.
+- PostgreSQL para la base de datos.
+- VS Code, IntelliJ IDEA, WebStorm o un editor compatible.
+- Git para clonar el repositorio y trabajar con ramas.
+
+## Diagrama ER
+
+![Diagrama ER](docs/Diagrama_ER.png)
+
+## Base de datos y SQL
+
+Prisma administra las migraciones en `prisma/migrations`. Ademas, el proyecto incluye el script SQL final en:
+
+```text
+sql/servicios_tecnicos.sql
+```
+
+Ese script contiene:
+
+- Creacion de tablas principales.
+- Datos de prueba.
+- Restricciones `CHECK`.
+- Vista `vista_resumen_servicios_categoria`.
+- Comentarios SQL que explican la vista y la subconsulta.
+- Subconsulta para obtener servicios activos con precio mayor al promedio.
+
+La migracion `20260529100000_vista_restricciones_y_subconsulta` agrega restricciones `CHECK` reales y la vista usada desde el backend.
 
 ## Variables de entorno
 
@@ -32,83 +74,102 @@ PORT=3000
 LOG_LEVEL="info"
 LOGIN_THROTTLE_TTL=60000
 LOGIN_THROTTLE_LIMIT=5
+PAYMENT_GATEWAY_MODE=mock
+PAYMENT_GATEWAY_URL=
+PAYMENT_GATEWAY_API_KEY=
+PAYMENT_GATEWAY_TIMEOUT_MS=10000
 ```
 
-## Instalacion
-
-En PowerShell usa `npm.cmd` y `npx.cmd` si la politica de ejecucion bloquea los shims `.ps1`.
+## Instalacion y ejecucion
 
 ```powershell
-cd "D:\THE PC MASTER RACE\Escritorio\ServiciosTecnicosProyecto\servicios-tecnicos"
+git clone https://github.com/NovaChronoBlade/servicios-tecnicos.git
+cd servicios-tecnicos
 npm.cmd install
 npx.cmd prisma migrate deploy
 npx.cmd prisma generate
-```
-
-## Correr el proyecto
-
-```powershell
 npm.cmd run start:dev
 ```
 
 La API queda disponible en `http://localhost:3000`.
 
-La documentacion OpenAPI/Swagger queda disponible en:
+Swagger/OpenAPI queda disponible en:
 
 ```text
 http://localhost:3000/api/docs
 ```
 
-## Scripts utiles
+## Endpoints
+
+| Metodo | Ruta | Descripcion | Acceso |
+|---|---|---|---|
+| GET | `/` | Mensaje raiz de la API | Publico |
+| POST | `/auth/register` | Registra usuario | Publico |
+| POST | `/auth/login` | Inicia sesion | Publico |
+| POST | `/auth/refresh` | Renueva JWT | Publico |
+| POST | `/auth/logout` | Cierra sesion e invalida token | JWT |
+| GET | `/usuarios?page=&limit=&rol=&activo=` | Lista usuarios con filtros | Admin |
+| GET | `/usuarios/tecnicos` | Lista tecnicos | JWT |
+| GET | `/usuarios/:id` | Obtiene usuario | Propio/Admin |
+| PATCH | `/usuarios/:id` | Actualiza perfil | Propio/Admin |
+| PATCH | `/usuarios/:id/desactivar` | Desactiva usuario | Admin |
+| POST | `/usuarios/:id_tecnico/datos-tecnicos` | Crea datos tecnicos | Tecnico/Admin |
+| PATCH | `/usuarios/:id/detalles-tecnicos` | Actualiza datos tecnicos | Tecnico/Admin |
+| POST | `/direcciones` | Crea direccion | Cliente/Admin |
+| GET | `/direcciones` | Lista direcciones | Cliente/Admin |
+| GET | `/direcciones/usuario/:id_usuario` | Lista direcciones por usuario | Propio/Admin |
+| GET | `/direcciones/:id` | Obtiene direccion | Propio/Admin |
+| PATCH | `/direcciones/:id` | Actualiza direccion | Propio/Admin |
+| DELETE | `/direcciones/:id` | Elimina direccion | Propio/Admin |
+| POST | `/servicios` | Crea servicio | Tecnico/Admin |
+| GET | `/servicios?page=&limit=` | Lista servicios | JWT |
+| POST | `/servicios/categorias` | Crea categoria | Admin |
+| GET | `/servicios/categorias` | Lista categorias | JWT |
+| GET | `/servicios/buscar?nombre=&page=&limit=` | Busca servicios por nombre | JWT |
+| GET | `/servicios/rango-precio?min=&max=` | Busca por rango de precio | JWT |
+| GET | `/servicios/reportes/resumen-categorias` | Reporte desde vista SQL | JWT |
+| GET | `/servicios/reportes/precio-sobre-promedio` | Reporte con subconsulta SQL | JWT |
+| GET | `/servicios/:id` | Obtiene servicio | JWT |
+| PATCH | `/servicios/:id` | Actualiza servicio | Admin |
+| DELETE | `/servicios/:id` | Desactiva servicio | Admin |
+| PATCH | `/servicios/:id/activar` | Reactiva servicio | Admin |
+| POST | `/solicitudes-servicio` | Crea solicitud | Cliente/Admin |
+| GET | `/solicitudes-servicio?page=&limit=&estado=&id_tecnico=&desde=` | Lista solicitudes | Admin |
+| GET | `/solicitudes-servicio/estado?estado=` | Filtra por estado | Admin |
+| GET | `/solicitudes-servicio/cliente/:id_cliente` | Solicitudes del cliente | Cliente/Admin |
+| GET | `/solicitudes-servicio/tecnico/:id_tecnico` | Solicitudes del tecnico | Tecnico/Admin |
+| GET | `/solicitudes-servicio/pendientes-disponibles` | Pendientes sin tecnico | Tecnico/Admin |
+| GET | `/solicitudes-servicio/:id` | Obtiene solicitud | JWT |
+| PATCH | `/solicitudes-servicio/:id/estado` | Cambia estado | Tecnico/Admin |
+| PATCH | `/solicitudes-servicio/:id/cancelar` | Cancela con motivo | Cliente/Tecnico/Admin |
+| PATCH | `/solicitudes-servicio/:id/reasignar-tecnico` | Reasigna tecnico | Admin |
+| PATCH | `/solicitudes-servicio/:id/asignar-tecnico/:id_tecnico` | Asigna tecnico | Tecnico/Admin |
+| PATCH | `/solicitudes-servicio/:id/confirmar/cliente` | Confirma cliente | Cliente |
+| PATCH | `/solicitudes-servicio/:id/confirmar/tecnico` | Confirma tecnico | Tecnico |
+| POST | `/pagos` | Crea pago | Cliente/Admin |
+| GET | `/pagos/solicitud/:id_ss` | Pagos por solicitud | JWT |
+| GET | `/pagos/cliente/:id_cliente` | Historial por cliente | Cliente/Admin |
+| GET | `/pagos/:id` | Obtiene pago | JWT |
+| PATCH | `/pagos/:id/estado` | Cambia estado | Admin |
+| PATCH | `/pagos/:id/reembolsar` | Reembolsa pago | Admin |
+| POST | `/comentarios` | Crea comentario | Cliente/Admin |
+| GET | `/comentarios` | Lista comentarios | JWT |
+| GET | `/comentarios/solicitud/:id_ss` | Comentarios por solicitud | JWT |
+| GET | `/comentarios/:id` | Obtiene comentario | JWT |
+| PATCH | `/comentarios/:id` | Actualiza comentario | Cliente/Admin |
+| DELETE | `/comentarios/:id` | Elimina comentario | Admin |
+| POST | `/calificaciones` | Crea calificacion | Cliente/Admin |
+| GET | `/calificaciones/top-tecnicos` | Ranking de tecnicos | JWT |
+| GET | `/calificaciones/tecnico/:id_tecnico?page=&limit=` | Calificaciones por tecnico | JWT |
+| GET | `/calificaciones/tecnico/:id_tecnico/promedio` | Promedio por tecnico | JWT |
+| GET | `/calificaciones/cliente/:id_cliente?page=&limit=` | Calificaciones por cliente | JWT |
+| GET | `/calificaciones/:id` | Obtiene calificacion | JWT |
+
+## Verificacion
 
 ```powershell
-npm.cmd run format
 npm.cmd run build
 npm.cmd test
 npm.cmd run test:e2e
 npm.cmd run test:cov
 ```
-
-## Autenticacion
-
-El login devuelve:
-
-- `access_token`: JWT para usar en `Authorization: Bearer <token>`.
-- `refresh_token`: token renovable mediante `POST /auth/refresh`.
-- `token`: alias de compatibilidad para clientes existentes.
-
-Para cerrar sesion:
-
-```http
-POST /auth/logout
-Authorization: Bearer <access_token>
-Content-Type: application/json
-
-{
-  "refresh_token": "opcional"
-}
-```
-
-## Base de datos
-
-Prisma administra migraciones en `prisma/migrations`. Las migraciones actuales crean el esquema base, agregan `direcciones.es_default` y las tablas de tokens:
-
-- `refresh_tokens`
-- `revoked_access_tokens`
-
-Para aplicar cambios en otro entorno:
-
-```powershell
-npx.cmd prisma migrate deploy
-```
-
-## Calidad
-
-El proyecto usa:
-
-- Swagger/OpenAPI para documentacion interactiva.
-- `@nestjs/config` con validacion Joi de variables de entorno.
-- `@nestjs/throttler` para limitar intentos de login.
-- `nestjs-pino`/Pino para logs JSON.
-- Filtro global para errores HTTP y errores conocidos de Prisma.
-- Jest con umbral minimo de cobertura.

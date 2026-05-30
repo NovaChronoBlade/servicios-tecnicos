@@ -90,6 +90,27 @@ export class ServiciosController {
     return this.serviciosService.findByRangoPrecio(Number(min), Number(max));
   }
 
+  @Get('reportes/resumen-categorias')
+  @ApiOperation({
+    summary: 'Reporte de servicios por categoria usando vista SQL',
+  })
+  @ApiResponse({ status: 200, description: 'Resumen consultado desde vista' })
+  findResumenPorCategorias() {
+    return this.serviciosService.findResumenPorCategorias();
+  }
+
+  @Get('reportes/precio-sobre-promedio')
+  @ApiOperation({
+    summary: 'Servicios con precio superior al promedio usando subconsulta',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Servicios encontrados por subconsulta',
+  })
+  findServiciosSobrePromedio() {
+    return this.serviciosService.findServiciosSobrePromedio();
+  }
+
   /**
    * Obtiene un servicio por id.
    * Parametros: id del servicio.

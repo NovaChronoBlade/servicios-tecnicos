@@ -258,6 +258,41 @@ export class ServiciosService {
     `;
   }
 
+  async findResumenPorCategorias() {
+    return this.prisma.$queryRaw`
+      SELECT
+        id_categoria,
+        nombre_categoria,
+        total_servicios,
+        servicios_activos,
+        precio_promedio,
+        precio_minimo,
+        precio_maximo
+      FROM vista_resumen_servicios_categoria
+      ORDER BY nombre_categoria ASC
+    `;
+  }
+
+  async findServiciosSobrePromedio() {
+    return this.prisma.$queryRaw`
+      SELECT
+        id_servicio,
+        nombre,
+        descripcion,
+        precio,
+        activo,
+        id_categoria
+      FROM servicios
+      WHERE precio > (
+        SELECT AVG(precio)
+        FROM servicios
+        WHERE activo = true
+      )
+        AND activo = true
+      ORDER BY precio DESC
+    `;
+  }
+
   // ----------------------------------------------------------------
   // Helper: generar ID único para servicio
   // ----------------------------------------------------------------
