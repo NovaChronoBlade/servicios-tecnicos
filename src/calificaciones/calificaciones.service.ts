@@ -114,6 +114,23 @@ export class CalificacionesService {
     return calificacion;
   }
 
+  async findAll() {
+    return this.prisma.$queryRaw`
+      SELECT
+        c.id_calificacion,
+        c.puntuacion,
+        c.comentario,
+        c.fecha_calificacion,
+        c.id_ss,
+        u_tec.nombre AS nombre_tecnico,
+        u_cli.nombre AS nombre_cliente
+      FROM calificaciones c
+      JOIN usuarios u_tec ON u_tec.id_usuario = c.id_tecnico
+      JOIN usuarios u_cli ON u_cli.id_usuario = c.id_cliente
+      ORDER BY c.fecha_calificacion DESC
+    `;
+  }
+
   async findByTecnico(id_tecnico: string, page?: string, limit?: string) {
     const { take, skip, currentPage } = this.getPagination(page, limit);
     const calificaciones = await this.prisma.$queryRaw`

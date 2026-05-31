@@ -42,6 +42,7 @@ export const APP_ROUTES = {
 
     MIS_SOLICITUDES: {
       ROOT: '/mis-solicitudes',
+      DETAIL: (id?: string) => id ? `/mis-solicitudes/${id}` : '/mis-solicitudes/:id',
     },
 
     SERVICIOS: {
@@ -100,44 +101,45 @@ export const APP_ROUTES = {
 
   // ── Admin ─────────────────────────────────────────────
   ADMIN: {
-    DASHBOARD: '/dashboard',
+    DASHBOARD: '/admin/dashboard',
 
     USUARIOS: {
-      ROOT:     '/usuarios',
-      CLIENTES: '/usuarios/clientes',
-      TECNICOS: '/usuarios/tecnicos',
-      DETAIL:   (id?: string) => id ? `/usuarios/${id}` : '/usuarios/:id',
-      EDITAR:   (id?: string) => id ? `/usuarios/${id}/editar` : '/usuarios/:id/editar',
+      ROOT:     '/admin/usuarios',
+      CLIENTES: '/admin/usuarios/clientes',
+      TECNICOS: '/admin/usuarios/tecnicos',
+      DETAIL:   (id?: string) => id ? `/admin/usuarios/${id}` : '/admin/usuarios/:id',
+      EDITAR:   (id?: string) => id ? `/admin/usuarios/${id}/editar` : '/admin/usuarios/:id/editar',
     },
 
     SERVICIOS: {
-      ROOT:       '/servicios',
-      CREAR:      '/servicios/crear',
-      CATEGORIAS: '/servicios/categorias',
-      DETAIL:     (id?: string) => id ? `/servicios/${id}` : '/servicios/:id',
-      EDITAR:     (id?: string) => id ? `/servicios/${id}/editar` : '/servicios/:id/editar',
+      ROOT:       '/admin/servicios',
+      CREAR:      '/admin/servicios/crear',
+      CATEGORIAS: '/admin/servicios/categorias',
+      DETAIL:     (id?: string) => id ? `/admin/servicios/${id}` : '/admin/servicios/:id',
+      EDITAR:     (id?: string) => id ? `/admin/servicios/${id}/editar` : '/admin/servicios/:id/editar',
     },
 
     SOLICITUDES: {
-      ROOT:            '/solicitudes',
-      DETAIL:          (id?: string) => id ? `/solicitudes/${id}` : '/solicitudes/:id',
-      ASIGNAR_TECNICO: (id?: string) => id ? `/solicitudes/${id}/asignar-tecnico` : '/solicitudes/:id/asignar-tecnico',
+      ROOT:            '/admin/solicitudes',
+      DETAIL:          (id?: string) => id ? `/admin/solicitudes/${id}` : '/admin/solicitudes/:id',
+      ASIGNAR_TECNICO: (id?: string) => id ? `/admin/solicitudes/${id}/asignar-tecnico` : '/admin/solicitudes/:id/asignar-tecnico',
     },
 
-    PAGOS: '/pagos',
+    PAGOS: '/admin/pagos',
+    COMENTARIOS: '/admin/comentarios',
 
     REPORTES: {
-      ROOT:         '/reportes',
-      INGRESOS:     '/reportes/ingresos',
-      SOLICITUDES:  '/reportes/solicitudes',
+      ROOT:         '/admin/reportes',
+      INGRESOS:     '/admin/reportes/ingresos',
+      SOLICITUDES:  '/admin/reportes/solicitudes',
     },
 
     ADMINISTRACION: {
-      CONFIGURACION: '/administracion/configuracion',
-      AUDITORIA:     '/administracion/auditoria',
+      CONFIGURACION: '/admin/administracion/configuracion',
+      AUDITORIA:     '/admin/administracion/auditoria',
     },
 
-    CALIFICACIONES: '/calificaciones',
+    CALIFICACIONES: '/admin/calificaciones',
   },
 
 } as const;

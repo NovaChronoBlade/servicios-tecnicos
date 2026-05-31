@@ -68,6 +68,27 @@ export class UsuariosController {
     return this.usuariosService.findTecnicos({ page, limit, disponible });
   }
 
+  @Get('me/detalles-tecnicos')
+  @ApiOperation({ summary: 'Obtener datos tecnicos del tecnico autenticado' })
+  @ApiResponse({ status: 200, description: 'Datos tecnicos encontrados' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
+  findMisDetallesTecnicos(@Request() req) {
+    return this.usuariosService.findDetallesTecnicosPerfil(
+      req.user.userId,
+      req.user,
+    );
+  }
+
+  @Get(':id/detalles-tecnicos')
+  @ApiOperation({ summary: 'Obtener datos tecnicos por usuario' })
+  @ApiResponse({ status: 200, description: 'Datos tecnicos encontrados' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.TECNICO, RolEnum.ADMIN)
+  findDetallesTecnicos(@Param('id') id: string, @Request() req) {
+    return this.usuariosService.findDetallesTecnicosPerfil(id, req.user);
+  }
+
   /**
    * Obtiene el perfil publico de un usuario.
    * Parametros: id del usuario.

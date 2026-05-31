@@ -8,6 +8,8 @@ export interface Pago {
   estado: PagoEstado;
   numero_referencia?: string | null;
   fecha_pago: string;
+  id_servicio?: string;
+  nombre_servicio?: string;
 }
 
 export interface CreatePagoRequest {

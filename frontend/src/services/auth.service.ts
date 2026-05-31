@@ -8,9 +8,36 @@ import type {
 } from "../types/auth.types";
 import { AUTH_ENDPOINTS } from "../constants/auth.constants";
 
+const REFRESH_TOKEN_KEY = "auth.refresh_token";
+
+function persistRefreshToken(token?: string | null) {
+  try {
+    if (typeof window === "undefined") return;
+
+    if (token) {
+      window.localStorage.setItem(REFRESH_TOKEN_KEY, token);
+    } else {
+      window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+    }
+  } catch (e) {}
+}
+
+function getStoredRefreshToken() {
+  try {
+    if (typeof window === "undefined") return null;
+    return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+  } catch (e) {
+    return null;
+  }
+}
+
 function normalizeAuthResponse(response: AuthResponse): AuthResponse {
+  const token = response.token ?? response.access_token;
+
   return {
     ...response,
+    token,
+    access_token: response.access_token ?? token,
     user: response.user ?? response.usuario,
     usuario: response.usuario ?? response.user,
   };
@@ -136,8 +163,10 @@ export function getAuthFieldErrors(error: unknown): AuthFieldErrorMap {
 
 export async function loginRequest(credentials: LoginRequest): Promise<AuthResponse> {
   const { data } = await api.post<AuthResponse>(AUTH_ENDPOINTS.LOGIN, credentials);
-  if (data?.token) setAuthToken(data.token);
-  return normalizeAuthResponse(data);
+  const normalized = normalizeAuthResponse(data);
+  if (normalized.token) setAuthToken(normalized.token);
+  persistRefreshToken(normalized.refresh_token);
+  return normalized;
 }
 
 export function saveToken(token: string) {
@@ -149,6 +178,7 @@ export function saveToken(token: string) {
 export function clearToken() {
   try {
     setAuthToken(null);
+    persistRefreshToken(null);
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("auth.user");
       document.cookie = "auth.token=; path=/; max-age=0; samesite=lax";
@@ -160,9 +190,16 @@ export function clearToken() {
 
 export async function refreshToken(): Promise<AuthResponse> {
   try {
-    const { data } = await api.post<AuthResponse>("/auth/refresh");
-    if (data?.token) setAuthToken(data.token);
-    return normalizeAuthResponse(data);
+    const refreshToken = getStoredRefreshToken();
+    if (!refreshToken) throw new Error("No hay refresh token almacenado.");
+
+    const { data } = await api.post<AuthResponse>(AUTH_ENDPOINTS.REFRESH, {
+      refresh_token: refreshToken,
+    });
+    const normalized = normalizeAuthResponse(data);
+    if (normalized.token) setAuthToken(normalized.token);
+    persistRefreshToken(normalized.refresh_token);
+    return normalized;
   } catch (e) {
     throw e;
   }
@@ -170,7 +207,9 @@ export async function refreshToken(): Promise<AuthResponse> {
 
 export async function logoutRequest(): Promise<void> {
   try {
-    await api.post(AUTH_ENDPOINTS.LOGOUT);
+    await api.post(AUTH_ENDPOINTS.LOGOUT, {
+      refresh_token: getStoredRefreshToken() ?? undefined,
+    });
   } catch (e) {
     // ignore
   }
@@ -181,10 +220,12 @@ export async function registerRequest(
   payload: RegisterRequest,
 ): Promise<RegisterResponse> {
   const { data } = await api.post<RegisterResponse>(AUTH_ENDPOINTS.REGISTER, payload);
+  const normalized = normalizeAuthResponse(data);
 
-  if (data?.token) {
-    setAuthToken(data.token);
+  if (normalized.token) {
+    setAuthToken(normalized.token);
   }
+  persistRefreshToken(normalized.refresh_token);
 
-  return normalizeAuthResponse(data);
+  return normalized;
 }

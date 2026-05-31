@@ -29,6 +29,16 @@ const accentMap = {
   info: 'info.main',
 } as const;
 
+const accentBgMap = {
+  default: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.text.primary, 0.04),
+  primary: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.primary.main, 0.1),
+  secondary: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.secondary.main, 0.1),
+  success: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.success.main, 0.1),
+  warning: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.warning.main, 0.12),
+  error: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.error.main, 0.1),
+  info: (theme: typeof useTheme extends (...args: any[]) => infer T ? T : never) => alpha(theme.palette.info.main, 0.1),
+} as const;
+
 export function ClientDetailHero({ eyebrow, title, description, chips, facts, actions, secondary }: ClientDetailHeroProps) {
   const theme = useTheme();
 
@@ -82,14 +92,25 @@ export function ClientDetailHero({ eyebrow, title, description, chips, facts, ac
           sx={{
             p: 2.5,
             borderRadius: 3,
-            bgcolor: alpha(theme.palette.background.paper, 0.88),
+            bgcolor: alpha(theme.palette.background.paper, 0.7),
             backdropFilter: 'blur(12px)',
+            borderColor: alpha(theme.palette.primary.main, 0.12),
           }}
         >
           <Box sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' } }}>
             {facts.map((fact) => (
-              <Paper key={fact.label} variant="outlined" sx={{ p: 2, borderRadius: 3, bgcolor: alpha(theme.palette.common.white, 0.7) }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+              <Paper
+                key={fact.label}
+                variant="outlined"
+                sx={(paperTheme) => ({
+                  p: 2,
+                  borderRadius: 3,
+                  bgcolor: accentBgMap[fact.accent ?? 'default'](paperTheme),
+                  borderColor: alpha(paperTheme.palette[fact.accent ?? 'default' === 'default' ? 'text' : fact.accent ?? 'default'].main ?? paperTheme.palette.text.primary, 0.18),
+                  boxShadow: `0 10px 24px ${alpha(paperTheme.palette.common.black, 0.05)}`,
+                })}
+              >
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, letterSpacing: 0.2 }}>
                   {fact.label}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 800, color: accentMap[fact.accent ?? 'default'] }}>

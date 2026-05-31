@@ -1,13 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import ThemeProvider from '../theme/ThemeProvider';
 import { AuthProvider } from '../store/authStore';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
 
 export const metadata: Metadata = {
   title: 'Servicios Técnicos - Conecta con Expertos Técnicos de Confianza',
@@ -34,7 +28,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={inter.variable}>
+      <body>
         <AppRouterCacheProvider options={{ key: 'mui' }}>
           <AuthProvider>
             <ThemeProvider>{children}</ThemeProvider>

@@ -1,13 +1,13 @@
 "use client";
 
 import { APP_ROUTES } from '@/constants/routes.constants';
-import type { TecnicoSolicitudDisponibleMock } from '@/mocks/tecnico-pages.mock';
+import type { SolicitudView } from '@/services/solicitudes.service';
 import { alpha, Box, Button, Card, CardActions, CardContent, Chip, Divider, Typography, useTheme } from '@mui/material';
 import { ArrowRight, CalendarClock, MapPin, Phone, UserRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type SolicitudDisponibleCardProps = {
-	solicitud: TecnicoSolicitudDisponibleMock;
+	solicitud: SolicitudView;
 	compact?: boolean;
 };
 

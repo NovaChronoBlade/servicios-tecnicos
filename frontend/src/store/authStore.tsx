@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { UserRole } from '@/types/user.types';
+import { setAuthToken } from '@/services/api';
 
 // ── Tipos ─────────────────────────────────────────────────
 
@@ -62,11 +63,13 @@ function loadFromStorage(): { token: string; user: AuthUser } | null {
 }
 
 function persistAuth(token: string, user: AuthUser) {
+  setAuthToken(token);
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
 function clearStorage() {
+  setAuthToken(null);
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
 }
@@ -98,7 +101,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         : { token: null, user: null, isAuthenticated: false, isHydrated: true },
     );
 
-    if (!saved) clearStorage();
+    if (saved) {
+      setAuthToken(saved.token);
+    } else {
+      clearStorage();
+    }
   }, []);
 
   const setAuth = useCallback((token: string, user: AuthUser) => {

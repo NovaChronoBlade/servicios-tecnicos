@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -42,6 +43,15 @@ export class PagosController {
     return this.pagosService.createPago(createPagoDto, req.user.userId);
   }
 
+  @Get()
+  @ApiOperation({ summary: 'Listar pagos para administradores' })
+  @ApiResponse({ status: 200, description: 'Pagos encontrados' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolEnum.ADMIN)
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.pagosService.findAll({ page, limit });
+  }
+
   @Get('solicitud/:id_ss')
   @UseGuards(JwtAuthGuard)
   findBySolicitud(@Param('id_ss') id_ss: string) {
@@ -51,8 +61,8 @@ export class PagosController {
   @Get('cliente/:id_cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolEnum.CLIENTE, RolEnum.ADMIN)
-  findByCliente(@Param('id_cliente') id_cliente: string) {
-    return this.pagosService.findByCliente(id_cliente);
+  findByCliente(@Param('id_cliente') id_cliente: string, @Request() req?) {
+    return this.pagosService.findByCliente(id_cliente, req?.user);
   }
 
   /**

@@ -8,6 +8,12 @@ import { PrismaService } from 'src/prisma.service';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PaymentGatewayService } from './payment-gateway.service';
+import { RolEnum } from 'src/auth/enums/rol.enum';
+
+type Actor = {
+  userId?: string;
+  rol?: RolEnum | string;
+};
 
 @Injectable()
 export class PagosService {
@@ -26,9 +32,10 @@ export class PagosService {
     } = createPagoDto;
 
     const solicitudes = await this.prisma.$queryRaw`
-      SELECT id_ss, estado, id_cliente, id_servicio
-      FROM solicitud_servicios
-      WHERE id_ss = ${id_ss}
+      SELECT ss.id_ss, ss.estado, ss.id_cliente, ss.id_servicio, s.precio AS precio_servicio
+      FROM solicitud_servicios ss
+      JOIN servicios s ON s.id_servicio = ss.id_servicio
+      WHERE ss.id_ss = ${id_ss}
       LIMIT 1
     `;
     const solicitud = Array.isArray(solicitudes) ? solicitudes[0] : null;
@@ -42,9 +49,15 @@ export class PagosService {
       );
     }
 
-    if (solicitud.estado === 'completado') {
+    if (solicitud.estado === 'completado' || solicitud.estado === 'cancelado') {
       throw new BadRequestException(
-        'No se puede pagar una solicitud completada',
+        `No se puede pagar una solicitud en estado '${solicitud.estado}'`,
+      );
+    }
+
+    if (Number(monto) !== Number(solicitud.precio_servicio)) {
+      throw new BadRequestException(
+        'El monto del pago no coincide con el precio del servicio',
       );
     }
 
@@ -102,6 +115,47 @@ export class PagosService {
     return pago;
   }
 
+  async findAll(filters: { page?: string; limit?: string } = {}) {
+    const { take, skip, currentPage } = this.getPagination(
+      filters.page,
+      filters.limit,
+    );
+
+    const pagos = await this.prisma.$queryRaw`
+      SELECT
+        p.id_pago,
+        p.id_ss,
+        p.monto,
+        p.metodo_pago,
+        p.estado,
+        p.numero_referencia,
+        p.fecha_pago,
+        ss.id_cliente,
+        ss.id_tecnico,
+        ss.id_servicio,
+        u_cli.nombre AS nombre_cliente,
+        u_tec.nombre AS nombre_tecnico,
+        s.nombre AS nombre_servicio
+      FROM pagos p
+      JOIN solicitud_servicios ss ON ss.id_ss = p.id_ss
+      JOIN usuarios u_cli ON u_cli.id_usuario = ss.id_cliente
+      LEFT JOIN usuarios u_tec ON u_tec.id_usuario = ss.id_tecnico
+      JOIN servicios s ON s.id_servicio = ss.id_servicio
+      ORDER BY p.fecha_pago DESC
+      LIMIT ${take} OFFSET ${skip}
+    `;
+
+    const totalResult = await this.prisma.$queryRaw`
+      SELECT COUNT(*)::int AS total FROM pagos
+    `;
+    const total = Array.isArray(totalResult) ? (totalResult[0]?.total ?? 0) : 0;
+
+    return {
+      data: pagos,
+      pagination: { page: currentPage, limit: take, total },
+    };
+  }
+
   async findBySolicitud(id_ss: string) {
     return this.prisma.$queryRaw`
       SELECT id_pago, id_ss, monto, metodo_pago, estado, numero_referencia, fecha_pago
@@ -111,7 +165,13 @@ export class PagosService {
     `;
   }
 
-  async findByCliente(id_cliente: string) {
+  async findByCliente(id_cliente: string, actor?: Actor) {
+    if (actor && actor.rol !== RolEnum.ADMIN && actor.userId !== id_cliente) {
+      throw new UnauthorizedException(
+        'Solo el cliente propietario puede consultar estos pagos',
+      );
+    }
+
     return this.prisma.$queryRaw`
       SELECT
         p.id_pago,
@@ -179,5 +239,13 @@ export class PagosService {
 
   private generarNumeroReferencia(): string {
     return `REF-${uuidv4().split('-')[0].toUpperCase()}`;
+  }
+
+  private getPagination(page?: string, limit?: string) {
+    const currentPage = Math.max(Number(page) || 1, 1);
+    const take = Math.min(Math.max(Number(limit) || 10, 1), 100);
+    const skip = (currentPage - 1) * take;
+
+    return { currentPage, take, skip };
   }
 }

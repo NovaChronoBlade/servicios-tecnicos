@@ -57,7 +57,7 @@ describe('PagosService', () => {
 
   it('throws Unauthorized when cliente no coincide', async () => {
     (prisma.$queryRaw as jest.Mock).mockResolvedValueOnce([
-      { id_ss: 'SS-1', estado: 'pendiente', id_cliente: 'otro-cli' },
+      { id_ss: 'SS-1', estado: 'pendiente', id_cliente: 'otro-cli', precio_servicio: 100 },
     ]);
     const dto: CreatePagoDto = {
       id_ss: 'SS-1',
@@ -77,7 +77,7 @@ describe('PagosService', () => {
     };
 
     (prisma.$queryRaw as jest.Mock).mockResolvedValueOnce([
-      { id_ss: 'SS-1', estado: 'completado', id_cliente: 'cli-1' },
+      { id_ss: 'SS-1', estado: 'completado', id_cliente: 'cli-1', precio_servicio: 100 },
     ]);
     await expect(service.createPago(dto, 'cli-1')).rejects.toThrow(
       BadRequestException,
@@ -85,7 +85,7 @@ describe('PagosService', () => {
 
     (prisma.$queryRaw as jest.Mock)
       .mockResolvedValueOnce([
-        { id_ss: 'SS-1', estado: 'pendiente', id_cliente: 'cli-1' },
+        { id_ss: 'SS-1', estado: 'pendiente', id_cliente: 'cli-1', precio_servicio: 100 },
       ])
       .mockResolvedValueOnce([{ id_pago: 'PAG-1' }]);
     await expect(service.createPago(dto, 'cli-1')).rejects.toThrow(
@@ -96,7 +96,7 @@ describe('PagosService', () => {
   it('creates pago when data valid', async () => {
     (prisma.$queryRaw as jest.Mock)
       .mockResolvedValueOnce([
-        { id_ss: 'SS-1', estado: 'pendiente', id_cliente: 'cli-1' },
+        { id_ss: 'SS-1', estado: 'pendiente', id_cliente: 'cli-1', precio_servicio: 150.5 },
       ])
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([

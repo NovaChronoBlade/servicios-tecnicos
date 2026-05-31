@@ -14,6 +14,8 @@ import { PagosModule } from './pagos/pagos.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { envValidationSchema } from './config/env.validation';
 import { ComentariosModule } from './comentarios/comentarios.module';
+import { AdminModule } from './admin/admin.module';
+import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 
 @Module({
   imports: [
@@ -67,6 +69,8 @@ import { ComentariosModule } from './comentarios/comentarios.module';
     PagosModule,
     DireccionesModule,
     ComentariosModule,
+    AdminModule,
+    DisponibilidadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

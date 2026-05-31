@@ -28,6 +28,13 @@ import { CreateCalificacionDto } from './dto/create-calificacion.dto';
 export class CalificacionesController {
   constructor(private readonly calificacionesService: CalificacionesService) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Listar calificaciones' })
+  @ApiResponse({ status: 200, description: 'Calificaciones encontradas' })
+  findAll() {
+    return this.calificacionesService.findAll();
+  }
+
   @Post()
   @ApiOperation({ summary: 'Crear calificacion' })
   @ApiResponse({ status: 201, description: 'Calificacion creada' })
