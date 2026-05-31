@@ -32,14 +32,14 @@ API REST construida con NestJS, Prisma y PostgreSQL para administrar una platafo
 ## Requisitos previos
 
 - Node.js 22 o compatible.
-- npm para instalar dependencias y ejecutar scripts.
+- npm o pnpm para instalar dependencias y ejecutar scripts.
 - PostgreSQL para la base de datos.
 - VS Code, IntelliJ IDEA, WebStorm o un editor compatible.
 - Git para clonar el repositorio y trabajar con ramas.
 
 ## Diagrama ER
 
-![Diagrama ER](docs/Diagrama_ER.png)
+![Diagrama ER](docs/diagrama.png)
 
 ## Base de datos y SQL
 
@@ -82,13 +82,25 @@ PAYMENT_GATEWAY_TIMEOUT_MS=10000
 
 ## Instalacion y ejecucion
 
+El proyecto tiene dos partes: el backend en la raiz del repositorio y el frontend dentro de `frontend/`. Puedes usar `npm` o `pnpm`; solo cambia el gestor y el comando equivalente.
+
+### Backend
+
 ```powershell
 git clone https://github.com/NovaChronoBlade/servicios-tecnicos.git
 cd servicios-tecnicos
+
+# con npm
 npm.cmd install
 npx.cmd prisma migrate deploy
 npx.cmd prisma generate
 npm.cmd run start:dev
+
+# con pnpm
+pnpm install
+pnpm exec prisma migrate deploy
+pnpm exec prisma generate
+pnpm run start:dev
 ```
 
 La API queda disponible en `http://localhost:3000`.
@@ -98,6 +110,24 @@ Swagger/OpenAPI queda disponible en:
 ```text
 http://localhost:3000/api/docs
 ```
+
+### Frontend
+
+En otra terminal:
+
+```powershell
+cd servicios-tecnicos\frontend
+
+# con npm
+npm.cmd install
+npm.cmd run dev -- --port 3001
+
+# con pnpm
+pnpm install
+pnpm run dev -- --port 3001
+```
+
+El frontend queda disponible en `http://localhost:3001` y el backend en `http://localhost:3000`.
 
 ## Endpoints
 
