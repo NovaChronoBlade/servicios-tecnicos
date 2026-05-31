@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { Alert, Box, Button, Divider, MenuItem, Paper, Snackbar, TextField } from '@mui/material';
 
 import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
@@ -14,10 +16,12 @@ export default function AdminCrearServicioPage() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savingError, setSavingError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formEl = event.currentTarget as HTMLFormElement;
+    const form = new FormData(formEl);
     setSaving(true);
     setSavingError(null);
 
@@ -29,8 +33,10 @@ export default function AdminCrearServicioPage() {
         id_categoria: String(form.get('id_categoria') || '') || undefined,
         activo: true,
       });
-      event.currentTarget.reset();
+      formEl.reset();
       setSaved(true);
+      // Redirect to admin services list so the new service is visible
+      router.push(APP_ROUTES.ADMIN.SERVICIOS.ROOT);
     } catch (err) {
       setSavingError(getApiErrorMessage(err, 'No se pudo crear el servicio.'));
     } finally {

@@ -15,6 +15,7 @@ export type ServicioListItem = Servicio & {
   categoriaNombre: string;
   tiempoEstimado: string;
   puntuacionPromedio: number;
+  puntuacion_promedio?: string | number | null;
 };
 
 export type CategoriaServicioListItem = CategoriaServicio & {
@@ -30,7 +31,7 @@ export function normalizeServicio(servicio: Servicio & { nombre_categoria?: stri
     precio: String(servicio.precio ?? 0),
     categoriaNombre,
     tiempoEstimado: 'Por confirmar',
-    puntuacionPromedio: 0,
+    puntuacionPromedio: Number((servicio as ServicioListItem).puntuacion_promedio ?? 0),
   };
 }
 

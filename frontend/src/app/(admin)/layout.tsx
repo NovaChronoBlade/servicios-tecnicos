@@ -2,6 +2,7 @@
 
 import { AuthGuard } from '@/components/common/ProtectedRoute/ProtectedRoute';
 import { NavbarAdmin } from '@/components/common/Navbar/NavbarAdmin';
+import { FooterAdmin } from '@/components/common/Footer/FooterAdmin';
 import { UserRole } from '@/types/user.types';
 import { alpha, Box, useTheme } from '@mui/material';
 import type { ReactNode } from 'react';
@@ -16,6 +17,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <Box component="main" sx={{ flex: 1 }}>
           {children}
         </Box>
+        <FooterAdmin />
       </Box>
     </AuthGuard>
   );

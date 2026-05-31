@@ -113,6 +113,10 @@ export function canClientComplete(solicitud: Pick<SolicitudServicio, 'estado' | 
   return normalizeSolicitudEstado(solicitud.estado) === 'en_curso' && Boolean(solicitud.id_tecnico) && !solicitud.confirmacion_cliente;
 }
 
+export function canClientComment(solicitud: Pick<SolicitudServicio, 'estado'>) {
+  return normalizeSolicitudEstado(solicitud.estado) === 'completado';
+}
+
 export function isSolicitudTerminal(value?: string | null) {
   const estado = normalizeSolicitudEstado(value);
   return estado === 'completado' || estado === 'cancelado';

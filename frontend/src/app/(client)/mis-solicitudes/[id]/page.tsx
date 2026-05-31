@@ -13,7 +13,10 @@ import {
   DialogTitle,
   Divider,
   Paper,
+  Rating,
   Snackbar,
+  Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import { CheckCircle2, CircleArrowLeft, Wrench } from 'lucide-react';
@@ -23,9 +26,11 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinne
 import { SolicitudTimeline } from '@/components/cliente/SolicitudTimeline/SolicitudTimeline';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useApiData } from '@/hooks/useApiData';
+import { createComentario } from '@/services/comentarios.service';
 import { getApiErrorMessage } from '@/services/api-error';
+import { createCalificacion, listCalificacionesByCliente } from '@/services/calificaciones.service';
 import { confirmarCliente, getSolicitudById } from '@/services/solicitudes.service';
-import { canClientComplete, getSolicitudEstadoMeta } from '@/utils/solicitud-state';
+import { canClientComment, canClientComplete, getSolicitudEstadoMeta } from '@/utils/solicitud-state';
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -35,11 +40,21 @@ export default function ClienteSolicitudDetallePage({ params }: PageProps) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [savingError, setSavingError] = useState<string | null>(null);
+  const [commentContent, setCommentContent] = useState('');
+  const [ratingValue, setRatingValue] = useState<number | null>(5);
+  const [ratingSaving, setRatingSaving] = useState(false);
+  const [ratingSaved, setRatingSaved] = useState(false);
+  const [ratingError, setRatingError] = useState<string | null>(null);
 
   const { data: solicitud, loading, error, reload } = useApiData(
     () => getSolicitudById(id),
     [id],
     null,
+  );
+  const { data: calificaciones, loading: loadingCalificaciones, error: calificacionesError, reload: reloadCalificaciones } = useApiData(
+    () => (solicitud?.id_cliente ? listCalificacionesByCliente(solicitud.id_cliente) : Promise.resolve([])),
+    [solicitud?.id_cliente],
+    [],
   );
 
   const handleComplete = async () => {
@@ -55,6 +70,45 @@ export default function ClienteSolicitudDetallePage({ params }: PageProps) {
       setSavingError(getApiErrorMessage(err, 'No se pudo finalizar el servicio.'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const calificacionRegistrada = solicitud
+    ? calificaciones.find((item) => item.id_ss === solicitud.id_ss)
+    : undefined;
+
+  const handleSubmitRating = async () => {
+    if (!solicitud || !canClientComment(solicitud) || !ratingValue) return;
+    if (calificacionRegistrada) return;
+
+    setRatingSaving(true);
+    setRatingError(null);
+
+    try {
+      await createCalificacion({
+        id_ss: solicitud.id_ss,
+        id_cliente: solicitud.id_cliente,
+        id_tecnico: solicitud.id_tecnico ?? '',
+        puntuacion: ratingValue,
+        comentario: commentContent.trim() || undefined,
+      });
+
+      if (commentContent.trim()) {
+        await createComentario({
+          id_ss: solicitud.id_ss,
+          id_cliente: solicitud.id_cliente,
+          id_tecnico: solicitud.id_tecnico ?? '',
+          contenido: commentContent.trim(),
+        });
+      }
+
+      setCommentContent('');
+      setRatingSaved(true);
+      await reloadCalificaciones();
+    } catch (err) {
+      setRatingError(getApiErrorMessage(err, 'No se pudo registrar la calificacion.'));
+    } finally {
+      setRatingSaving(false);
     }
   };
 
@@ -140,6 +194,60 @@ export default function ClienteSolicitudDetallePage({ params }: PageProps) {
         </Box>
       </Box>
 
+      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mt: 3 }}>
+        <Typography variant="h6" sx={{ fontWeight: 800 }}>Califica el servicio</Typography>
+        <Divider sx={{ my: 2 }} />
+        {calificacionesError ? <Alert severity="warning" sx={{ mb: 2 }}>{calificacionesError}</Alert> : null}
+        {loadingCalificaciones ? (
+          <Typography variant="body2" color="text.secondary">Cargando calificacion...</Typography>
+        ) : calificacionRegistrada ? (
+          <Stack spacing={1.25}>
+            <Rating value={calificacionRegistrada.puntuacion} readOnly />
+            <Typography variant="body2" color="text.secondary">
+              Ya registraste una calificacion para esta solicitud.
+            </Typography>
+            {calificacionRegistrada.comentario ? (
+              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default' }}>
+                <Typography variant="body2">{calificacionRegistrada.comentario}</Typography>
+              </Paper>
+            ) : null}
+          </Stack>
+        ) : solicitud && canClientComment(solicitud) ? (
+          <Box sx={{ display: 'grid', gap: 2 }}>
+            {ratingError ? <Alert severity="error">{ratingError}</Alert> : null}
+            <Stack spacing={1}>
+              <Typography variant="body2" color="text.secondary">Puntuacion</Typography>
+              <Rating
+                value={ratingValue}
+                onChange={(_, value) => setRatingValue(value)}
+                size="large"
+              />
+            </Stack>
+            <TextField
+              label="Comentario opcional para la calificacion"
+              value={commentContent}
+              onChange={(event) => setCommentContent(event.target.value)}
+              multiline
+              minRows={4}
+              fullWidth
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                variant="contained"
+                onClick={handleSubmitRating}
+                disabled={ratingSaving || !ratingValue}
+              >
+                {ratingSaving ? 'Guardando...' : 'Enviar calificacion'}
+              </Button>
+            </Box>
+          </Box>
+        ) : (
+          <Alert severity="info" variant="outlined">
+            Podrás calificar cuando la solicitud quede completada.
+          </Alert>
+        )}
+      </Paper>
+
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirmar finalizacion</DialogTitle>
         <DialogContent>
@@ -156,6 +264,7 @@ export default function ClienteSolicitudDetallePage({ params }: PageProps) {
       </Dialog>
 
       <Snackbar open={saved} autoHideDuration={2500} onClose={() => setSaved(false)} message="Servicio finalizado" />
+      <Snackbar open={ratingSaved} autoHideDuration={2500} onClose={() => setRatingSaved(false)} message="Calificacion publicada" />
     </Box>
   );
 }

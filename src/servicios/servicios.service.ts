@@ -54,7 +54,13 @@ export class ServiciosService {
         s.precio,
         s.activo,
         s.id_categoria,
-        c.nombre AS nombre_categoria
+        c.nombre AS nombre_categoria,
+        COALESCE((
+          SELECT ROUND(AVG(cal.puntuacion)::numeric, 2)
+          FROM calificaciones cal
+          JOIN solicitud_servicios ss ON ss.id_ss = cal.id_ss
+          WHERE ss.id_servicio = s.id_servicio
+        ), 0) AS puntuacion_promedio
       FROM servicios s
       LEFT JOIN categorias_servicios c ON c.id_categoria = s.id_categoria
       ORDER BY s.nombre ASC
@@ -84,7 +90,13 @@ export class ServiciosService {
         s.precio,
         s.activo,
         s.id_categoria,
-        c.nombre AS nombre_categoria
+        c.nombre AS nombre_categoria,
+        COALESCE((
+          SELECT ROUND(AVG(cal.puntuacion)::numeric, 2)
+          FROM calificaciones cal
+          JOIN solicitud_servicios ss ON ss.id_ss = cal.id_ss
+          WHERE ss.id_servicio = s.id_servicio
+        ), 0) AS puntuacion_promedio
       FROM servicios s
       LEFT JOIN categorias_servicios c ON c.id_categoria = s.id_categoria
       WHERE s.id_servicio = ${id}
@@ -179,10 +191,22 @@ export class ServiciosService {
     }
 
     const servicios = await this.prisma.$queryRaw`
-      SELECT id_servicio, nombre, descripcion, precio, activo, id_categoria
-      FROM servicios
-      WHERE precio BETWEEN ${precioMin} AND ${precioMax}
-      ORDER BY precio ASC
+      SELECT
+        s.id_servicio,
+        s.nombre,
+        s.descripcion,
+        s.precio,
+        s.activo,
+        s.id_categoria,
+        COALESCE((
+          SELECT ROUND(AVG(cal.puntuacion)::numeric, 2)
+          FROM calificaciones cal
+          JOIN solicitud_servicios ss ON ss.id_ss = cal.id_ss
+          WHERE ss.id_servicio = s.id_servicio
+        ), 0) AS puntuacion_promedio
+      FROM servicios s
+      WHERE s.precio BETWEEN ${precioMin} AND ${precioMax}
+      ORDER BY s.precio ASC
     `;
 
     return servicios;
@@ -207,7 +231,13 @@ export class ServiciosService {
         s.precio,
         s.activo,
         s.id_categoria,
-        c.nombre AS nombre_categoria
+        c.nombre AS nombre_categoria,
+        COALESCE((
+          SELECT ROUND(AVG(cal.puntuacion)::numeric, 2)
+          FROM calificaciones cal
+          JOIN solicitud_servicios ss ON ss.id_ss = cal.id_ss
+          WHERE ss.id_servicio = s.id_servicio
+        ), 0) AS puntuacion_promedio
       FROM servicios s
       LEFT JOIN categorias_servicios c ON c.id_categoria = s.id_categoria
       WHERE s.nombre ILIKE ${patron}

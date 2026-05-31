@@ -1,34 +1,52 @@
+"use client";
+
 import { ClientPageHeader } from '@/components/common/ClientPage/ClientPageHeader';
-import { adminComentariosMock } from '@/mocks/admin-pages.mock';
-import { Box, Chip, Divider, Paper, Typography } from '@mui/material';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner/LoadingSpinner';
+import { useApiData } from '@/hooks/useApiData';
+import { listCalificaciones } from '@/services/calificaciones.service';
+import { Alert, Box, Chip, Divider, Paper, Rating, Typography } from '@mui/material';
 
 export default function AdminComentariosPage() {
+  const { data: calificaciones, loading, error } = useApiData(listCalificaciones, [], []);
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
       <ClientPageHeader
-        eyebrow="Comentarios"
-        title="Comentarios de solicitudes"
-        description="Consulta los comentarios registrados por solicitud, cliente y tecnico."
-        chips={[{ label: `${adminComentariosMock.length} comentarios` }]}
+        eyebrow="Reputacion"
+        title="Calificaciones y comentarios"
+        description="Consulta las calificaciones registradas por solicitud, cliente y tecnico."
+        chips={[{ label: `${calificaciones.length} registros` }]}
       />
       <Divider sx={{ mb: 3 }} />
+      {error ? <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert> : null}
       <Box sx={{ display: 'grid', gap: 2 }}>
-        {adminComentariosMock.map((comentario) => (
-          <Paper key={comentario.id_comentario} variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
+        {calificaciones.map((calificacion) => (
+          <Paper key={calificacion.id_calificacion} variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                  Solicitud {comentario.id_ss}
+                  Solicitud {calificacion.id_ss}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {comentario.nombre_cliente} - {comentario.nombre_tecnico}
+                  {calificacion.nombre_cliente} - {calificacion.nombre_tecnico}
                 </Typography>
               </Box>
-              <Chip label={new Date(comentario.fecha_comentario).toLocaleDateString('es-CO')} variant="outlined" />
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                <Rating value={calificacion.puntuacion} readOnly size="small" />
+                <Chip label={new Date(calificacion.fecha_calificacion).toLocaleDateString('es-CO')} variant="outlined" />
+              </Box>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-              {comentario.contenido}
-            </Typography>
+            {calificacion.comentario ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                {calificacion.comentario}
+              </Typography>
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                Sin comentario.
+              </Typography>
+            )}
           </Paper>
         ))}
       </Box>

@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthGuard } from '@/components/common/ProtectedRoute/ProtectedRoute';
+import { FooterTecnico } from '@/components/common/Footer/FooterTecnico';
 import { NavbarTecnico } from '@/components/common/Navbar/NavbarTecnico';
 import { UserRole } from '@/types/user.types';
 import { alpha, Box, useTheme } from '@mui/material';
@@ -16,6 +17,7 @@ export default function TecnicoLayout({ children }: { children: ReactNode }) {
 				<Box component="main" sx={{ flex: 1 }}>
 					{children}
 				</Box>
+				<FooterTecnico />
 			</Box>
 		</AuthGuard>
 	);

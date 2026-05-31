@@ -56,6 +56,13 @@ export async function createCalificacion(payload: CreateCalificacionRequest) {
   return normalizeCalificacion(data);
 }
 
+export async function listCalificaciones() {
+  const { data } = await api.get<ApiListResponse<CalificacionListItem>>(
+    CALIFICACIONES_ENDPOINTS.LIST,
+  );
+  return unwrapList(data).map(normalizeCalificacion);
+}
+
 export async function listTopTecnicos(limit = 10) {
   const { data } = await api.get<TopTecnicoListItem[]>(
     CALIFICACIONES_ENDPOINTS.TOP_TECNICOS,

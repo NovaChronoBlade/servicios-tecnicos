@@ -39,8 +39,13 @@ export function ClientPageHeader({ title, description, eyebrow, chips = [], acti
       <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 2.25 }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
           {eyebrow ? <Chip label={eyebrow} sx={{ bgcolor: alpha(theme.palette.common.white, 0.12), color: 'common.white' }} /> : null}
-          {chips.map((chip) => (
-            <Chip key={chip.label} label={chip.label} color={chip.color ?? 'default'} sx={{ bgcolor: alpha(theme.palette.common.white, 0.12), color: 'common.white' }} />
+          {chips.map((chip, index) => (
+            <Chip
+              key={`${chip.label}-${index}`}
+              label={chip.label}
+              color={chip.color ?? 'default'}
+              sx={{ bgcolor: alpha(theme.palette.common.white, 0.12), color: 'common.white' }}
+            />
           ))}
         </Box>
 
